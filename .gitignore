@@ -1,0 +1,12 @@
+/Library
+Library/
+/ProjectSettings
+ProjectSettings/
+/UnityPackageManager
+UnityPackageManager/
+Assets/Imported/
+Assets/TextMesh*/
+Assets/Zios*/
+Assets/Tree_Textures/
+.vs/
+Temp/
