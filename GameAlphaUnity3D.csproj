@@ -306,7 +306,6 @@
     <Compile Include="Assets\Scripts\GameEngine\TurnSubject.cs" />
     <Compile Include="Assets\Scripts\Misc\Observer.cs" />
     <Compile Include="Assets\Scripts\Misc\Selectable.cs" />
-    <Compile Include="Assets\Scripts\Misc\TechTree.cs" />
     <Compile Include="Assets\Scripts\Misc\Utils.cs" />
     <Compile Include="Assets\Scripts\Players\ArtificialIntelligence.cs" />
     <Compile Include="Assets\Scripts\Players\Player.cs" />
@@ -324,12 +323,14 @@
     <Compile Include="Assets\Scripts\UI\Building\UnitButton.cs" />
     <Compile Include="Assets\Scripts\UI\CardDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\FlyCamera.cs" />
+    <Compile Include="Assets\Scripts\UI\HelpDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\ActionPointDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\ManaDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\FoodDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\MoneyDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\SchoolOfMagicDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\SelectionDisplay\BackButton.cs" />
+    <Compile Include="Assets\Scripts\UI\SelectionDisplay\ExitButton.cs" />
     <Compile Include="Assets\Scripts\UI\SelectionDisplay\ShortkeyButton.cs" />
     <Compile Include="Assets\Scripts\UI\Shop.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />

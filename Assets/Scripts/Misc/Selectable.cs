@@ -1,8 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor.UI;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using System;
 
 public abstract class Selectable : Observer
 {
@@ -17,9 +14,8 @@ public abstract class Selectable : Observer
 
     private void Start()
     {
-        selected = false;
     }
-    private bool selected;
+
 
     public abstract void UpdateCardDisplayInfo();
     public abstract void Select();

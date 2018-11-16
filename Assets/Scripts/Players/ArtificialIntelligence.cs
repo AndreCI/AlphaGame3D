@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System;
 using System.Collections.Generic;
-using System;
 
 public class ArtificialIntelligence : Player
 {
@@ -62,7 +60,6 @@ public class ArtificialIntelligence : Player
     }
     private Node DecideUnitMovementAttackableNodes(List<Node> attackables)
     {
-        Node target = null;
         List<int> priority = new List<int>();
         foreach(Node n in attackables)
         {

@@ -1,8 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class Warrior : Unit
 {
@@ -83,7 +82,6 @@ public class Warrior : Unit
 
     public override IEnumerator StartMoving()
     {
-        bool AICall = false;
         StartCoroutine(base.StartMoving());
         if (path[0].Attackable(this.currentPosition))
         {

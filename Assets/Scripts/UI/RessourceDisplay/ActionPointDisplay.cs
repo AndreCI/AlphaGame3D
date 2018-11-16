@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using TMPro;
+using UnityEngine;
 
 
 public class ActionPointDisplay : MonoBehaviour
 {
 
-    public Text ap;
+    public TextMeshProUGUI ap;
 
     // Update is called once per frame
     void Update()

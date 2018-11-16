@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using System;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class ConstructionManager : Observer
@@ -37,7 +36,6 @@ public class ConstructionManager : Observer
     private Unit unitToConstruct;
     private Spell spellToConstruct;
     public string mode;
-    private Player Builder;
     public bool canConstruct;
     private List<Node> availablePositions;
 
@@ -47,7 +45,6 @@ public class ConstructionManager : Observer
         Selector.Instance.Unselect();
         mode = "building";
         buildingToConstruct = building;
-        Builder = TurnManager.Instance.currentPlayer;
         canConstruct = true;
         if (!hallCenter)
         {
@@ -90,7 +87,6 @@ public class ConstructionManager : Observer
  
         spell.owner = TurnManager.Instance.currentPlayer;
         Selector.Instance.Select(spellToConstruct);
-        Builder = TurnManager.Instance.currentPlayer;
         canConstruct = true;
     }
 
@@ -118,7 +114,6 @@ public class ConstructionManager : Observer
         Selector.Instance.Unselect();
         mode = "unit";
         unitToConstruct = unit;
-        Builder = TurnManager.Instance.currentPlayer;
         canConstruct = true;
         Selectable requirements = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetRequierements()[0]);
         NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(requirements.currentPosition, 1);
@@ -159,7 +154,6 @@ public class ConstructionManager : Observer
         buildingToConstruct = null;
         unitToConstruct = null;
         spellToConstruct = null;
-        Builder = null;
         canConstruct = false;
         foreach (Node n in availablePositions)
         {
@@ -182,29 +176,5 @@ public class ConstructionManager : Observer
             return currentObject.GetComponent(unitToConstruct.GetType());
         }
         throw new System.AccessViolationException("This should not happend");
-        if (buildingToConstruct == HallCenter)
-        {
-            return currentObject.GetComponent<HallCenter>();// (buildingToConstruct.GetType());
-        }
-        //else if(buildingToConstruct == MagicCenter)
-        //{
-        //    Debug.Log(buildingToConstruct.GetType().ToString());
-        //    return currentObject.GetComponent(buildingToConstruct.GetType());
-        //}
-        else if(unitToConstruct == Warrior)
-        {
-            return currentObject.GetComponent<Warrior>();
-        }else if(unitToConstruct == Wizard)
-        {
-            return currentObject.GetComponent<Wizard>();
-        }
-        else if(buildingToConstruct == Barracks)
-        {
-            return currentObject.GetComponent<Barracks>();
-        }
-        else
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

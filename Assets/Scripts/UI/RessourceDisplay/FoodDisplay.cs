@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+﻿using TMPro;
+using UnityEngine;
 
 public class FoodDisplay : MonoBehaviour
 {
 
-    public Text food;
+    public TextMeshProUGUI food;
 
     // Update is called once per frame
     void Update()

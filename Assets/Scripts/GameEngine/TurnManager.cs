@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TurnManager{
@@ -84,10 +83,10 @@ public class TurnManager{
         
     }
 
-    public void StartGame()
+    public void StartGame(Node startNode)
     {
         currentPlayer = playerActive[0];
-        Node baseNode = (Node)GameObject.Find("Node (121)").GetComponent<Node>();
+        Node baseNode = startNode;// (Node)GameObject.Find("Node (121)").GetComponent<Node>();
         ConstructionManager.Instance.SetBuildingToBuild(ConstructionManager.Instance.HallCenter, true);
         baseNode.Construct(true);
         currentPlayer.UpdateVisibleNodes();

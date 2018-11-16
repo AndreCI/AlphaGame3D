@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Node : MonoBehaviour
 {
@@ -41,8 +40,6 @@ public class Node : MonoBehaviour
     public Vector3 position;
     public Building building;
     public Unit unit;
-    private Spell spell;
-    private Renderer nodeRenderer;
     private List<Renderer> infoRenderers;
     public STATE state;
 
@@ -69,12 +66,7 @@ public class Node : MonoBehaviour
             {
                 infoRenderers.Add(rend);
             }
-            else if (rend.name.Contains("Node"))
-            {
-                nodeRenderer = rend;
-            }
         }
-        //nodeRenderer.
     }
 
     // Update is called once per frame
@@ -181,7 +173,7 @@ public class Node : MonoBehaviour
             unit = ConstructionManager.Instance.ConstructUnit(this);
         }else if (ConstructionManager.Instance.mode == "spell")
         {
-            spell = ConstructionManager.Instance.ConstructSpell(this);
+            ConstructionManager.Instance.ConstructSpell(this);
         }
         ConstructionManager.Instance.ResetConstruction();
         if (makeUnwalkable)

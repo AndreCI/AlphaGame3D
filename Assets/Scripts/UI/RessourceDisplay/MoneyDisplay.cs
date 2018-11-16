@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class MoneyDisplay : MonoBehaviour
 {
 
-    public Text money;
+    public TextMeshProUGUI money;
 
     // Update is called once per frame
     void Update()

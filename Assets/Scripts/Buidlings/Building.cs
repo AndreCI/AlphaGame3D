@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using UnityEditor;
-using TMPro;
+﻿using TMPro;
+using UnityEngine;
 
 [System.Serializable]
 public abstract class Building : Selectable
@@ -70,7 +68,6 @@ public abstract class Building : Selectable
                     e.text = goldCost.ToString();
                     break;
                 case "CardEffectText":
-                    string temp = effectDescription;
                     e.text = effectDescription; 
                     break;
             }

@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class HallCenter : DefensiveBuilding {
     //public new List<Type> unlock;

@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Unit : Selectable
 {
@@ -194,10 +194,10 @@ public abstract class Unit : Selectable
 
     protected virtual void Attack(Node target)
     {
-        currentMovementPoints -= 1;
         target.Damage(attack);
         FinishMove();
         path = new List<Node>();
+        currentMovementPoints = 0;
     }
 
     protected virtual void FinishMove()

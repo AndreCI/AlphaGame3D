@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEditor;
-
-public class FrostEffect : UnitEffect
+﻿public class FrostEffect : UnitEffect
 {
     public FrostEffect(Unit u_, int duration_) : base(u_, duration_)
     {

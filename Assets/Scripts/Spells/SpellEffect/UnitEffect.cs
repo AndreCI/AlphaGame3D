@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEditor;
-
-public abstract class UnitEffect
+﻿public abstract class UnitEffect
 {
     protected Unit u;
     protected int duration;

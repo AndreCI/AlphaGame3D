@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+﻿using TMPro;
+using UnityEngine;
 
 public class ManaDisplay : MonoBehaviour
 {
 
-    public Text mana;
+    public TextMeshProUGUI mana;
 
     // Update is called once per frame
     void Update()
