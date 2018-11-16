@@ -9,12 +9,16 @@
 	Implement shrines 
 	Implement help UI when user hover
 	Improve Card display UI
+	
+Engine:
+Change way requirements are handled
 
 UI:
 	Implement help ressource bar
 Implement help selection bar
-Implement card tutorial (start of game: would you like to tuto + menuhelp)
+	Implement card tutorial (start of game: would you like to tuto + menuhelp)
 	Implement menu
+Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 	
 Graphic:
 Implement visual effect on spell effect
@@ -35,6 +39,7 @@ Implement unit mana & spells?
 Optimization
 Implement batching
 Look update methods
+Caching components
 
 Balance
 Refactor code (remove prefabs from other places than buttons)

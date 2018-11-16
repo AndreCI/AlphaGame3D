@@ -1,18 +1,20 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine;
+using TMPro;
 
-public class BuildingButtonScript : Observer, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class BuildingButtonScript : ConstructButtonScript
 {
     public Building building;
 
     public void OnEnable()
     {
         UpdateInfo();
-        TurnManager.Instance.StartTurnSubject.AddObserver(this);
     }
 
-    private void UpdateInfo()
+    public override void UpdateInfo()
     {
+        base.UpdateInfo();
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(building))
         {
             GetComponent<Button>().interactable = true;
@@ -23,28 +25,33 @@ public class BuildingButtonScript : Observer, IPointerEnterHandler, IPointerExit
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         CardDisplay.Instance.DisableCardDisplay();
         building.UpdateCardDisplayInfo();
-        
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        CardDisplay.Instance.DisableCardDisplay();
-        if (Selector.Instance.currentObject != null)
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(building))
         {
-            Selector.Instance.currentObject.UpdateCardDisplayInfo();
+            DisplayMessage(TurnManager.Instance.currentPlayer.GetUnavailableMessage(building));
         }
+        base.OnPointerEnter(eventData);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(building))
+        {
+            RemoveDisplayMessage();
+        }
+        base.OnPointerExit(eventData);
+    }
+
+    public override void OnPointerClick(PointerEventData eventData)
     {
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(building))
         {
             ConstructionManager.Instance.SetBuildingToBuild(building);
         }
+        base.OnPointerClick(eventData);
     }
 
     public override void Notify(Player player)

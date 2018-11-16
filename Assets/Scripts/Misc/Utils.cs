@@ -30,6 +30,7 @@ public static class Utils
     }
     public static Dictionary<string, Spell> stringToSpell = new Dictionary<string, Spell>{
         {"fireblast", Fireblast.Instance},
+        {"firehammer", FireHammer.Instance },
         {"frostblast", Frostblast.Instance },
         {"frostlance", Frostlance.Instance },
         {"arcaneintellect", ArcaneIntellect.Instance }

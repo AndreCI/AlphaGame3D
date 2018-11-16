@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fireblast : Spell
+public class FireHammer : Spell
 {
-    public static Fireblast Instance;
-    public int burnDuration;
+    public static FireHammer Instance;
+    public int secondaryDamage;
 
     public void Awake()
     {
@@ -42,13 +42,9 @@ public class Fireblast : Spell
         {
             if (node == currentPosition)
             {
-                node.Damage(damage);
+                node.Damage(secondaryDamage);
             }
             node.Damage(damage);
-            if (node.unit != null)
-            {
-                node.unit.currentEffect.Add(new BurnEffect(node.unit, burnDuration));
-            }
         }
         base.Activate(affectedNodes_);
     }

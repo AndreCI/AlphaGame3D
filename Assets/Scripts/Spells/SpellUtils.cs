@@ -30,7 +30,8 @@ public class SpellUtils : MonoBehaviour
     public enum UnitEffect
     {
         NORMAL,
-        FROST
+        FROST,
+        BURN
     }
 
     public static void ApplyEffect(Unit u, UnitEffect e)

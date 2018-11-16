@@ -1,7 +1,9 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine;
 
-public class UnitButton : Observer, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class UnitButton : ConstructButtonScript
 {
     public Unit unit;
 
@@ -9,11 +11,11 @@ public class UnitButton : Observer, IPointerEnterHandler, IPointerExitHandler, I
     public void OnEnable()
     {
         UpdateInfo();
-        TurnManager.Instance.StartTurnSubject.AddObserver(this);
     }
 
-    private void UpdateInfo()
+    public override void UpdateInfo()
     {
+        base.UpdateInfo();
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(unit))
         {
             GetComponent<Button>().interactable = true;
@@ -23,32 +25,32 @@ public class UnitButton : Observer, IPointerEnterHandler, IPointerExitHandler, I
             GetComponent<Button>().interactable = false;
         }
     }
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         CardDisplay.Instance.DisableCardDisplay();
         unit.UpdateCardDisplayInfo();
-
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        CardDisplay.Instance.DisableCardDisplay();
-        if (Selector.Instance.currentObject != null)
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(unit))
         {
-            Selector.Instance.currentObject.UpdateCardDisplayInfo();
+            DisplayMessage(TurnManager.Instance.currentPlayer.GetUnavailableMessage(unit));
         }
+        base.OnPointerEnter(eventData);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(unit))
+        {
+            RemoveDisplayMessage();
+        }
+        base.OnPointerExit(eventData);
+    }
+
+    public override void OnPointerClick(PointerEventData eventData)
     {
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(unit))
         {
             ConstructionManager.Instance.SetUnitToBuild(unit);
         }
-    }
-
-    public override void Notify(Player player)
-    {
-        UpdateInfo();
+        base.OnPointerClick(eventData);
     }
 }

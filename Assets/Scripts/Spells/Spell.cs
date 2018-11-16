@@ -168,7 +168,7 @@ public abstract class Spell : Selectable
         }
         foreach (Building buiding in currentBuildings)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, castableRange + 2);
+            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, castableRange);
             List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
             foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
             {

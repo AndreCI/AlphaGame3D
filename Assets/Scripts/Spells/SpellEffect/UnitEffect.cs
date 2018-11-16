@@ -1,7 +1,7 @@
 ﻿public abstract class UnitEffect
 {
     protected Unit u;
-    protected int duration;
+    public int duration;
 
     public UnitEffect(Unit u_, int duration_)
     {
@@ -12,11 +12,6 @@
     public virtual void ApplyEffect()
     {
         duration -= 1;
-        if (duration <= 0)
-        {
-            End();
-            return;
-        }
     }
 
     public void End()

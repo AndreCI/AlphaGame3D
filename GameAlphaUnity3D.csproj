@@ -311,14 +311,17 @@
     <Compile Include="Assets\Scripts\Players\Player.cs" />
     <Compile Include="Assets\Scripts\Players\Selector.cs" />
     <Compile Include="Assets\Scripts\Spells\BasicMagic\ArcaneIntellect.cs" />
+    <Compile Include="Assets\Scripts\Spells\FireMagic\FireHammer.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\Fireblast.cs" />
     <Compile Include="Assets\Scripts\Spells\FrostMagic\Frostlance.cs" />
     <Compile Include="Assets\Scripts\Spells\FrostMagic\Frostblast.cs" />
     <Compile Include="Assets\Scripts\Spells\Spell.cs" />
+    <Compile Include="Assets\Scripts\Spells\SpellEffect\BurnEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\FrostEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\UnitEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellUtils.cs" />
     <Compile Include="Assets\Scripts\UI\Building\BuildingButtonScript.cs" />
+    <Compile Include="Assets\Scripts\UI\Building\ConstructButtonScript.cs" />
     <Compile Include="Assets\Scripts\UI\Building\SpellButtonScript.cs" />
     <Compile Include="Assets\Scripts\UI\Building\UnitButton.cs" />
     <Compile Include="Assets\Scripts\UI\CardDisplay.cs" />

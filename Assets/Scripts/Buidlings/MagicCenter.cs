@@ -8,7 +8,11 @@ public class MagicCenter : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        unlock = new List<Type> { typeof(Fireblast), typeof(Frostblast), typeof(Frostlance), typeof(ArcaneIntellect),typeof(Fireblast), typeof(Shrine) };
+        unlock = new List<Type> { typeof(Fireblast),
+            typeof(Frostblast), typeof(Frostlance),
+            typeof(ArcaneIntellect),typeof(Fireblast),
+            typeof(FireHammer),
+            typeof(Shrine) };
     }
     public override List<Type> GetRequierements()
     {

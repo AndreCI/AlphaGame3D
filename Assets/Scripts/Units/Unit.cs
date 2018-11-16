@@ -42,13 +42,14 @@ public abstract class Unit : Selectable
 
     public override void Notify(Player player)
     {
-        if (player.Equals(TurnManager.Instance.currentPlayer))
+        if (player.Equals(owner))
         {
             currentMovementPoints = maxMovementPoints;
             foreach (UnitEffect ue in currentEffect)
             {
                 ue.ApplyEffect();
             }
+            currentEffect.RemoveAll(ue => ue.duration <= 0); //safe removing of elements
         }
 
     }

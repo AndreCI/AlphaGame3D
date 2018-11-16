@@ -175,6 +175,65 @@ public class Player
         return returnDebugVal;
     }
 
+    public string GetUnavailableMessage(Selectable target)
+    {
+        List<string> messages = new List<String>();
+        messages.Add("You need");
+        int requirementSatisfied = 0;
+        List<Type> buildReq = target.GetRequierements();
+        foreach (Building building in currentBuildings)
+        {
+
+            if (building.unlock.Contains(target.GetType()))
+            {
+                requirementSatisfied += 1;
+                break;
+            }
+        }
+        bool requierementsbool = requirementSatisfied >= 1;
+        if (!requierementsbool)
+        {
+            messages.Add("an additional building");
+        }
+        bool cost = target.goldCost <= gold;
+        if (!cost)
+        {
+            messages.Add("more gold");
+        }
+        cost = target.manaCost <= mana;
+        if (!cost)
+        {
+            messages.Add("more mana");
+        }
+        cost= target.actionPointCost <= actionPoints;
+        if (!cost)
+        {
+            messages.Add("more action points");
+        }
+
+        bool levelbool = true;
+        if (typeof(Spell).IsAssignableFrom(target.GetType()))
+        {
+            levelbool = schoolOfMagicLevels[((Spell)target).schoolOfMagic] >= ((Spell)target).requirementLevel;
+        }
+        if (!levelbool)
+        {
+            messages.Add("more magic level(s)");
+        }
+        if(messages.Count == 2)
+        {
+            return messages[0] + " " + messages[1] + ".";
+        }
+        string message = messages[0] + " ";
+        for(int i = 1; i<messages.Count - 2; i++)
+        {
+            message += messages[i];
+            message += ", ";
+        }
+        message += messages[messages.Count - 2] + " and " + messages[messages.Count - 1] + ".";
+        return message;
+    }
+
     public bool CheckIfAvailable(Selectable target)
     {
         int requirementSatisfied = 0;

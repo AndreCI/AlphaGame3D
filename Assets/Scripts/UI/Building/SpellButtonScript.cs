@@ -1,7 +1,9 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine;
 
-public class SpellButtonScript : Observer, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class SpellButtonScript : ConstructButtonScript
 {
 
     public string spellname;
@@ -13,30 +15,35 @@ public class SpellButtonScript : Observer, IPointerEnterHandler, IPointerExitHan
         spell.RegisterButton(this);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         spell = Utils.stringToSpell[spellname];
         CardDisplay.Instance.DisableCardDisplay();
         spell.UpdateCardDisplayInfo();
-
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        CardDisplay.Instance.DisableCardDisplay();
-        if (Selector.Instance.currentObject != null)
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(spell))
         {
-            Selector.Instance.currentObject.UpdateCardDisplayInfo();
+            DisplayMessage(TurnManager.Instance.currentPlayer.GetUnavailableMessage(spell));
         }
+        base.OnPointerEnter(eventData);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        if (!TurnManager.Instance.currentPlayer.CheckIfAvailable(spell))
+        {
+            RemoveDisplayMessage();
+        }
+        base.OnPointerExit(eventData);
+    }
+
+    public override void OnPointerClick(PointerEventData eventData)
     {
         spell = Utils.stringToSpell[spellname];
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(spell))
         {
             ConstructionManager.Instance.SetSpellToConstruct(spell);
         }
+        base.OnPointerClick(eventData);
     }
 
     void OnEnable()
@@ -44,13 +51,12 @@ public class SpellButtonScript : Observer, IPointerEnterHandler, IPointerExitHan
         UpdateInfo();
     }
 
-    public void UpdateInfo()
+    public override void UpdateInfo()
     {
+        base.UpdateInfo();
         spell = Utils.stringToSpell[spellname];
-        TurnManager.Instance.StartTurnSubject.AddObserver(this); //TODO: seems buggy
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(spell))
         {
-            //GetComponent<Button>().interactable = true;
             spell = Utils.stringToSpell[spellname];
             spell.UpdatePlayerInfos();
             float readyScore = ((float)(spell.cooldown) - (float)spell.playerInfos[TurnManager.Instance.currentPlayer].currentCooldown) / (float)(spell.cooldown);
@@ -69,10 +75,5 @@ public class SpellButtonScript : Observer, IPointerEnterHandler, IPointerExitHan
             GetComponent<Image>().fillAmount = 0;
             GetComponent<Button>().interactable = false;
         }
-    }
-
-    public override void Notify(Player player)
-    {
-        UpdateInfo();
     }
 }
