@@ -15,7 +15,6 @@ public class FlammingSwords : Spell
         if (Instance == null)
         {
             Instance = this;
-            unlock = new List<Type>();
             base.AwakeBase();
             effects.Add(new EffectFactory(effect, buffDuration, buffPower));
 
@@ -24,10 +23,6 @@ public class FlammingSwords : Spell
         {
             throw new System.NotImplementedException();
         }
-    }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(MagicCenter) };
     }
 
     public override void PlayAnimation()

@@ -12,7 +12,6 @@ public class FireHammer : Spell
         if (Instance == null)
         {
             Instance = this;
-            unlock = new List<Type>();
             base.AwakeBase();
 
         }
@@ -20,10 +19,6 @@ public class FireHammer : Spell
         {
             throw new System.NotImplementedException();
         }
-    }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(MagicCenter) };
     }
 
     public override void PlayAnimation()

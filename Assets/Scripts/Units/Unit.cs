@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public abstract class Unit : Selectable
 {
@@ -12,6 +13,7 @@ public abstract class Unit : Selectable
     public Canvas healthCanvas;
     public Image healthDisplay;
     public Sprite sprite;
+    public UnitEffectAnimations effectAnimations;
 
     [Header("General Info")]
     public int maxHealth;
@@ -333,5 +335,5 @@ public abstract class Unit : Selectable
             }
         }
     }
-
+    public abstract Type GetSpawnPoint();
 }

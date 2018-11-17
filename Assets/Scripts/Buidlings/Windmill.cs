@@ -6,18 +6,8 @@ public class Windmill : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        unlock = new List<Type>();
     }
-
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(HallCenter) };
-    }
-
-    void Update()
-    {
-        
-    }
+    
 
     public override void Notify(Player player)
     {

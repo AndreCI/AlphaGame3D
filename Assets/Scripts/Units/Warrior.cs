@@ -13,7 +13,6 @@ public class Warrior : Unit
     // Use this for initialization
     public override void Setup()
     {
-        unlock = new List<Type>();
         anim = GetComponentInChildren<Animator>();
         anim.logWarnings = false;
         base.Setup();
@@ -105,10 +104,10 @@ public class Warrior : Unit
     {
 
     }
-    public override List<Type> GetRequierements()
+
+
+    public override Type GetSpawnPoint()
     {
-        return new List<Type> { typeof(Barracks) };
+        return typeof(Barracks);
     }
-
-
 }

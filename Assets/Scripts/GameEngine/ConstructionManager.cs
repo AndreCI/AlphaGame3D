@@ -71,6 +71,7 @@ public class ConstructionManager : Observer
         building.SetCurrentPosition(node);
         building.owner = TurnManager.Instance.currentPlayer;
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
+        TurnManager.Instance.currentPlayer.requirementSystem.SetUnlocked(building.GetType());
         TurnManager.Instance.currentPlayer.gold -= building.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= building.actionPointCost;
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
@@ -80,6 +81,7 @@ public class ConstructionManager : Observer
         }
         Selector.Instance.currentObject = null;
         if (CardDisplay.Instance != null) { CardDisplay.Instance.DisableCardDisplay(); } //sanity check because hallcenter spawn is manually made.
+        TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
         return building;
     }
 
@@ -107,7 +109,8 @@ public class ConstructionManager : Observer
         TurnManager.Instance.currentPlayer.actionPoints -= spellToConstruct.actionPointCost;
         spellToConstruct.Activate(spellToConstruct.affectedNodes);
         spellToConstruct.PlayAnimation();
-        
+        TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+
         return spellToConstruct;
     }
 
@@ -121,8 +124,8 @@ public class ConstructionManager : Observer
         canConstruct = true;
         Selector.Instance.currentObject = (unit);
         unit.UpdateCardDisplayInfo();
-        Selectable requirements = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetRequierements()[0]);
-        NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(requirements.currentPosition, 1);
+        Selectable spawnPoint = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetSpawnPoint());
+        NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(spawnPoint.currentPosition, 1);
         foreach(NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
         {
             if (nw.state == NodeUtils.NodeWrapper.STATE.EMPTY)
@@ -154,6 +157,8 @@ public class ConstructionManager : Observer
         }
         Selector.Instance.currentObject = null;
         CardDisplay.Instance.DisableCardDisplay();
+        TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+
         return unit;
     }
 

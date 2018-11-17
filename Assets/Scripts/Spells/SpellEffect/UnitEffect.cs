@@ -2,7 +2,7 @@
 
 public abstract class UnitEffect
 {
-    protected SpellUtils.EffectTypes type;
+    public SpellUtils.EffectTypes type;
     protected Unit u;
     public bool applyOnTouch;
     public int duration;
@@ -20,17 +20,35 @@ public abstract class UnitEffect
         type = type_;
         u = u_;
         duration = duration_;
+        u.effectAnimations.StartAnimation(type);
     }
 
     public virtual void ApplyEffect()
     {
         duration -= 1;
+        if (effectEnded)
+        {
+            End();
+        }
     }
 
-    public void End()
+    public virtual void End()
     {
         duration = 0;
+        int counter = 0;
+        foreach (UnitEffect ue in u.currentEffect)
+        {
+            if (ue.type == type)
+            {
+                counter++;
+            }
+        }
+        if (counter <= 1) //it is still in the list
+        {
+            u.effectAnimations.StopAnimation(type);
+        }
     }
+    
 
     public abstract string GetDescriptionRelative();
 }

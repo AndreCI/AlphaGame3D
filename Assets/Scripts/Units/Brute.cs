@@ -13,7 +13,6 @@ public class Brute : Unit
     // Use this for initialization
     public override void Setup()
     {
-        unlock = new List<Type>();
         anim = GetComponentInChildren<Animator>();
         anim.logWarnings = false;
         base.Setup();
@@ -105,10 +104,10 @@ public class Brute : Unit
     {
 
     }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(Barracks) };
-    }
 
+    public override Type GetSpawnPoint()
+    {
+        return typeof(Barracks);
+    }
 
 }

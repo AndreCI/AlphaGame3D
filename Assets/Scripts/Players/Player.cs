@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Player
 {
@@ -42,6 +43,7 @@ public class Player
     public List<Node> knownBuilding;
     protected List<Node> visibleNodesPrev;
     public Dictionary<SpellUtils.SchoolOfMagic, int> schoolOfMagicLevels;
+    public RequirementSystem requirementSystem;
 
     public static Player getPlayerFromId(int id)
     {
@@ -126,6 +128,7 @@ public class Player
         food = 4;
         foodPrediction = 0;
         id = id_;
+        requirementSystem = new RequirementSystem();
         currentBuildings = new List<Building>();
         currentUnits = new List<Unit>();
         visibleNodesPrev = new List<Node>();
@@ -178,19 +181,12 @@ public class Player
     public string GetUnavailableMessage(Selectable target)
     {
         List<string> messages = new List<String>();
-        messages.Add("You need");
-        int requirementSatisfied = 0;
-        List<Type> buildReq = target.GetRequierements();
-        foreach (Building building in currentBuildings)
-        {
-
-            if (building.unlock.Contains(target.GetType()))
-            {
-                requirementSatisfied += 1;
-                break;
-            }
+        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType());
+        if(alreadyOwned){
+            return "You already own this building.";
         }
-        bool requierementsbool = requirementSatisfied >= 1;
+        messages.Add("You need");
+        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType());
         if (!requierementsbool)
         {
             messages.Add("an additional building");
@@ -212,13 +208,22 @@ public class Player
         }
 
         bool levelbool = true;
+        bool cooldown = true;
         if (typeof(Spell).IsAssignableFrom(target.GetType()))
         {
             levelbool = schoolOfMagicLevels[((Spell)target).schoolOfMagic] >= ((Spell)target).requirementLevel;
+            if (((Spell)target).playerInfos[this].currentCooldown > 0)
+            {
+                cooldown = false;
+            }
         }
         if (!levelbool)
         {
             messages.Add("more magic level(s)");
+        }
+        if (!cooldown)
+        {
+            messages.Add("to wait for cooldown");
         }
         if(messages.Count == 2)
         {
@@ -236,23 +241,20 @@ public class Player
 
     public bool CheckIfAvailable(Selectable target)
     {
-        int requirementSatisfied = 0;
-        foreach (Building building in currentBuildings)
-        {
-            if (building.unlock.Contains(target.GetType()))
-            {
-                requirementSatisfied += 1;
-                break;
-            }
-        }
-        bool requierementsbool = requirementSatisfied >= 1;
+        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType());
+        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType());
         bool cost = target.goldCost <= gold && target.manaCost <= mana && target.actionPointCost <= actionPoints;
         bool levelbool = true;
+        bool cooldown = true;
         if (typeof(Spell).IsAssignableFrom(target.GetType()))
         {
             levelbool = schoolOfMagicLevels[((Spell)target).schoolOfMagic] >= ((Spell)target).requirementLevel;
+            if(((Spell)target).playerInfos[this].currentCooldown > 0)
+            {
+                cooldown = false;
+            }
         }
-        return requierementsbool && cost && levelbool;
+        return !alreadyOwned && requierementsbool && cost && levelbool && cooldown;
 
     }
     public virtual void StartOfTurn()

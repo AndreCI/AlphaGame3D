@@ -51,11 +51,6 @@ public class SpellButtonScript : ConstructButtonScript
         UpdateInfo();
     }
 
-    private void Update()
-    {
-        UpdateInfo();
-    }
-
     public override void UpdateInfo()
     {
         base.UpdateInfo();

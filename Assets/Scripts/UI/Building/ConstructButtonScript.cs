@@ -12,6 +12,7 @@ public abstract class ConstructButtonScript : Observer, IPointerEnterHandler, IP
     void Awake()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
+        TurnManager.Instance.ButtonUpdateSubject.AddObserver(this);
     }
 
     public virtual void OnPointerClick(PointerEventData eventData)

@@ -10,6 +10,7 @@ public class TurnManager{
     private int playerActiveIndex;
     public TurnSubject StartTurnSubject;
     public TurnSubject EndTurnSubject;
+    public TurnSubject ButtonUpdateSubject;
     private bool againstAI;
 
     public static TurnManager Instance
@@ -29,6 +30,7 @@ public class TurnManager{
         TurnNumber = 0;
         StartTurnSubject = new TurnSubject();
         EndTurnSubject = new TurnSubject();
+        ButtonUpdateSubject = new TurnSubject();
         playerActiveIndex = 1;
         playerActive = new List<Player>
         {

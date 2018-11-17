@@ -266,18 +266,17 @@ MonoBehaviour:
   currentPosition: {fileID: 0}
   cardName: Fireblast
   goldCost: 0
-  manaCost: 2
+  manaCost: 3
   actionPointCost: 1
   prefab: {fileID: 1582447445132398}
   sprite: {fileID: 21300000, guid: ca51f8f985ab4f047ac8f6334f6616d1, type: 3}
   schoolOfMagic: 1
   requirementLevel: 1
-  effectDescription: Deal 5 Damages in a radius of 2 and an additional 5 damage to
-    the target. Apply burn to all units damaged this way.
+  effectDescription: Deal 5 damages to all unit in a radius of 2 and burn them.
   cooldown: 2
   currentCooldown: 0
   areaOfEffect: 2
-  castableRange: 3
+  castableRange: 2
   damage: 5
   affectedNodes:
   - {fileID: 0}

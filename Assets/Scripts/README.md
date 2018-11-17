@@ -11,7 +11,7 @@
 	Improve Card display UI
 	
 Engine:
-Change way requirements are handled
+	Change way requirements are handled
 
 UI:
 	Implement help ressource bar
@@ -19,11 +19,11 @@ UI:
 	Implement card tutorial (start of game: would you like to tuto + menuhelp)
 	Implement help card selection
 	Implement menu
-Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
+	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 Implement T2 help
 	
 Graphic:
-Implement visual effect on spell effect
+	Implement visual effect on spell effect
 Implement unit diffrence from player
 Implement start of turn effects
 	
@@ -38,7 +38,7 @@ Implement building restr(max 1 building)
 Implement scouts (hallcenterbuilding)
 Implement unit mana & spells?
 
-Optimization
+Optimization:
 Implement batching
 Look update methods
 Caching components

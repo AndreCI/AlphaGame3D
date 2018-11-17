@@ -15,4 +15,5 @@
     {
         return SpellUtils.effectDescriptionAbsolute[type] + " for " + duration + " turns.";
     }
+
 }

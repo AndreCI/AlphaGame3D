@@ -13,7 +13,6 @@ public class Fireblast : Spell
         if (Instance == null)
         {
             Instance = this;
-            unlock = new List<Type>();
             base.AwakeBase();
             effects.Add(new EffectFactory(effect, burnDuration));
         }
@@ -21,10 +20,6 @@ public class Fireblast : Spell
         {
             throw new System.NotImplementedException();
         }
-    }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(MagicCenter) };
     }
 
     public override void PlayAnimation()
@@ -41,10 +36,6 @@ public class Fireblast : Spell
     {
         foreach(Node node in affectedNodes_)
         {
-            if (node == currentPosition)
-            {
-                node.Damage(damage);
-            }
             node.Damage(damage);
             if (node.unit != null)
             {

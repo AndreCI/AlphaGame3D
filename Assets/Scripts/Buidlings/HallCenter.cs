@@ -3,22 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HallCenter : DefensiveBuilding {
-    //public new List<Type> unlock;
 
 	// Use this for initialization
 	void Start () {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        //owner = Player.getPlayerFromId(playerId);
-        unlock = new List<Type>() { typeof(Barracks), typeof(MagicCenter), typeof(Windmill) };
     }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type>();
-    }
-
-    // Update is called once per frame
-    void Update () {
-	}
 
     public override void Death()
     {

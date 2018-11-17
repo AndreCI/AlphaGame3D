@@ -13,7 +13,6 @@ public class Frostlance : Spell
         if (Instance == null)
         {
             Instance = this;
-            unlock = new List<Type>();
             base.AwakeBase();
             effects.Add(new EffectFactory(effect, frostDuration));
         }
@@ -23,10 +22,7 @@ public class Frostlance : Spell
         }
     }
 
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(MagicCenter) };
-    }
+
     public override void PlayAnimation()
     {
         transform.position = playerInfos[TurnManager.Instance.currentPlayer].position.transform.position;

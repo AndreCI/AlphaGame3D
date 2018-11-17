@@ -11,17 +11,12 @@ public class ArcaneIntellect : Spell
         if (Instance == null)
         {
             Instance = this;
-            unlock = new List<Type>();
             base.AwakeBase();
         }
         else
         {
             throw new System.NotImplementedException();
         }
-    }
-    public override List<Type> GetRequierements()
-    {
-        return new List<Type> { typeof(MagicCenter) };
     }
 
     public override void PlayAnimation()
