@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public abstract class Building : Selectable
@@ -7,6 +8,8 @@ public abstract class Building : Selectable
     [Header("Prefab")]
     public GameObject prefab;
     public Sprite sprite;
+    public GameObject notificationPanel;
+    public TextMeshProUGUI notificationText;
     [Header("General Info")]
     public string effectDescription;
     public string tier2EffectDescription;
@@ -82,6 +85,10 @@ public abstract class Building : Selectable
                 constructionTime -= 1;
                 return;
             }
+            /*notificationPanel.SetActive(true);
+            notificationPanel.transform.rotation = Camera.main.transform.rotation;
+            notificationText.text = "+8";
+            notificationText.color = Color.blue;*/
         }
         else
         {

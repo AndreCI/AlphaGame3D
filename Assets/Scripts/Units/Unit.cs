@@ -23,6 +23,7 @@ public abstract class Unit : Selectable
 
     public int currentHealth;
     public int currentMovementPoints;
+    public int currentAttackModifier;
     protected NodeUtils.NodeWrapper currentPositionWrapped; //NodeWrapper containing the root of the movement tree
     public List<NodeUtils.NodeWrapper> possibleMoves; //List of all the nodes where the unit can go
     protected List<NodeUtils.NodeWrapper> potentialMove; //Current path for the target node
@@ -32,7 +33,7 @@ public abstract class Unit : Selectable
 
     public virtual void Setup()
     {
-
+        currentAttackModifier = 0;
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
@@ -45,6 +46,7 @@ public abstract class Unit : Selectable
         if (player.Equals(owner))
         {
             currentMovementPoints = maxMovementPoints;
+            currentAttackModifier = 0;
             foreach (UnitEffect ue in currentEffect)
             {
                 ue.ApplyEffect();
@@ -195,7 +197,7 @@ public abstract class Unit : Selectable
 
     protected virtual void Attack(Node target)
     {
-        target.Damage(attack);
+        target.Damage(attack + currentAttackModifier);
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
@@ -292,7 +294,18 @@ public abstract class Unit : Selectable
                     e.text = goldCost.ToString();
                     break;
                 case "CardAttackText":
-                    e.text = attack.ToString();
+                    if (currentAttackModifier > 0)
+                    {
+                        e.color = Color.green;
+                    }else if(currentAttackModifier < 0)
+                    {
+                        e.color = Color.red;
+                    }
+                    else
+                    {
+                        e.color = Color.white;
+                    }
+                    e.text = (attack + currentAttackModifier).ToString();
                     break;
                 case "CardHealthText":
                     e.text = currentHealth + "/" + maxHealth;
