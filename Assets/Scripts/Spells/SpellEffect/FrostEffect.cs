@@ -2,6 +2,7 @@
 {
     public FrostEffect(Unit u_, int duration_) : base(u_, duration_)
     {
+        applyOnTouch = true;
     }
 
     public override void ApplyEffect()

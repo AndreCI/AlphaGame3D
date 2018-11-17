@@ -279,6 +279,7 @@ MonoBehaviour:
   castableRange: 2
   damage: 15
   affectedNodes: []
+  effect: 1
   frostDuration: 3
 --- !u!198 &198149012375933696
 ParticleSystem:

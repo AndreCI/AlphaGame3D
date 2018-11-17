@@ -335,7 +335,7 @@ MonoBehaviour:
   schoolOfMagic: 0
   requirementLevel: 0
   effectDescription: Deals 10 damage to a target.
-  cooldown: 1
+  cooldown: 0
   currentCooldown: 0
   areaOfEffect: 0
   castableRange: 4

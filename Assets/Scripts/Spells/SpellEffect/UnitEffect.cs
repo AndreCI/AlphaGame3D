@@ -1,6 +1,9 @@
-﻿public abstract class UnitEffect
+﻿using System.Collections.Generic;
+
+public abstract class UnitEffect
 {
     protected Unit u;
+    public bool applyOnTouch;
     public int duration;
 
     public UnitEffect(Unit u_, int duration_)
@@ -17,6 +20,5 @@
     public void End()
     {
         duration = 0;
-        u.currentEffect.Remove(this);
     }
 }

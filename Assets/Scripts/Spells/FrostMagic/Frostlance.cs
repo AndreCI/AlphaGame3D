@@ -5,6 +5,7 @@ using UnityEngine;
 public class Frostlance : Spell
 {
     public static Frostlance Instance;
+    public SpellUtils.UnitEffect effect;
     public int frostDuration;
 
     public void Awake()
@@ -14,6 +15,7 @@ public class Frostlance : Spell
             Instance = this;
             unlock = new List<Type>();
             base.AwakeBase();
+            effects.Add(new EffectFactory(effect, frostDuration));
         }
         else
         {
@@ -41,7 +43,7 @@ public class Frostlance : Spell
         {
             node.Damage(damage);
             if (node.unit != null) {
-                node.unit.currentEffect.Add(new FrostEffect(node.unit, frostDuration));
+                ApplyEffectsToUnit(node.unit);
             }
         }
         base.Activate(affectedNodes_);

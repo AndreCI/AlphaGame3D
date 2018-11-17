@@ -31,7 +31,8 @@ public class SpellUtils : MonoBehaviour
     {
         NORMAL,
         FROST,
-        BURN
+        BURN,
+        ATTACK_MODIFIER
     }
 
     public static void ApplyEffect(Unit u, UnitEffect e)

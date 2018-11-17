@@ -144,7 +144,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1455761652035724}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50.461388, y: 0.5, z: 14.071102}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4839588238381908}
@@ -279,6 +279,7 @@ MonoBehaviour:
   castableRange: 3
   damage: 5
   affectedNodes: []
+  effect: 1
   frostDuration: 3
 --- !u!198 &198154187091667082
 ParticleSystem:

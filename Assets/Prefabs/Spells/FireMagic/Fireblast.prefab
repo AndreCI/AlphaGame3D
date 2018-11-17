@@ -272,7 +272,8 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: ca51f8f985ab4f047ac8f6334f6616d1, type: 3}
   schoolOfMagic: 1
   requirementLevel: 1
-  effectDescription: Deal 5 Damages in a radius of 2
+  effectDescription: Deal 5 Damages in a radius of 2 and an additional 5 damage to
+    the target. Apply burn to all units damaged this way.
   cooldown: 2
   currentCooldown: 0
   areaOfEffect: 2
@@ -291,6 +292,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  effect: 2
+  burnDuration: 2
 --- !u!198 &198099267739524250
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -21,10 +21,12 @@ public abstract class Spell : Selectable
     private SpellButtonScript spellButton;
 
     public Dictionary<Player, PlayerInfo> playerInfos;
+    public List<EffectFactory> effects;
 
     public void AwakeBase()
     {
         UpdatePlayerInfos();
+        effects = new List<EffectFactory>();
     }
     public void UpdatePlayerInfos()
     {
@@ -49,13 +51,25 @@ public abstract class Spell : Selectable
 
     public virtual void Activate(List<Node> affectedNodes_)
     {
-        //GameObject attackAnim = (GameObject)Instantiate(animationSpell, currentPosition.position, new Quaternion(0, 0, 0, 0));
-
         Selector.Instance.Unselect();
         playerInfos[TurnManager.Instance.currentPlayer].currentCooldown = cooldown;
         UpdateCooldown();
-        //affectedNodes = new List<Node>();
-        //Destroy(this);
+    }
+
+    protected virtual void ApplyEffectsToUnit(Unit u)
+    {
+        foreach(EffectFactory factory in effects)
+        {
+            UnitEffect ue = factory.GetEffect(u);
+            if (ue.applyOnTouch)
+            {
+                ue.ApplyEffect();
+            }
+            if (ue.duration > 0)
+            {
+                u.currentEffect.Add(ue);
+            }
+        }
     }
 
     public override void Select()

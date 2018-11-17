@@ -187,7 +187,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1033780950261058}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 60, y: 100, z: 12}
+  m_LocalPosition: {x: -136, y: 600, z: 8.0625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4858095991008186}
@@ -279,6 +279,7 @@ MonoBehaviour:
   castableRange: 1
   damage: 0
   affectedNodes: []
+  effect: 3
   buffDuration: 3
   buffPower: 5
 --- !u!198 &198263726983820958

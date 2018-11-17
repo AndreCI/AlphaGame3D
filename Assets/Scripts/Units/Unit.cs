@@ -90,6 +90,7 @@ public abstract class Unit : Selectable
         {
             ue.End();
         }
+        currentEffect = new List<UnitEffect>();
         owner.currentUnits.Remove(this);
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         currentPosition.ResetNode();

@@ -322,6 +322,7 @@
     <Compile Include="Assets\Scripts\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\AttackModifierEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\BurnEffect.cs" />
+    <Compile Include="Assets\Scripts\Spells\SpellEffect\EffectFactory.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\FrostEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\UnitEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellUtils.cs" />

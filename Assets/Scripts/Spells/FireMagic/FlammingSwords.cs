@@ -6,6 +6,7 @@ using UnityEngine;
 public class FlammingSwords : Spell
 {
     public static FlammingSwords Instance;
+    public SpellUtils.UnitEffect effect;
     public int buffDuration;
     public int buffPower;
 
@@ -16,6 +17,7 @@ public class FlammingSwords : Spell
             Instance = this;
             unlock = new List<Type>();
             base.AwakeBase();
+            effects.Add(new EffectFactory(effect, buffDuration, buffPower));
 
         }
         else
@@ -46,11 +48,7 @@ public class FlammingSwords : Spell
             {
                 if (node.unit.owner.Equals(TurnManager.Instance.currentPlayer))
                 {
-                    UnitEffect ue = new AttackModifierEffect(node.unit, buffDuration, buffPower);
-                    ue.ApplyEffect();
-                    node.unit.currentEffect.Add(ue);
-                    
-
+                    ApplyEffectsToUnit(node.unit);
                 }
             }
         }
