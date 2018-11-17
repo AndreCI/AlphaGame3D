@@ -780,12 +780,14 @@ MonoBehaviour:
   goldCost: 3
   manaCost: 0
   actionPointCost: 1
+  isTier2: 1
   prefab: {fileID: 1219432950886762}
   sprite: {fileID: 21300000, guid: 74f1fe63a5b0299458c6e3eebf1a6471, type: 3}
+  notificationPanel: {fileID: 0}
+  notificationText: {fileID: 0}
   effectDescription: Gain 1 red level permanently.
   tier2EffectDescription: 
   constructionTime: 1
-  tier2: 1
   goldCostTier2: 0
   schoolOfMagic: 1
 --- !u!135 &135944740715315390

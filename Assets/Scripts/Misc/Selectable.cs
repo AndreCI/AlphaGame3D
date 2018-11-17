@@ -11,6 +11,7 @@ public abstract class Selectable : Observer
     public int actionPointCost;
     protected CardDisplay cardDisplay;
 
+    public bool isTier2;
     private void Start()
     {
     }

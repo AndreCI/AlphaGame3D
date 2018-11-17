@@ -18,7 +18,7 @@ public class MagicCenter : Building
         if (player.Equals(owner) && constructionTime <= 0)
         {
             player.mana += 4;
-            if (tier2)
+            if (isTier2)
             {
                 player.mana += 4;
                 //unlock.Add();

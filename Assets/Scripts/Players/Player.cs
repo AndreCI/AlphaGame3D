@@ -186,10 +186,10 @@ public class Player
             return "You already own this building.";
         }
         messages.Add("You need");
-        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType());
+        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType(), target.isTier2);
         if (!requierementsbool)
         {
-            messages.Add("an additional building");
+            messages.Add("an additional building or an upgrade");
         }
         bool cost = target.goldCost <= gold;
         if (!cost)
@@ -242,7 +242,7 @@ public class Player
     public bool CheckIfAvailable(Selectable target)
     {
         bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType());
-        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType());
+        bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType(), target.isTier2);
         bool cost = target.goldCost <= gold && target.manaCost <= mana && target.actionPointCost <= actionPoints;
         bool levelbool = true;
         bool cooldown = true;

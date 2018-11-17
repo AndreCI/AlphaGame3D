@@ -6,7 +6,7 @@ public class UpgradeButton : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!currentBuilding.tier2 && currentBuilding.goldCostTier2 <= TurnManager.Instance.currentPlayer.gold && TurnManager.Instance.currentPlayer.actionPoints > 0)
+        if (!currentBuilding.isTier2 && currentBuilding.goldCostTier2 <= TurnManager.Instance.currentPlayer.gold && TurnManager.Instance.currentPlayer.actionPoints > 0)
         {
             currentBuilding.UpgradeToT2();
             TurnManager.Instance.currentPlayer.gold -= currentBuilding.goldCostTier2;
@@ -30,7 +30,7 @@ public class UpgradeButton : MonoBehaviour, IPointerClickHandler
         currentBuilding = (Building)Selector.Instance.currentObject;
         if (currentBuilding != null)
         {
-            if (currentBuilding.tier2 || currentBuilding.goldCostTier2 > TurnManager.Instance.currentPlayer.gold || TurnManager.Instance.currentPlayer.actionPoints < 0)
+            if (currentBuilding.isTier2 || currentBuilding.goldCostTier2 > TurnManager.Instance.currentPlayer.gold || TurnManager.Instance.currentPlayer.actionPoints < 0)
             {
                 button.interactable = false;
             }

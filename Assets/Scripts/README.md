@@ -28,15 +28,16 @@ Implement unit diffrence from player
 Implement start of turn effects
 	
 Content:
-Implement barrack T2 unit
+	Implement barrack T2 unit
 Implement more building
 Implement more frost spells
 Implement more fire spells
 Implement more basic spells
 Implement more spell effects
-Implement building restr(max 1 building)
+	Implement building restr(max 1 building)
 Implement scouts (hallcenterbuilding)
 Implement unit mana & spells?
+Implement better AI
 
 Optimization:
 Implement batching

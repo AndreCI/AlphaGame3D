@@ -1864,7 +1864,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1877265065928658}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 55.104424, y: 100.5, z: 21.950397}
+  m_LocalPosition: {x: 57.302666, y: 100.5, z: 21.474926}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4196645355099646}
@@ -2096,6 +2096,7 @@ MonoBehaviour:
   goldCost: 4
   manaCost: 0
   actionPointCost: 1
+  isTier2: 0
   prefab: {fileID: 1877265065928658}
   movementSphere: {fileID: 4196645355099646}
   healthCanvas: {fileID: 223468477154560030}
@@ -12564,6 +12565,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 4.39}
+  m_AnchoredPosition: {x: 0, y: 4.9}
   m_SizeDelta: {x: 100, y: 43.062}
   m_Pivot: {x: 0.5, y: 0.5}

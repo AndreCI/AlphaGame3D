@@ -8,7 +8,6 @@ public abstract class DefensiveBuilding : Building
     private void Start()
     {
         currentHealth = maxHealth;
-        tier2 = true;
     }
 
     public void TakeDamage(int amount)
@@ -28,7 +27,7 @@ public abstract class DefensiveBuilding : Building
     }
     public override void UpdateCardDisplayInfo()
     {
-        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableDefensiveBuildingCardDisplay(currentHealth, maxHealth, sprite, tier2);
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableDefensiveBuildingCardDisplay(currentHealth, maxHealth, sprite, isTier2);
         foreach (TextMeshProUGUI e in elem)
         {
             switch (e.name)

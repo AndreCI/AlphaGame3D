@@ -15,12 +15,11 @@ public abstract class Building : Selectable
     public string tier2EffectDescription;
     public int constructionTime;
 
-    public bool tier2;
     public int goldCostTier2;
 
     private void Start()
     {
-        tier2 = false;
+        isTier2 = false;
     }
     public void SetVisible(bool v)
     {
@@ -59,7 +58,7 @@ public abstract class Building : Selectable
     }
     public override void UpdateCardDisplayInfo()
     {
-        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableNormalBuildigCardDisplay(sprite, tier2);
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableNormalBuildigCardDisplay(sprite, isTier2);
         foreach (TextMeshProUGUI e in elem)
         {
             switch (e.name)
@@ -99,10 +98,11 @@ public abstract class Building : Selectable
 
     public virtual void UpgradeToT2()
     {
-        tier2 = true;
+        isTier2 = true;
         cardName += " T2";
         effectDescription += "\n" + tier2EffectDescription;
         goldCost += goldCostTier2;
+        TurnManager.Instance.currentPlayer.requirementSystem.SetTier2(GetType());
         UpdateCardDisplayInfo();
     }
 }

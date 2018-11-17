@@ -23,7 +23,7 @@ public class HallCenter : DefensiveBuilding {
             owner.AddGold(8);
             //owner.foodPrediction += 4; //Done dirty somewhere else (see Utils.EatFood)
             owner.actionPoints += 1;
-            if (tier2)
+            if (isTier2)
             {
                 owner.actionPoints += 1;
             }

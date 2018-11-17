@@ -16,7 +16,7 @@ public class Windmill : Building
         {
             owner.foodPrediction += 3;
             owner.AddGold(3);
-            if (tier2)
+            if (isTier2)
             {
                 owner.AddGold(3);
                 owner.foodPrediction += 3;

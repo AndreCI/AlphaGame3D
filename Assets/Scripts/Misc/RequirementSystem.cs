@@ -58,6 +58,15 @@ public class RequirementSystem {
         }
         n.owned = true;
     }
+    public void SetTier2(Type type)
+    {
+        NodeR n = start.Search(type);
+        if (n == null)
+        {
+            throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
+        }
+        n.t2 = true;
+    }
     public bool IsAlreadyUnlocked(Type type)
     {
         NodeR n = start.Search(type);
@@ -67,13 +76,22 @@ public class RequirementSystem {
         }
         return n.owned;
     }
+    public bool IsAlreadyT2(Type type)
+    {
+        NodeR n = start.Search(type);
+        if (n == null)
+        {
+            throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
+        }
+        return n.t2;
+    }
 
     public void debugString()
     {
         start.debugString(0);
     }
 
-    public bool CheckIfRequirementAreSatisfied(Type type)
+    public bool CheckIfRequirementAreSatisfied(Type type, bool ist2)
     {
         NodeR n = start.Search(type);
         if (n == null)
@@ -81,14 +99,19 @@ public class RequirementSystem {
             throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
         }
         bool allLocksOwned = true;
+        bool allT2 = true;
         foreach(NodeR parent in n.locks)
         {
             if (!parent.owned)
             {
                 allLocksOwned = false;
             }
+            if (!parent.t2)
+            {
+                allT2 = false;
+            }
         }
-        return allLocksOwned;
+        return allLocksOwned && (ist2 && allT2 || !ist2);
     }
 
     private void AddUnlocksAndLocks(NodeR parent, NodeR child)
@@ -103,10 +126,12 @@ public class RequirementSystem {
         public List<NodeR> unlocks;
         public List<NodeR> locks;
         public bool owned;
+        public bool t2;
         public NodeR(Type element_)
         {
             element = element_;
             owned = false;
+            t2 = false;
             unlocks = new List<NodeR>();
             locks = new List<NodeR>();
         }
