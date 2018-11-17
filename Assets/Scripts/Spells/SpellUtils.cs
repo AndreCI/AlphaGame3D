@@ -6,6 +6,7 @@ public class SpellUtils : MonoBehaviour
     public Sprite noRequirementSprite;
     public Sprite fireSprite;
     public Sprite frostSprite;
+    public Sprite greenSprite;
 
     public static SpellUtils Instance;
 
@@ -23,6 +24,8 @@ public class SpellUtils : MonoBehaviour
                 return fireSprite;
             case SchoolOfMagic.FROST:
                 return frostSprite;
+            case SchoolOfMagic.GREEN:
+                return greenSprite;
             default:
                 throw new System.NotImplementedException("This school of magic has not been implemented yet.");
         }
@@ -46,6 +49,7 @@ public class SpellUtils : MonoBehaviour
     {
         BASIC,
         FIRE,
-        FROST
+        FROST,
+        GREEN
     }
 }

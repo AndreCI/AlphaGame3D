@@ -35,16 +35,20 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Shrine));
         AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Fireblast));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(FireHammer));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(FlammingSwords));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Frostblast));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Frostlance));
-        AddUnlocksAndLocks(depth1, depth2);
+
+        //Shrine
+        NodeR depth3 = new NodeR(typeof(Fireblast));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(FireHammer));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(FlammingSwords));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(Frostblast));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(Frostlance));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(Naturewrath));
+        AddUnlocksAndLocks(depth2, depth3);
 
         start = depth0;
     }

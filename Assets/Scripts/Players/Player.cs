@@ -137,6 +137,7 @@ public class Player
         schoolOfMagicLevels = new Dictionary<SpellUtils.SchoolOfMagic, int>
         {
             { SpellUtils.SchoolOfMagic.BASIC, 100 },
+            { SpellUtils.SchoolOfMagic.GREEN, 0 },
             { SpellUtils.SchoolOfMagic.FIRE, 0 },
             {SpellUtils.SchoolOfMagic.FROST, 0 }
         };

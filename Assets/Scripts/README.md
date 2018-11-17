@@ -1,3 +1,19 @@
+#Other
+Need to think about the general balance and ideas behind magic
+-> try to assign magic tree to playstyle, then balance
+give clear and coherent bondaries between schoolom
+brainstorm ideas: 
+	arcane=cheap, quick, non effective
+	fire=aoe, self damage, aggression, buffs
+	frost=control, mana gain, economic disruption (food removal?)
+	green=value, economic power (food & gold?), heal
+	void=powerful, costly, high cooldown
+
+#Implementation ideas
+Implement unit mana & spells?
+Implement Void magic, a more powerful magic (more costly, control/cheese strat), not supposed to be a started magic
+
+
 
 #TODOLIST
 
@@ -35,8 +51,9 @@ Implement more fire spells
 Implement more basic spells
 Implement more spell effects
 	Implement building restr(max 1 building)
+	Implement green magic
+Implement more green spells
 Implement scouts (hallcenterbuilding)
-Implement unit mana & spells?
 Implement better AI
 
 Optimization:

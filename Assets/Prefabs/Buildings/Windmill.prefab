@@ -408,12 +408,14 @@ MonoBehaviour:
   goldCost: 6
   manaCost: 0
   actionPointCost: 1
+  isTier2: 0
   prefab: {fileID: 1235940273140178}
   sprite: {fileID: 21300000, guid: 3ddcf522161edab4597cba2e0e2adb0e, type: 3}
+  notificationPanel: {fileID: 0}
+  notificationText: {fileID: 0}
   effectDescription: 'Start of Turn: Gain 3 Gold and 3 Food.'
   tier2EffectDescription: 'Start of Turn: Gain 3 Gold and 3 Food.'
   constructionTime: 0
-  tier2: 0
   goldCostTier2: 10
 --- !u!135 &135655985122380026
 SphereCollider:

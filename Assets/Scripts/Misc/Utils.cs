@@ -29,6 +29,7 @@ public static class Utils
         return list.OrderBy(arg => Guid.NewGuid()).Take(elementsCount).ToList();
     }
     public static Dictionary<string, Spell> stringToSpell = new Dictionary<string, Spell>{
+        {"naturewrath", Naturewrath.Instance },
         {"fireblast", Fireblast.Instance},
         {"firehammer", FireHammer.Instance },
         {"flammingswords", FlammingSwords.Instance },
