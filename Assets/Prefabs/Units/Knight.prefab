@@ -2016,6 +2016,7 @@ MonoBehaviour:
   effectDescription: Your classic warrior.
   currentHealth: 20
   currentMovementPoints: 3
+  currentAttackModifier: 0
   animTransform: {fileID: 4129529926293946}
   physicalAttackAnimation: {fileID: 1083240323644074, guid: 89aa4ab6a03390a46971dbc51ffb07df,
     type: 2}

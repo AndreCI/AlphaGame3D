@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SpellUtils : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class SpellUtils : MonoBehaviour
         }
     }
 
-    public enum UnitEffect
+    public enum EffectTypes
     {
         NORMAL,
         FROST,
@@ -35,10 +36,12 @@ public class SpellUtils : MonoBehaviour
         ATTACK_MODIFIER
     }
 
-    public static void ApplyEffect(Unit u, UnitEffect e)
+    public static Dictionary<EffectTypes, string> effectDescriptionAbsolute = new Dictionary<EffectTypes, string>
     {
-
-    }
+        {EffectTypes.FROST, "<b>FREEZE: </b>Start of Turn: Lose 1 Movement Point"},
+        {EffectTypes.BURN, "<b>BURN: </b>Start of Turn: Lose 5 Health" },
+        {EffectTypes.ATTACK_MODIFIER, "<b>ATTACK MODIFIED: </b>Attack is modified" }
+    };
     public enum SchoolOfMagic
     {
         BASIC,

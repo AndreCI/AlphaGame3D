@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class CardDisplay : MonoBehaviour
 {
@@ -13,7 +14,12 @@ public class CardDisplay : MonoBehaviour
     public GameObject spellCard;
     public GameObject buildingCardT2;
     public GameObject buildingCardDefensiveT2;
+    public GameObject spellEffectHelp;
+    public TextMeshProUGUI spellEffectText;
+    public GameObject unitEffectHelp;
+    public TextMeshProUGUI unitEffectText;
     public Button upgradeButton;
+
     
 
     public enum MODE
@@ -42,12 +48,27 @@ public class CardDisplay : MonoBehaviour
     {
 
     }
-    public TextMeshProUGUI[] EnableUnitCardDisplay(float currentHealth, float maxHealth, Sprite sprite)
+    public TextMeshProUGUI[] EnableUnitCardDisplay(float currentHealth, float maxHealth, Sprite sprite, string effectDescriptor)
     {
         DisableCardDisplay();
         mode = MODE.UNIT_DISPLAY;
         unitCard.SetActive(true);
         unitCard.GetComponent<Image>().enabled = true;
+
+        unitEffectHelp.SetActive(true);
+        unitEffectText.text = effectDescriptor;
+        Vector2 newSize = new Vector2(0, 0);
+        if (effectDescriptor != "")
+        {
+            newSize = unitEffectText.GetPreferredValues();
+            newSize += newSize / 5;
+
+        }
+        unitEffectHelp.GetComponent<Image>().rectTransform.sizeDelta = newSize;
+        if (effectDescriptor == "")
+        {
+            unitEffectHelp.SetActive(true);
+        }
 
         TextMeshProUGUI[] elements = unitCard.GetComponentsInChildren<TextMeshProUGUI>();
         foreach (TextMeshProUGUI t in elements)
@@ -65,6 +86,7 @@ public class CardDisplay : MonoBehaviour
                 t.sprite = sprite;
             }
         }
+        
         return elements;
     }
 
@@ -146,7 +168,7 @@ public class CardDisplay : MonoBehaviour
         return elements;
     }
 
-    public TextMeshProUGUI[] EnableSpellCardDisplay(Sprite sprite, SpellUtils.SchoolOfMagic schoolOfMagic)
+    public TextMeshProUGUI[] EnableSpellCardDisplay(Sprite sprite, SpellUtils.SchoolOfMagic schoolOfMagic, string effectDescriptor)
     {
         DisableCardDisplay();
         mode = MODE.SPELL_DISPLAY;
@@ -171,6 +193,17 @@ public class CardDisplay : MonoBehaviour
                 t.sprite = requirementSprite;
             }
         }
+        spellEffectHelp.SetActive(true);
+        Vector2 newSize = new Vector2(0, 0); ;
+        spellEffectText.text = effectDescriptor;
+        if (effectDescriptor != "")
+        {
+            newSize = spellEffectText.GetPreferredValues();
+            newSize += newSize / 5;
+            
+        }
+        spellEffectHelp.GetComponent<Image>().rectTransform.sizeDelta = newSize;
+        spellEffectHelp.SetActive(false);
         return elements;
     }
 
@@ -203,5 +236,7 @@ public class CardDisplay : MonoBehaviour
         }
         upgradeButton.gameObject.SetActive(false);
         card.SetActive(false);
+        spellEffectHelp.SetActive(false);
+        unitEffectHelp.SetActive(false);
     }
 }

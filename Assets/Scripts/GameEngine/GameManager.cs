@@ -3,15 +3,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("General starting objects")]
     public Node startNode;
     public static List<Node> allNodes;
     private TurnManager turnManager;
     public GameObject menu;
+    public GameObject selectionPanel;
     
     // Use this for initialization
     void Start()
     {
-
+        selectionPanel.SetActive(true);
         turnManager = TurnManager.Instance;
         allNodes = new List<Node>();
         foreach (NodeUtils.NodeWrapper node in NodeUtils.GetNeighborsNode(startNode, 20).GetNodeChildren())

@@ -100,9 +100,26 @@ public abstract class Spell : Selectable
         CardDisplay.Instance.DisableCardDisplay();
     }
 
+    public List<string> GetKeywordsDescription()
+    {
+        List<string> descriptions = new List<string>();
+        {
+            foreach(EffectFactory factory in effects)
+            {
+                descriptions.Add(factory.GetAbsoluteDescriptions());
+            }
+        }
+        return descriptions;
+    }
+
     public override void UpdateCardDisplayInfo()
     {
-        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableSpellCardDisplay(sprite, schoolOfMagic);
+        string keywordsDescription = "";
+        foreach(string effect in GetKeywordsDescription())
+        {
+            keywordsDescription += effect + "\n";
+        }
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableSpellCardDisplay(sprite, schoolOfMagic, keywordsDescription);
         foreach (TextMeshProUGUI e in elem)
         {
             switch (e.name)

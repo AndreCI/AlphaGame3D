@@ -6,7 +6,7 @@ using UnityEngine;
 public class FlammingSwords : Spell
 {
     public static FlammingSwords Instance;
-    public SpellUtils.UnitEffect effect;
+    public SpellUtils.EffectTypes effect;
     public int buffDuration;
     public int buffPower;
 

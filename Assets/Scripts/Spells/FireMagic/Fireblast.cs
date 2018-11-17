@@ -5,7 +5,7 @@ using UnityEngine;
 public class Fireblast : Spell
 {
     public static Fireblast Instance;
-    public SpellUtils.UnitEffect effect;
+    public SpellUtils.EffectTypes effect;
     public int burnDuration;
 
     public void Awake()
@@ -16,7 +16,6 @@ public class Fireblast : Spell
             unlock = new List<Type>();
             base.AwakeBase();
             effects.Add(new EffectFactory(effect, burnDuration));
-
         }
         else
         {
@@ -49,7 +48,7 @@ public class Fireblast : Spell
             node.Damage(damage);
             if (node.unit != null)
             {
-                node.unit.currentEffect.Add(new BurnEffect(node.unit, burnDuration));
+                ApplyEffectsToUnit(node.unit);
             }
         }
         base.Activate(affectedNodes_);

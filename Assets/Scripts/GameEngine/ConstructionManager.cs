@@ -48,6 +48,8 @@ public class ConstructionManager : Observer
         canConstruct = true;
         if (!hallCenter)
         {
+            Selector.Instance.currentObject = (building);
+            building.UpdateCardDisplayInfo();
             NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, 3);
             foreach (NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
             {
@@ -76,6 +78,8 @@ public class ConstructionManager : Observer
         {
             n.MakeIdle();
         }
+        Selector.Instance.currentObject = null;
+        if (CardDisplay.Instance != null) { CardDisplay.Instance.DisableCardDisplay(); } //sanity check because hallcenter spawn is manually made.
         return building;
     }
 
@@ -115,6 +119,8 @@ public class ConstructionManager : Observer
         mode = "unit";
         unitToConstruct = unit;
         canConstruct = true;
+        Selector.Instance.currentObject = (unit);
+        unit.UpdateCardDisplayInfo();
         Selectable requirements = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetRequierements()[0]);
         NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(requirements.currentPosition, 1);
         foreach(NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
@@ -146,6 +152,8 @@ public class ConstructionManager : Observer
         {
             n.MakeIdle();
         }
+        Selector.Instance.currentObject = null;
+        CardDisplay.Instance.DisableCardDisplay();
         return unit;
     }
 

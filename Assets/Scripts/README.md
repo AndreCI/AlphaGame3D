@@ -15,10 +15,12 @@ Change way requirements are handled
 
 UI:
 	Implement help ressource bar
-Implement help selection bar
+	Implement help selection bar
 	Implement card tutorial (start of game: would you like to tuto + menuhelp)
+	Implement help card selection
 	Implement menu
 Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
+Implement T2 help
 	
 Graphic:
 Implement visual effect on spell effect

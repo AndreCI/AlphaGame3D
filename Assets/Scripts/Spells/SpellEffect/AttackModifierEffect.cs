@@ -1,7 +1,14 @@
 ﻿public class AttackModifierEffect : UnitEffect
 {
     private int modifier;
-    public AttackModifierEffect(Unit u_, int duration_, int modifier_) : base(u_, duration_)
+    public override bool effectEnded
+    {
+        get
+        {
+            return duration <= -1;
+        }
+    }
+    public AttackModifierEffect(SpellUtils.EffectTypes type_, Unit u_, int duration_, int modifier_) : base(type_, u_, duration_)
     {
         applyOnTouch = true;
         modifier = modifier_;
@@ -11,5 +18,10 @@
     {
         base.ApplyEffect();
         u.currentAttackModifier += modifier;
+    }
+
+    public override string GetDescriptionRelative()
+    {
+        return SpellUtils.effectDescriptionAbsolute[type] + " by " + modifier +" for " + duration + " turns.";
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Frostblast : Spell
 {
     public static Frostblast Instance;
-    public SpellUtils.UnitEffect effect;
+    public SpellUtils.EffectTypes effect;
     public int frostDuration;
 
     public void Awake()

@@ -51,7 +51,7 @@ public abstract class Unit : Selectable
             {
                 ue.ApplyEffect();
             }
-            currentEffect.RemoveAll(ue => ue.duration <= 0); //safe removing of elements
+            currentEffect.RemoveAll(ue => ue.effectEnded); //safe removing of elements
         }
 
     }
@@ -282,8 +282,21 @@ public abstract class Unit : Selectable
 
     public override void UpdateCardDisplayInfo()
     {
-        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableUnitCardDisplay(currentHealth, maxHealth, sprite);
-
+        string keywordsDescription = "";
+        if (currentEffect != null) //sanity check as displayInfo can be displayed without the unit being instantiated
+        {
+            foreach (UnitEffect ue in currentEffect)
+            {
+                string effect = ue.GetDescriptionRelative();
+                keywordsDescription += effect + "\n";
+            }
+        }
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableUnitCardDisplay(currentHealth, maxHealth, sprite, keywordsDescription);
+        if (keywordsDescription != "")
+        {
+            elem = CardDisplay.Instance.EnableUnitCardDisplay(currentHealth, maxHealth, sprite, keywordsDescription);
+            //TMPPRO bug fix?
+        }
         foreach (TextMeshProUGUI e in elem)
         {
             switch (e.name)
