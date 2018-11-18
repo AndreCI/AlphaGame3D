@@ -75,6 +75,27 @@ public abstract class Building : Selectable
             }
         }
     }
+
+    public virtual void MockCardDisplayT2Info()
+    {
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableNormalBuildigCardDisplay(sprite, true);
+        CardDisplay.Instance.upgradeToT2Preview.SetActive(true);
+        foreach (TextMeshProUGUI e in elem)
+        {
+            switch (e.name)
+            {
+                case "CardNameText":
+                    e.text = cardName += " T2";
+                    break;
+                case "CardCostText":
+                    e.text = goldCostTier2.ToString();
+                    break;
+                case "CardEffectText":
+                    e.text = "Once upgraded, this building will have:" + "\n" + tier2EffectDescription;
+                    break;
+            }
+        }
+    }
     public override void Notify(Player player)
     {
         if (player.Equals(owner)) 

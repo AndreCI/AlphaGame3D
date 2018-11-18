@@ -15,6 +15,7 @@ public class CardDisplay : MonoBehaviour
     public GameObject buildingCardT2;
     public GameObject buildingCardDefensiveT2;
     public GameObject spellEffectHelp;
+    public GameObject upgradeToT2Preview;
     public TextMeshProUGUI spellEffectText;
     public GameObject unitEffectHelp;
     public TextMeshProUGUI unitEffectText;
@@ -238,5 +239,6 @@ public class CardDisplay : MonoBehaviour
         card.SetActive(false);
         spellEffectHelp.SetActive(false);
         unitEffectHelp.SetActive(false);
+        upgradeToT2Preview.SetActive(false);
     }
 }

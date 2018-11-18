@@ -4,6 +4,7 @@ public abstract class DefensiveBuilding : Building
 {
     public int maxHealth;
     public int currentHealth;
+    public int maxHealthT2Upgrade;
 
     private void Start()
     {
@@ -43,6 +44,29 @@ public abstract class DefensiveBuilding : Building
                     break;
                 case "CardHealthText":
                     e.text = currentHealth.ToString() +"/"+maxHealth.ToString();
+                    break;
+            }
+        }
+    }
+    public override void MockCardDisplayT2Info()
+    {
+        TextMeshProUGUI[] elem = CardDisplay.Instance.EnableDefensiveBuildingCardDisplay(currentHealth + maxHealthT2Upgrade, maxHealth + maxHealthT2Upgrade, sprite, true);
+        CardDisplay.Instance.upgradeToT2Preview.SetActive(true);
+        foreach (TextMeshProUGUI e in elem)
+        {
+            switch (e.name)
+            {
+                case "CardNameText":
+                    e.text = cardName + " T2";
+                    break;
+                case "CardCostText":
+                    e.text = goldCostTier2.ToString();
+                    break;
+                case "CardEffectText":
+                    e.text = "Once upgraded, this building will have:" + "\n" + tier2EffectDescription;
+                    break;
+                case "CardHealthText":
+                    e.text = (currentHealth+maxHealthT2Upgrade).ToString() + "/" + (maxHealth+maxHealthT2Upgrade).ToString();
                     break;
             }
         }

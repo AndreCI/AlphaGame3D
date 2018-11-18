@@ -782,7 +782,7 @@ MonoBehaviour:
   actionPointCost: 1
   isTier2: 1
   prefab: {fileID: 1041405632541750}
-  sprite: {fileID: 21300000, guid: 74f1fe63a5b0299458c6e3eebf1a6471, type: 3}
+  sprite: {fileID: 21300000, guid: fe69e1de92e7a9e42af6ad2502fb4b20, type: 3}
   notificationPanel: {fileID: 0}
   notificationText: {fileID: 0}
   effectDescription: Gain 1 green level permanently.

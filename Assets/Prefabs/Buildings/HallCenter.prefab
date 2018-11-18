@@ -737,6 +737,7 @@ MonoBehaviour:
   goldCost: 0
   manaCost: 0
   actionPointCost: 0
+  isTier2: 0
   prefab: {fileID: 1358547463272360}
   sprite: {fileID: 21300000, guid: 4bd667e0a518d5a4391683048f1631e1, type: 3}
   notificationPanel: {fileID: 1719784916219128}
@@ -744,10 +745,10 @@ MonoBehaviour:
   effectDescription: 'Start of turn: Gain 8 Gold, 4 Food and 1 Action Point. '
   tier2EffectDescription: 'Start of turn: Gain 1 Action Point'
   constructionTime: 0
-  tier2: 0
   goldCostTier2: 10
   maxHealth: 30
   currentHealth: 30
+  maxHealthT2Upgrade: 10
 --- !u!114 &114612457469222856
 MonoBehaviour:
   m_ObjectHideFlags: 1

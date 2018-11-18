@@ -32,8 +32,8 @@ public class HallCenter : DefensiveBuilding {
     }
     public override void UpgradeToT2()
     {
-        maxHealth += 10;
-        currentHealth += 10;
+        maxHealth += maxHealthT2Upgrade;
+        currentHealth += maxHealthT2Upgrade;
         base.UpgradeToT2();
     }
 }
