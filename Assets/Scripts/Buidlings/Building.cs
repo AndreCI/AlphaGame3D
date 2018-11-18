@@ -10,8 +10,6 @@ public abstract class Building : Selectable
     [Header("Prefab")]
     public GameObject prefab;
     public Sprite sprite;
-    public GameObject notificationPanel;
-    public TextMeshProUGUI notificationText;
     [Header("General Info")]
     public string effectDescription;
     public string tier2EffectDescription;
@@ -122,48 +120,28 @@ public abstract class Building : Selectable
         }
 
     }
-
     public IEnumerator DisplayAndApplyNotification(Player currentPlayer, Dictionary<Utils.notificationTypes, int> notificationData)
     {
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        foreach(Utils.notificationTypes type in notificationData.Keys)
+        foreach (Utils.notificationTypes type in notificationData.Keys)
         {
-            string data = notificationData[type].ToString();
+            string data = "";
+            if (notificationData[type] > 0)
+            {
+                data += "+";
+            }
+            else
+            {
+                data += "-";
+            }
+                
+            data+=notificationData[type].ToString();
             Utils.ApplyNotification(type, notificationData[type], currentPlayer);
             yield return StartCoroutine(FadeNotification(data, type));
         }
         notificationPanel.SetActive(false);
         yield return null;
-    }
-
-    public IEnumerator FadeNotification(string notif, Utils.notificationTypes type)
-    {
-        Color color = Utils.typesToColors[type];
-        if (type == Utils.notificationTypes.BUILDING)
-        {
-            float fontSize = notificationText.fontSize;
-
-            notificationText.fontSize = fontSize/2; //TODO: DEBUG
-            notificationText.text = "BUILDING FOR " +notif+ " TURNS";
-            notificationText.fontSize = fontSize;
-        }
-        else
-        {
-            notificationText.text = notif;
-        }
-        notificationText.color = color;
-        float duration = Time.time + 1.0f;
-        Vector3 pos = notificationPanel.transform.localPosition;
-        
-        while(Time.time<duration)
-        {
-            notificationPanel.transform.localPosition = new Vector3(pos.x, pos.y + 1 - duration + Time.time, pos.z);
-            notificationText.canvasRenderer.SetAlpha(duration - Time.time);
-            yield return null;
-        }
-        notificationPanel.transform.localPosition = pos;
-        yield break;
     }
 
     public virtual void UpgradeToT2()

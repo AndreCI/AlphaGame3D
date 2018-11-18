@@ -49,13 +49,24 @@ public abstract class Unit : Selectable
         {
             currentMovementPoints = maxMovementPoints;
             currentAttackModifier = 0;
-            foreach (UnitEffect ue in currentEffect)
-            {
-                ue.ApplyEffect();
-            }
+            StartCoroutine(DisplayAndApplyNotification(owner, currentEffect));
             currentEffect.RemoveAll(ue => ue.effectEnded); //safe removing of elements
         }
 
+    }
+    public IEnumerator DisplayAndApplyNotification(Player currentPlayer, List<UnitEffect> currentEffects)
+    {
+        notificationPanel.SetActive(true);
+        notificationPanel.transform.rotation = Camera.main.transform.rotation;
+        Dictionary<Utils.notificationTypes, int> effectNotification = new Dictionary<Utils.notificationTypes, int>();
+        foreach (UnitEffect ue in currentEffect)
+        {
+            System.Object[] data = ue.ApplyEffect();
+            
+            yield return StartCoroutine(FadeNotification((string)data[1], (Utils.notificationTypes)data[0]));
+        }
+        notificationPanel.SetActive(false);
+        yield return null;
     }
 
     private void LateUpdate()

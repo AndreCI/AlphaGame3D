@@ -23,13 +23,14 @@ public abstract class UnitEffect
         u.effectAnimations.StartAnimation(type);
     }
 
-    public virtual void ApplyEffect()
+    public virtual System.Object[] ApplyEffect()
     {
         duration -= 1;
         if (effectEnded)
         {
             End();
         }
+        return null;
     }
 
     public virtual void End()

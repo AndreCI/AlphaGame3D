@@ -67,7 +67,7 @@ UI:
 Graphic:
 	Implement visual effect on spell effect
 Implement unit diffrence from player
-Implement start of turn effects
+	Implement start of turn effects
 	
 Content:
 	Implement barrack T2 unit

@@ -5,10 +5,12 @@
         applyOnTouch = true;
     }
 
-    public override void ApplyEffect()
+    public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
         u.currentMovementPoints -= 1;
+        System.Object[] e = { Utils.notificationTypes.FREEZE, "-1" };
+        return e;
     }
 
     public override string GetDescriptionRelative()

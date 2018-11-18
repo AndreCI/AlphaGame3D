@@ -14,10 +14,25 @@
         modifier = modifier_;
     }
 
-    public override void ApplyEffect()
+    public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
         u.currentAttackModifier += modifier;
+        string notif = "";
+        System.Object[] e = {null, null};
+        if (modifier > 0)
+        {
+            notif += "+";
+            e[0] = Utils.notificationTypes.BUFF_ATCK;
+        }
+        else
+        {
+            notif += "-";
+            e[0] = Utils.notificationTypes.DEBUFF_ATCK;
+        }
+        notif += modifier.ToString();
+        e[1] = notif;
+        return e;
     }
 
     public override string GetDescriptionRelative()

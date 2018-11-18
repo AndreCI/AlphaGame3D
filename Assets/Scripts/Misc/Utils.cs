@@ -61,10 +61,14 @@ public static class Utils
     public static Dictionary<notificationTypes, Color> typesToColors = new Dictionary<notificationTypes, Color>
     {
         { notificationTypes.GOLD, Color.yellow },
-        { notificationTypes.MANA, Color.blue },
+        { notificationTypes.MANA, Color.cyan },
+        { notificationTypes.FREEZE, Color.cyan },
         { notificationTypes.ACTION_POINT, Color.red },
         { notificationTypes.BUILDING, Color.red },
-        { notificationTypes.FOOD, Color.green }
+        { notificationTypes.DAMAGE, Color.red },
+        { notificationTypes.FOOD, Color.green },
+        { notificationTypes.BUFF_ATCK, Color.green },
+        { notificationTypes.DEBUFF_ATCK, Color.red },
 
     };
 
@@ -73,7 +77,11 @@ public static class Utils
         GOLD,
         MANA,
         ACTION_POINT,
-        FOOD
+        FOOD,
+        DAMAGE,
+        FREEZE,
+        BUFF_ATCK,
+        DEBUFF_ATCK
     }
 }
 public static class hasComponent
