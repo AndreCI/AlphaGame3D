@@ -8,22 +8,15 @@ public class MagicCenter : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
+        notificationsData = new Dictionary<Utils.notificationTypes, int> {
+            {Utils.notificationTypes.MANA, 4 }
+        };
     }
 
-
-
-    public override void Notify(Player player)
+    public override void UpgradeToT2()
     {
-        base.Notify(player);
-        if (player.Equals(owner) && constructionTime <= 0)
-        {
-            player.mana += 4;
-            if (isTier2)
-            {
-                player.mana += 4;
-                //unlock.Add();
-            }
-        }
-        
+        base.UpgradeToT2();
+        notificationsData[Utils.notificationTypes.MANA] += 4;
     }
+
 }

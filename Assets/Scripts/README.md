@@ -37,11 +37,12 @@ Anyway. The point is that starting a path should not lock you from the others an
 #Implementation ideas
 Implement unit mana & spells?
 Implement Void magic, a more powerful magic (more costly, control/cheese strat), not supposed to be a started magic
-
+Implement riposte?
 
 
 #TODOLIST
 
+Basic:
 	Implement Enemy spawn
 	Implement basic enemy AI
 	Implement spell effect
@@ -61,7 +62,7 @@ UI:
 	Implement help card selection
 	Implement menu
 	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
-Implement T2 help
+	Implement T2 help
 	
 Graphic:
 	Implement visual effect on spell effect

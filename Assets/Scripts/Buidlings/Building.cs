@@ -1,6 +1,8 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 [System.Serializable]
 public abstract class Building : Selectable
@@ -16,6 +18,7 @@ public abstract class Building : Selectable
     public int constructionTime;
 
     public int goldCostTier2;
+    protected Dictionary<Utils.notificationTypes, int> notificationsData;
 
     private void Start()
     {
@@ -105,16 +108,50 @@ public abstract class Building : Selectable
                 constructionTime -= 1;
                 return;
             }
-            /*notificationPanel.SetActive(true);
-            notificationPanel.transform.rotation = Camera.main.transform.rotation;
-            notificationText.text = "+8";
-            notificationText.color = Color.blue;*/
+            else
+            {
+                StartCoroutine(DisplayAndApplyNotification(owner));
+            }
         }
         else
         {
             return;
         }
 
+    }
+
+    public IEnumerator DisplayAndApplyNotification(Player currentPlayer)
+    {
+        notificationPanel.SetActive(true);
+        notificationPanel.transform.rotation = Camera.main.transform.rotation;
+        foreach(Utils.notificationTypes type in notificationsData.Keys)
+        {
+            string data = notificationsData[type].ToString();
+            Color color = Utils.typesToColors[type];
+            Utils.ApplyNotification(type, notificationsData[type], currentPlayer);
+            yield return StartCoroutine(FadeNotification(data, color));
+        }
+        notificationPanel.SetActive(false);
+        yield return null;
+    }
+
+    public IEnumerator FadeNotification(string notif, Color color)
+    {
+        notificationText.text = notif;
+        notificationText.color = color;
+        float duration = Time.time + 1.0f;
+        Vector3 pos = notificationPanel.transform.localPosition;
+        Debug.Log(notif);
+        Debug.Log(color.ToString());
+        
+        while(Time.time<duration)
+        {
+            notificationPanel.transform.localPosition = new Vector3(pos.x, pos.y + 1 - duration + Time.time, pos.z);
+            notificationText.canvasRenderer.SetAlpha(duration - Time.time);
+            yield return null;
+        }
+        notificationPanel.transform.localPosition = pos;
+        yield break;
     }
 
     public virtual void UpgradeToT2()

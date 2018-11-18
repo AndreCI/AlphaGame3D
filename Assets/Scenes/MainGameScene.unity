@@ -11375,7 +11375,7 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -12609,7 +12609,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.16450594, y: 0.089}
   m_AnchorMax: {x: 0.8525179, y: 0.15400001}
-  m_AnchoredPosition: {x: 17.40348, y: 2.6871643}
+  m_AnchoredPosition: {x: 17.40348, y: 2.6871338}
   m_SizeDelta: {x: -132.1005, y: 5.3565216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &572967935
@@ -15938,7 +15938,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &756348502
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17020,11 +17020,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -24038,7 +24038,6 @@ GameObject:
   - component: {fileID: 1188487559}
   - component: {fileID: 1188487558}
   - component: {fileID: 1188487557}
-  - component: {fileID: 1188487556}
   - component: {fileID: 1188487555}
   m_Layer: 5
   m_Name: UpgradeButton
@@ -24078,19 +24077,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   help: {fileID: 1139805304}
---- !u!114 &1188487556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1188487553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af1613633208bd64785b018e19bd013c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentBuilding: {fileID: 0}
-  button: {fileID: 0}
 --- !u!114 &1188487557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24140,6 +24126,17 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1633631167}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -24967,11 +24964,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1251225944}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af1613633208bd64785b018e19bd013c, type: 3}
+  m_Script: {fileID: 11500000, guid: 71d6f768dd2752d4c8b6c85487d09cd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentBuilding: {fileID: 0}
-  button: {fileID: 0}
 --- !u!114 &1251225947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24994,7 +24989,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.60294116, g: 0, b: 0, a: 0.534}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -25907,11 +25902,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -26462,7 +26457,6 @@ GameObject:
   - component: {fileID: 1319123850}
   - component: {fileID: 1319123849}
   - component: {fileID: 1319123848}
-  - component: {fileID: 1319123847}
   m_Layer: 5
   m_Name: UpgradeButton
   m_TagString: cardInfo
@@ -26488,19 +26482,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.43572998, y: 0}
   m_SizeDelta: {x: -0.87154, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1319123847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1319123845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af1613633208bd64785b018e19bd013c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentBuilding: {fileID: 0}
-  button: {fileID: 0}
 --- !u!114 &1319123848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30194,7 +30175,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1106230751}
-  - {fileID: 1633631168}
   m_Father: {fileID: 756348502}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -30452,7 +30432,7 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -33245,7 +33225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1633631168
 RectTransform:
   m_ObjectHideFlags: 0
@@ -33254,17 +33234,17 @@ RectTransform:
   m_GameObject: {fileID: 1633631167}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.99998516, y: 0.99998516, z: 0.99998516}
+  m_LocalScale: {x: 0.9999853, y: 0.9999853, z: 0.9999853}
   m_Children:
   - {fileID: 1251225945}
   - {fileID: 1855669288}
-  m_Father: {fileID: 1485376864}
-  m_RootOrder: 1
+  m_Father: {fileID: 1910173093}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 149.1, y: -157.6}
-  m_SizeDelta: {x: 362.4, y: -25.5}
+  m_AnchoredPosition: {x: -0.19380188, y: -413.20715}
+  m_SizeDelta: {x: -66.39621, y: -675.8344}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1633631169
 MonoBehaviour:
@@ -33880,11 +33860,11 @@ MonoBehaviour:
     lineCount: 2
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -37110,6 +37090,7 @@ GameObject:
   - component: {fileID: 1855669291}
   - component: {fileID: 1855669290}
   - component: {fileID: 1855669289}
+  - component: {fileID: 1855669292}
   m_Layer: 5
   m_Name: cancel
   m_TagString: Untagged
@@ -37221,6 +37202,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1855669287}
+--- !u!114 &1855669292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1855669287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c3c7c0290dab944add1b17140af201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1856207974
 Prefab:
   m_ObjectHideFlags: 0
@@ -37981,6 +37973,7 @@ RectTransform:
   - {fileID: 982081864}
   - {fileID: 516476840}
   - {fileID: 1318259582}
+  - {fileID: 1633631168}
   m_Father: {fileID: 1769799022}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -38008,6 +38001,7 @@ MonoBehaviour:
   buildingCardT2: {fileID: 1318259581}
   buildingCardDefensiveT2: {fileID: 516476839}
   spellEffectHelp: {fileID: 384017088}
+  upgradeToT2Preview: {fileID: 1633631167}
   spellEffectText: {fileID: 1439715990}
   unitEffectHelp: {fileID: 400099326}
   unitEffectText: {fileID: 741792216}
@@ -39041,11 +39035,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

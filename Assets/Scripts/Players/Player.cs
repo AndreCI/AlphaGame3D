@@ -126,7 +126,7 @@ public class Player
         mana = 0;
         actionPoints = 6;
         food = 4;
-        foodPrediction = 0;
+        foodPrediction = 4;
         id = id_;
         requirementSystem = new RequirementSystem();
         currentBuildings = new List<Building>();

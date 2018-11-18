@@ -10,6 +10,6 @@ public class Shrine : Building
     void Start()
     {
         owner.schoolOfMagicLevels[schoolOfMagic] += 1;
-        isTier2 = true;
+        isTier2 = true; notificationsData = new Dictionary<Utils.notificationTypes, int>();
     }
 }

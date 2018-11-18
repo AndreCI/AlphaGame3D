@@ -6,22 +6,18 @@ public class Windmill : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
+        notificationsData = new Dictionary<Utils.notificationTypes, int> {
+            {Utils.notificationTypes.GOLD, 3 },
+            {Utils.notificationTypes.FOOD, 3 }
+        };
     }
-    
 
-    public override void Notify(Player player)
+
+    public override void UpgradeToT2()
     {
-        base.Notify(player);
-        if (player.Equals(owner) && constructionTime <= 0)
-        {
-            owner.foodPrediction += 3;
-            owner.AddGold(3);
-            if (isTier2)
-            {
-                owner.AddGold(3);
-                owner.foodPrediction += 3;
-            }
-        }
+        base.UpgradeToT2();
+        notificationsData[Utils.notificationTypes.GOLD] += 3;
+        notificationsData[Utils.notificationTypes.FOOD] += 3;
     }
 
 }
