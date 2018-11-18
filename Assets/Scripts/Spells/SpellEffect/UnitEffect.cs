@@ -14,7 +14,10 @@ public abstract class UnitEffect
         }
     }
     
+    public UnitEffect()
+    {
 
+    }
     public UnitEffect(SpellUtils.EffectTypes type_, Unit u_, int duration_)
     {
         type = type_;

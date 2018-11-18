@@ -17,12 +17,12 @@ public static class Utils
             {
                 if (!unitFed.Contains(u))
                 {
-                    u.TakesDamage(10);
+                    u.currentEffect.Add(new StarvationEffect(SpellUtils.EffectTypes.STARVING, u, 1));
                 }
             }
         }
         currentPlayer.food -= j;
-        currentPlayer.foodPrediction = 0; //TODO:FOOD DEBUG
+        currentPlayer.foodPrediction = 0; 
     }
     public static List<T> GetRandomElements<T>(this IEnumerable<T> list, int elementsCount)
     {//TODO: change this

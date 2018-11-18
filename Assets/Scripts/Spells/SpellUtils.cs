@@ -36,11 +36,13 @@ public class SpellUtils : MonoBehaviour
         NORMAL,
         FROST,
         BURN,
-        ATTACK_MODIFIER
+        ATTACK_MODIFIER,
+        STARVING
     }
 
     public static Dictionary<EffectTypes, string> effectDescriptionAbsolute = new Dictionary<EffectTypes, string>
     {
+        {EffectTypes.STARVING, "<b>STARVING: </b>You need more food!" },
         {EffectTypes.FROST, "<b>FREEZE: </b>Start of Turn: Lose 1 Movement Point"},
         {EffectTypes.BURN, "<b>BURN: </b>Start of Turn: Lose 5 Health" },
         {EffectTypes.ATTACK_MODIFIER, "<b>ATTACK MODIFIED: </b>Attack is modified" }
