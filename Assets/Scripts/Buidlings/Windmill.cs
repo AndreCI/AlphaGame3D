@@ -6,7 +6,7 @@ public class Windmill : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        notificationsData = new Dictionary<Utils.notificationTypes, int> {
+        startOfTurnNotificationData = new Dictionary<Utils.notificationTypes, int> {
             {Utils.notificationTypes.GOLD, 3 },
             {Utils.notificationTypes.FOOD, 3 }
         };
@@ -16,8 +16,8 @@ public class Windmill : Building
     public override void UpgradeToT2()
     {
         base.UpgradeToT2();
-        notificationsData[Utils.notificationTypes.GOLD] += 3;
-        notificationsData[Utils.notificationTypes.FOOD] += 3;
+        startOfTurnNotificationData[Utils.notificationTypes.GOLD] += 3;
+        startOfTurnNotificationData[Utils.notificationTypes.FOOD] += 3;
     }
 
 }

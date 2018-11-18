@@ -18,7 +18,7 @@ public abstract class Building : Selectable
     public int constructionTime;
 
     public int goldCostTier2;
-    protected Dictionary<Utils.notificationTypes, int> notificationsData;
+    protected Dictionary<Utils.notificationTypes, int> startOfTurnNotificationData;
 
     private void Start()
     {
@@ -106,11 +106,14 @@ public abstract class Building : Selectable
             if (constructionTime > 0)
             {
                 constructionTime -= 1;
+                StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.notificationTypes, int> {
+                    {Utils.notificationTypes.BUILDING, constructionTime }
+                }));
                 return;
             }
             else
             {
-                StartCoroutine(DisplayAndApplyNotification(owner));
+                StartCoroutine(DisplayAndApplyNotification(owner, startOfTurnNotificationData));
             }
         }
         else
@@ -120,29 +123,38 @@ public abstract class Building : Selectable
 
     }
 
-    public IEnumerator DisplayAndApplyNotification(Player currentPlayer)
+    public IEnumerator DisplayAndApplyNotification(Player currentPlayer, Dictionary<Utils.notificationTypes, int> notificationData)
     {
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        foreach(Utils.notificationTypes type in notificationsData.Keys)
+        foreach(Utils.notificationTypes type in notificationData.Keys)
         {
-            string data = notificationsData[type].ToString();
-            Color color = Utils.typesToColors[type];
-            Utils.ApplyNotification(type, notificationsData[type], currentPlayer);
-            yield return StartCoroutine(FadeNotification(data, color));
+            string data = notificationData[type].ToString();
+            Utils.ApplyNotification(type, notificationData[type], currentPlayer);
+            yield return StartCoroutine(FadeNotification(data, type));
         }
         notificationPanel.SetActive(false);
         yield return null;
     }
 
-    public IEnumerator FadeNotification(string notif, Color color)
+    public IEnumerator FadeNotification(string notif, Utils.notificationTypes type)
     {
-        notificationText.text = notif;
+        Color color = Utils.typesToColors[type];
+        if (type == Utils.notificationTypes.BUILDING)
+        {
+            float fontSize = notificationText.fontSize;
+
+            notificationText.fontSize = fontSize/2; //TODO: DEBUG
+            notificationText.text = "BUILDING FOR " +notif+ " TURNS";
+            notificationText.fontSize = fontSize;
+        }
+        else
+        {
+            notificationText.text = notif;
+        }
         notificationText.color = color;
         float duration = Time.time + 1.0f;
         Vector3 pos = notificationPanel.transform.localPosition;
-        Debug.Log(notif);
-        Debug.Log(color.ToString());
         
         while(Time.time<duration)
         {

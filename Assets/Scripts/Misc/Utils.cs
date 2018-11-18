@@ -63,11 +63,13 @@ public static class Utils
         { notificationTypes.GOLD, Color.yellow },
         { notificationTypes.MANA, Color.blue },
         { notificationTypes.ACTION_POINT, Color.red },
+        { notificationTypes.BUILDING, Color.red },
         { notificationTypes.FOOD, Color.green }
 
     };
 
     public enum notificationTypes {
+        BUILDING,
         GOLD,
         MANA,
         ACTION_POINT,
