@@ -268,14 +268,17 @@ MonoBehaviour:
   goldCost: 0
   manaCost: 4
   actionPointCost: 1
+  notificationPanel: {fileID: 0}
+  notificationText: {fileID: 0}
+  isTier2: 0
   prefab: {fileID: 1455761652035724}
   sprite: {fileID: 21300000, guid: 5357d5ef38057d74c8adaeffeb9fbf93, type: 3}
   schoolOfMagic: 2
-  requirementLevel: 2
-  effectDescription: Deal 5 Damages and freeze for 3 turns them in a radius of 3
+  requirementLevel: 1
+  effectDescription: Deal 5 Damages and freeze enemy units in a radius of 1.
   cooldown: 2
   currentCooldown: 0
-  areaOfEffect: 3
+  areaOfEffect: 1
   castableRange: 3
   damage: 5
   affectedNodes: []

@@ -2430,6 +2430,7 @@ MonoBehaviour:
   currentMovementPoints: 3
   currentAttackModifier: 0
   armor: 0
+  foodConso: 0
   animTransform: {fileID: 4129529926293946}
   physicalAttackAnimation: {fileID: 1083240323644074, guid: 89aa4ab6a03390a46971dbc51ffb07df,
     type: 2}
@@ -2449,6 +2450,7 @@ MonoBehaviour:
   freezeAnimation: {fileID: 198861691832732496}
   attackBuffAnimation: {fileID: 198854778818990378}
   berserkAnimation: {fileID: 198877806173030134}
+  regenAnimation: {fileID: 0}
 --- !u!114 &114938365514250922
 MonoBehaviour:
   m_ObjectHideFlags: 1

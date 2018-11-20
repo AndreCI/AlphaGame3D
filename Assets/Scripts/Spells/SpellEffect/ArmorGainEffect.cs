@@ -28,8 +28,9 @@
         else
         {
             notif += "-";
-            throw new System.NotImplementedException("Armor loss has not been implemented");
             e[0] = Utils.NotificationTypes.DEBUFF_MVT;
+            throw new System.NotImplementedException("Armor loss has not been implemented");
+           
         }
         notif += modifier.ToString();
         e[1] = notif;

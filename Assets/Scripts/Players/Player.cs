@@ -35,6 +35,7 @@ public class Player
     public int id;
     public int gold;
     public int mana;
+    public int manaBank;
     public int actionPoints;
     public int food;
     public int foodPrediction;
@@ -127,6 +128,7 @@ public class Player
     {
         gold = 8;
         mana = 0;
+        manaBank = 0;
         actionPoints = 6;
         food = 4;
         foodPrediction = 4;

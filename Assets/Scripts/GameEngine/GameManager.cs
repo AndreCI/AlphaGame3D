@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +11,10 @@ public class GameManager : MonoBehaviour
     private TurnManager turnManager;
     public GameObject menu;
     public GameObject selectionPanel;
+    public GameObject ressourcePanel;
+    public GameObject notificationPanel;
+
+    public static GameManager Instance;
     
     // Use this for initialization
     void Start()
@@ -21,6 +27,7 @@ public class GameManager : MonoBehaviour
             allNodes.Add(node.root);
         }
         turnManager.StartGame(startNode);
+        Instance = this;
 
         //CardDisplay.Instance.DisableCardDisplay();
         
@@ -38,5 +45,20 @@ public class GameManager : MonoBehaviour
             menu.SetActive(true);
         }
         turnManager.Update();
+    }
+
+    public void SetUIVisible(bool v)
+    {
+        selectionPanel.SetActive(v);
+        ressourcePanel.SetActive(v);
+    }
+
+    public IEnumerator DisplayStartOfTurn()
+    {
+        notificationPanel.SetActive(true);
+        notificationPanel.GetComponentInChildren<TextMeshProUGUI>().text = "New Turn!";
+        yield return new WaitForSeconds(1.0f);
+        notificationPanel.SetActive(false);
+        yield return null;
     }
 }

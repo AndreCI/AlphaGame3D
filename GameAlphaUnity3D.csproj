@@ -321,13 +321,17 @@
     <Compile Include="Assets\Scripts\Spells\FireMagic\FireHammer.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\BerserkerSpirit.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\FlammingSwords.cs" />
+    <Compile Include="Assets\Scripts\Spells\FrostMagic\ManaFreeze.cs" />
+    <Compile Include="Assets\Scripts\Spells\FrostMagic\CropFreeze.cs" />
     <Compile Include="Assets\Scripts\Spells\FrostMagic\Frostblast.cs" />
     <Compile Include="Assets\Scripts\Spells\FrostMagic\Frostlance.cs" />
+    <Compile Include="Assets\Scripts\Spells\GreenMagic\WaveOfVigor.cs" />
     <Compile Include="Assets\Scripts\Spells\GreenMagic\EarthLink.cs" />
     <Compile Include="Assets\Scripts\Spells\GreenMagic\Naturewrath.cs" />
     <Compile Include="Assets\Scripts\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\AttackModifierEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\ArmorGainEffect.cs" />
+    <Compile Include="Assets\Scripts\Spells\SpellEffect\RegenerationEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\NoFoodConsoEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\MouvementGainEffect.cs" />
     <Compile Include="Assets\Scripts\Spells\SpellEffect\StarvationEffect.cs" />

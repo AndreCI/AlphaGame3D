@@ -40,7 +40,8 @@ public class SpellUtils : MonoBehaviour
         STARVING,
         ARMOR_GAIN,
         MVT_GAIN,
-        NO_FOOD_CONSO
+        NO_FOOD_CONSO,
+        REGEN
     }
 
     public static Dictionary<EffectTypes, string> effectDescriptionAbsolute = new Dictionary<EffectTypes, string>
@@ -51,7 +52,8 @@ public class SpellUtils : MonoBehaviour
         {EffectTypes.ATTACK_MODIFIER, "<b>ATTACK MODIFIED: </b>Attack is modified" },
         {EffectTypes.ARMOR_GAIN, "<b>ARMOR: </b>This unit has armor, which prevents damages taken" },
         {EffectTypes.MVT_GAIN, "<b>FAST: </b>Mouvement points gained at the start of the turn is modified" },
-        {EffectTypes.NO_FOOD_CONSO, "<b>SELF SUSTAINING: </b>This unit does not consume food." },
+        {EffectTypes.NO_FOOD_CONSO, "<b>SELF SUSTAINING: </b>This unit does not consume food" },
+        {EffectTypes.REGEN, "<b>REGENERATION: </b>Start of Turn: Recover some health" },
     };
     public enum SchoolOfMagic
     {

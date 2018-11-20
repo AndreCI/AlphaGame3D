@@ -85,7 +85,6 @@ public abstract class Unit : Selectable
     {
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
         foreach (Utils.NotificationTypes type in notifications.Keys)
         {
             yield return StartCoroutine(FadeNotification(notifications[type].ToString(),type));
@@ -282,7 +281,10 @@ public abstract class Unit : Selectable
         currentPosition = path[0];
         currentPosition.UpdateUnit(this);
         currentMovementPoints -= 1;
-        UpdateCardDisplayInfo();
+        if (!(TurnManager.Instance.againstAI && TurnManager.Instance.currentPlayer.Equals(Player.Player2)))
+        {
+            UpdateCardDisplayInfo();
+        }
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
     }
 

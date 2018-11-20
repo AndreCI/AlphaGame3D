@@ -92,11 +92,12 @@ UI:
 	Implement menu
 	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 	Implement T2 help
+Change fontsize of carddisplay (spell overflow)
 	
 Graphic:
 	Implement visual effect on spell effect
 Implement unit diffrence from player
-	Implement start of turn effects
+	Implement start of turn effects + start of turn pop up
 	Implement starvation effect
 	
 Content:
@@ -105,7 +106,7 @@ Start a global reflexion before implementing anything
 Construction Time?
 Implement more building
 Implement more frost spells
-Implement more fire spells
+	Implement more fire spells
 Implement more basic spells
 Implement more spell effects
 	Implement building restr(max 1 building)

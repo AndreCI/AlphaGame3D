@@ -7,6 +7,7 @@ public class UnitEffectAnimations : MonoBehaviour
     public ParticleSystem freezeAnimation;
     public ParticleSystem attackBuffAnimation;
     public ParticleSystem berserkAnimation;
+    public ParticleSystem regenAnimation;
 
     private void Start()
     {
@@ -29,6 +30,10 @@ public class UnitEffectAnimations : MonoBehaviour
             case (SpellUtils.EffectTypes.ARMOR_GAIN):
                 berserkAnimation.Play();
                 break;
+            case (SpellUtils.EffectTypes.REGEN):
+                regenAnimation.Play();
+                break;
+
         }
     }
 
@@ -47,6 +52,9 @@ public class UnitEffectAnimations : MonoBehaviour
                 break;
             case (SpellUtils.EffectTypes.ARMOR_GAIN):
                 berserkAnimation.Stop();
+                break;
+            case (SpellUtils.EffectTypes.REGEN):
+                regenAnimation.Stop();
                 break;
         }
     }

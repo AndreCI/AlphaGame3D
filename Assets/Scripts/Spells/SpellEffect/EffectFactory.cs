@@ -28,6 +28,8 @@ public class EffectFactory {
                 return new ArmorGainEffect(type, u_, duration, amplitude);
             case SpellUtils.EffectTypes.NO_FOOD_CONSO:
                 return new NoFoodConsoEffect(type, u_, duration);
+            case SpellUtils.EffectTypes.REGEN:
+                return new RegenerationEffect(type, u_, duration, amplitude);
             default:
                 return null;
         }
@@ -49,6 +51,8 @@ public class EffectFactory {
                 return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
             case SpellUtils.EffectTypes.NO_FOOD_CONSO:
                 return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
+            case SpellUtils.EffectTypes.REGEN:
+                return SpellUtils.effectDescriptionAbsolute[type] + "  (" + amplitude + " heal) for " + duration + " turns.";
 
             default:
                 return null;

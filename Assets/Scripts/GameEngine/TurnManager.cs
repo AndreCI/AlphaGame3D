@@ -11,7 +11,22 @@ public class TurnManager{
     public TurnSubject StartTurnSubject;
     public TurnSubject EndTurnSubject;
     public TurnSubject ButtonUpdateSubject;
-    private bool againstAI;
+    public bool againstAI;
+
+    public Player inactivePlayer
+    {
+        get
+        {
+            if (Player.Player1.Equals(currentPlayer))
+            {
+                return Player.Player2;
+            }
+            else
+            {
+                return Player.Player1;
+            }
+        }
+    }
 
     public static TurnManager Instance
     {
@@ -64,8 +79,11 @@ public class TurnManager{
         {
             currentPlayer.UpdateVisibleNodes();
         }
+        currentPlayer.mana += currentPlayer.manaBank;
+        currentPlayer.manaBank = 0;
         Utils.EatFood(currentPlayer);
         StartTurnSubject.NotifyObservers(currentPlayer);
+
         GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(currentPlayer.StartOfTurn());
     }
 
@@ -84,6 +102,19 @@ public class TurnManager{
             currentPlayer.HideVisibleNodes();
         }
         currentPlayer = playerActive[playerActiveIndex];
+        if (GameManager.Instance != null)
+        {
+            if (againstAI && currentPlayer.Equals(Player.Player2))
+            {
+                GameManager.Instance.SetUIVisible(false);
+            }
+            else
+            {
+                GameManager.Instance.SetUIVisible(true);
+                GameManager.Instance.StartCoroutine(GameManager.Instance.DisplayStartOfTurn());
+
+            }
+        }
         StartTurn();
         
     }

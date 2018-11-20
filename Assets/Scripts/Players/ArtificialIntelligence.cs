@@ -53,7 +53,9 @@ public class ArtificialIntelligence : Player
         if (target != null)
         {
             u.ShowPotentialMove(target);
+            CardDisplay.Instance.DisableCardDisplay();
             yield return u.StartCoroutine(u.StartAIMove());
+            CardDisplay.Instance.DisableCardDisplay();
             u.HidePotentialMove();
             u.HidePossibleMoves();
         }

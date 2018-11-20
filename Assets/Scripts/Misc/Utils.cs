@@ -35,6 +35,8 @@ public static class Utils
         {"firehammer", FireHammer.Instance },
         {"flammingswords", FlammingSwords.Instance },
         {"frostblast", Frostblast.Instance },
+        {"cropfreeze", CropFreeze.Instance },
+        {"manafreeze", ManaFreeze.Instance },
         {"frostlance", Frostlance.Instance },
         {"arcaneburn", Arcaneblast.Instance },
         {"earthlink", EarthLink.Instance },

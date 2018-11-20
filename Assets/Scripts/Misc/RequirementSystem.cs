@@ -47,9 +47,15 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(Frostlance));
         AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(CropFreeze));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(ManaFreeze));
+        AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(Naturewrath));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(EarthLink));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(WaveOfVigor));
         AddUnlocksAndLocks(depth2, depth3);
 
         start = depth0;

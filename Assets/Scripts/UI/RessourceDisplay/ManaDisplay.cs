@@ -9,6 +9,7 @@ public class ManaDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mana.text = TurnManager.Instance.currentPlayer.mana.ToString();
+        string manabank = TurnManager.Instance.currentPlayer.manaBank>0? " (" + TurnManager.Instance.currentPlayer.manaBank.ToString() + ")" : "";
+        mana.text = TurnManager.Instance.currentPlayer.mana.ToString() + manabank;
     }
 }
