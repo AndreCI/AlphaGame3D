@@ -43,7 +43,10 @@ public class TurnManager{
 	public void Update () {
         if (Input.GetKeyDown("space"))
         {
-            EndTurn();
+            if (againstAI && ((ArtificialIntelligence)Player.Player2).turnFinished)
+            {
+                EndTurn();
+            }
         }
 	}
     
@@ -63,7 +66,7 @@ public class TurnManager{
         }
         Utils.EatFood(currentPlayer);
         StartTurnSubject.NotifyObservers(currentPlayer);
-        currentPlayer.StartOfTurn();
+        GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(currentPlayer.StartOfTurn());
     }
 
     void NewTurn()

@@ -32,15 +32,19 @@ public abstract class Unit : Selectable
     protected List<Node> path; //selected path to node
     protected bool moving;
     public List<UnitEffect> currentEffect;
+    public int armor;
+    public int foodConso;
 
     public virtual void Setup()
     {
+        foodConso = 1;
         currentAttackModifier = 0;
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
         moving = false;
         currentEffect = new List<UnitEffect>();
+        armor = 0;
     }
 
     public override void Notify(Player player)
@@ -49,24 +53,44 @@ public abstract class Unit : Selectable
         {
             currentMovementPoints = maxMovementPoints;
             currentAttackModifier = 0;
-            StartCoroutine(DisplayAndApplyNotification(owner, currentEffect));
+            armor = 0;
+            StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
         }
 
     }
 
-    public IEnumerator DisplayAndApplyNotification(Player currentPlayer, List<UnitEffect> currentEffects)
+    public IEnumerator DisplayAndApplyCurrentEffects(Player currentPlayer, List<UnitEffect> currentEffects)
     {
+        currentEffect.RemoveAll(ue => ue.duration<=0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        Dictionary<Utils.notificationTypes, int> effectNotification = new Dictionary<Utils.notificationTypes, int>();
+        Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
         foreach (UnitEffect ue in currentEffect)
         {
             System.Object[] data = ue.ApplyEffect();
-            
-            yield return StartCoroutine(FadeNotification((string)data[1], (Utils.notificationTypes)data[0]));
+            if (ue == null)
+            {
+                yield return null;
+            }
+            else
+            {
+                yield return StartCoroutine(FadeNotification((string)data[1], (Utils.NotificationTypes)data[0]));
+            }
         }
         notificationPanel.SetActive(false);
         currentEffect.RemoveAll(ue => ue.effectEnded); //safe removing of elements
+        yield return null;
+    }
+    public IEnumerator DisplayNotifications(Player currentPlayer, Dictionary<Utils.NotificationTypes, int> notifications)
+    {
+        notificationPanel.SetActive(true);
+        notificationPanel.transform.rotation = Camera.main.transform.rotation;
+        Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
+        foreach (Utils.NotificationTypes type in notifications.Keys)
+        {
+            yield return StartCoroutine(FadeNotification(notifications[type].ToString(),type));
+        }
+        notificationPanel.SetActive(false);
         yield return null;
     }
 
@@ -87,9 +111,29 @@ public abstract class Unit : Selectable
         healthCanvas.enabled = v;
     }
 
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        StartCoroutine(DisplayNotifications(owner, new Dictionary<Utils.NotificationTypes, int> {
+            { Utils.NotificationTypes.HEAL, amount } }));
+        healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
+
+
+    }
+
     public void TakesDamage(int amount)
     {
-        currentHealth = currentHealth - amount;
+        int amountReduced = amount - armor;
+        if (amountReduced <= 0)
+        {
+            amountReduced = 0;
+        }
+        currentHealth = currentHealth - amountReduced;
+        StartCoroutine(DisplayNotifications(owner, new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
         if (currentHealth <= 0)
         {
             Death();
@@ -161,11 +205,14 @@ public abstract class Unit : Selectable
 
     public void HidePossibleMoves()
     {
-        foreach (NodeUtils.NodeWrapper node in possibleMoves)
+        if (possibleMoves != null)
         {
-            node.root.MakeIdle();
+            foreach (NodeUtils.NodeWrapper node in possibleMoves)
+            {
+                node.root.MakeIdle();
+            }
+            possibleMoves = null;
         }
-        possibleMoves = null;
     }
 
     public void ShowPotentialMove(Node target)
@@ -190,18 +237,21 @@ public abstract class Unit : Selectable
 
     public void HidePotentialMove()
     {
-        foreach (NodeUtils.NodeWrapper node in possibleMoves)
+        if (potentialMove != null)
         {
-            if (node.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+            foreach (NodeUtils.NodeWrapper node in potentialMove)
             {
-                node.root.state = Node.STATE.SELECTABLE;
+                if (node.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+                {
+                    node.root.state = Node.STATE.SELECTABLE;
+                }
+                else
+                {
+                    node.root.state = Node.STATE.ATTACKABLE_HIDDEN;
+                }
             }
-            else
-            {
-                node.root.state = Node.STATE.ATTACKABLE_HIDDEN;
-            }
+            potentialMove = null;
         }
-        potentialMove = null;
     }
     protected void FaceNextNode(Node nextNode)
     {
@@ -236,7 +286,7 @@ public abstract class Unit : Selectable
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
     }
 
-    public virtual IEnumerator StartMoving()
+    public virtual IEnumerator StartMoving(bool hideUI=false)
     {
         moving = true;
         path = new List<Node>();
@@ -244,13 +294,22 @@ public abstract class Unit : Selectable
         {
             path.Add(node.root);
         }
+        if (hideUI)
+        {
+            HidePotentialMove();
+            HidePossibleMoves();
+        }
         path.Reverse();
         path.Remove(path[0]);
         FaceNextNode(path[0]);
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(0.0f);
 
     }
-    public void AIMove()
+    public virtual IEnumerator AITransitionToMove()
+    {
+        yield return new WaitForEndOfFrame();
+    }
+    public IEnumerator AIMove()
     {
         bool visible = false;
         while(path.Count > 0 && !visible)
@@ -258,27 +317,35 @@ public abstract class Unit : Selectable
             if (Player.Player1.visibleNodes.Contains(path[0]))
             {
                 SetVisible(true);
-                StartCoroutine(StartMoving());
                 visible = true;
+                moving = true;
+                HidePotentialMove();
+                HidePossibleMoves();
+                yield return StartCoroutine(AITransitionToMove());
             }
             else
             {
                 FaceNextNode(path[0]);
-                movementSphere.localPosition = new Vector3(path[0].position.x - currentPosition.position.x, movementSphere.localPosition.y, path[0].position.z - currentPosition.position.z);
+                movementSphere.localPosition = new Vector3(path[0].position.x - transform.position.x, movementSphere.localPosition.y, path[0].position.z - transform.position.z);
                 currentPosition.ResetNode();
                 currentPosition = path[0];
                 currentPosition.UpdateUnit(this);
                 currentMovementPoints -= 1;
                 path.Remove(path[0]);
+                //yield return new WaitForSeconds(0.2f);
             }
         }
+        HidePotentialMove();
+        HidePossibleMoves();
+
+        yield return new WaitForSeconds(0.1f);
     }
 
-    public void StartAIMove()
+    public IEnumerator StartAIMove()
     {
         if (Player.Player1.visibleNodes.Contains(currentPosition))
         {
-            StartCoroutine(StartMoving());
+            yield return StartCoroutine(StartMoving(hideUI:true));
         }
         else
         {
@@ -290,7 +357,7 @@ public abstract class Unit : Selectable
             path.Reverse();
             path.Remove(path[0]);
             FaceNextNode(path[0]);
-            AIMove();
+            yield return StartCoroutine(AIMove());
         }
     }
 

@@ -50,7 +50,7 @@ public class ConstructionManager : Observer
         {
             Selector.Instance.currentObject = (building);
             building.UpdateCardDisplayInfo();
-            NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, 3);
+            NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, TurnManager.Instance.currentPlayer.buildingRange);
             foreach (NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
             {
                 if (nw.state == NodeUtils.NodeWrapper.STATE.EMPTY)

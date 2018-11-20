@@ -8,7 +8,7 @@ public class Barracks : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        startOfTurnNotificationData = new Dictionary<Utils.notificationTypes, int>();
+        startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int>();
     }
 
     public override void UpgradeToT2()

@@ -30,10 +30,10 @@ public abstract class Selectable : Observer
         currentPosition = node;
     }
 
-    public IEnumerator FadeNotification(string notif, Utils.notificationTypes type)
+    public IEnumerator FadeNotification(string notif, Utils.NotificationTypes type)
     {
         Color color = Utils.typesToColors[type];
-        if (type == Utils.notificationTypes.BUILDING)
+        if (type == Utils.NotificationTypes.BUILDING)
         {
             float fontSize = notificationText.fontSize;
 

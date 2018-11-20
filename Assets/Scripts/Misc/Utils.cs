@@ -8,12 +8,13 @@ public static class Utils
     public static void EatFood(Player currentPlayer)
     {
         currentPlayer.food = currentPlayer.foodPrediction;
+        List<Unit> eatingUnits = currentPlayer.currentUnits;
+        eatingUnits.RemoveAll(u => u.foodConso == 0);
         int i = currentPlayer.food;
-        int j = currentPlayer.currentUnits.Count;
-        if (i < currentPlayer.currentUnits.Count)
+        if (i < eatingUnits.Count)
         {
-            List<Unit> unitFed = GetRandomElements<Unit>(currentPlayer.currentUnits, i);
-            foreach(Unit u in currentPlayer.currentUnits)
+            List<Unit> unitFed = GetRandomElements<Unit>(eatingUnits, i);
+            foreach(Unit u in eatingUnits)
             {
                 if (!unitFed.Contains(u))
                 {
@@ -21,7 +22,7 @@ public static class Utils
                 }
             }
         }
-        currentPlayer.food -= j;
+        currentPlayer.food -= eatingUnits.Count;
         currentPlayer.foodPrediction = 0; 
     }
     public static List<T> GetRandomElements<T>(this IEnumerable<T> list, int elementsCount)
@@ -36,52 +37,61 @@ public static class Utils
         {"frostblast", Frostblast.Instance },
         {"frostlance", Frostlance.Instance },
         {"arcaneburn", Arcaneblast.Instance },
+        {"earthlink", EarthLink.Instance },
+        {"berserkerspirit", BerserkerSpirit.Instance },
         {"arcaneintellect", ArcaneIntellect.Instance }
         };
 
-    public static void ApplyNotification(notificationTypes notType, int amount, Player currentPlayer)
+    public static void ApplyNotification(NotificationTypes notType, int amount, Player currentPlayer)
     {
         switch (notType)
         {
-            case notificationTypes.GOLD:
+            case NotificationTypes.GOLD:
                 currentPlayer.gold += amount;
                 break;
-            case notificationTypes.MANA:
+            case NotificationTypes.MANA:
                 currentPlayer.mana += amount;
                 break;
-            case notificationTypes.FOOD:
+            case NotificationTypes.FOOD:
                 currentPlayer.foodPrediction += amount;
                 break;
-            case notificationTypes.ACTION_POINT:
+            case NotificationTypes.ACTION_POINT:
                 currentPlayer.actionPoints += amount;
                 break;
         }
     }
 
-    public static Dictionary<notificationTypes, Color> typesToColors = new Dictionary<notificationTypes, Color>
+    public static Dictionary<NotificationTypes, Color> typesToColors = new Dictionary<NotificationTypes, Color>
     {
-        { notificationTypes.GOLD, Color.yellow },
-        { notificationTypes.MANA, Color.cyan },
-        { notificationTypes.FREEZE, Color.cyan },
-        { notificationTypes.ACTION_POINT, Color.red },
-        { notificationTypes.BUILDING, Color.red },
-        { notificationTypes.DAMAGE, Color.red },
-        { notificationTypes.FOOD, Color.green },
-        { notificationTypes.BUFF_ATCK, Color.green },
-        { notificationTypes.DEBUFF_ATCK, Color.red },
+        { NotificationTypes.GOLD, Color.yellow },
+        { NotificationTypes.MANA, Color.cyan },
+        { NotificationTypes.ACTION_POINT, Color.red },
+        { NotificationTypes.BUILDING, Color.red },
+        { NotificationTypes.FOOD, Color.green },
+
+        { NotificationTypes.BUFF_ATCK, Color.green },
+        { NotificationTypes.DEBUFF_ATCK, Color.red },
+        { NotificationTypes.BUFF_MVT, Color.blue },
+        { NotificationTypes.BUFF_ARMOR, Color.grey },
+        { NotificationTypes.HEAL, Color.green },
+        { NotificationTypes.DEBUFF_MVT, Color.cyan },
+        { NotificationTypes.DAMAGE, Color.red },
 
     };
 
-    public enum notificationTypes {
+    public enum NotificationTypes {
         BUILDING,
         GOLD,
         MANA,
         ACTION_POINT,
         FOOD,
         DAMAGE,
-        FREEZE,
+        DEBUFF_MVT,
         BUFF_ATCK,
-        DEBUFF_ATCK
+        DEBUFF_ATCK,
+        BUFF_MVT,
+        BUFF_ARMOR,
+        HEAL
     }
 }
 public static class hasComponent

@@ -9,12 +9,12 @@
     {
         base.ApplyEffect();
         u.currentMovementPoints -= 1;
-        System.Object[] e = { Utils.notificationTypes.FREEZE, "-1" };
+        System.Object[] e = { Utils.NotificationTypes.DEBUFF_MVT, "-1" };
         return e;
     }
 
     public override string GetDescriptionRelative()
     {
-        return SpellUtils.effectDescriptionAbsolute[type] + " for " + duration + " turns.";
+        return SpellUtils.effectDescriptionAbsolute[type] + " (" + duration + " turns left).";
     }
 }

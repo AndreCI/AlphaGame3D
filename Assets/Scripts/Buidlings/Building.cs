@@ -16,7 +16,7 @@ public abstract class Building : Selectable
     public int constructionTime;
 
     public int goldCostTier2;
-    protected Dictionary<Utils.notificationTypes, int> startOfTurnNotificationData;
+    protected Dictionary<Utils.NotificationTypes, int> startOfTurnNotificationData;
 
     private void Start()
     {
@@ -104,8 +104,8 @@ public abstract class Building : Selectable
             if (constructionTime > 0)
             {
                 constructionTime -= 1;
-                StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.notificationTypes, int> {
-                    {Utils.notificationTypes.BUILDING, constructionTime }
+                StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.NotificationTypes, int> {
+                    {Utils.NotificationTypes.BUILDING, constructionTime }
                 }));
                 return;
             }
@@ -120,11 +120,11 @@ public abstract class Building : Selectable
         }
 
     }
-    public IEnumerator DisplayAndApplyNotification(Player currentPlayer, Dictionary<Utils.notificationTypes, int> notificationData)
+    public IEnumerator DisplayAndApplyNotification(Player currentPlayer, Dictionary<Utils.NotificationTypes, int> notificationData)
     {
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        foreach (Utils.notificationTypes type in notificationData.Keys)
+        foreach (Utils.NotificationTypes type in notificationData.Keys)
         {
             string data = "";
             if (notificationData[type] > 0)

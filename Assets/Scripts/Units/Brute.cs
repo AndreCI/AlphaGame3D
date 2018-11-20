@@ -79,7 +79,7 @@ public class Brute : Unit
         base.FinishMove();
     }
 
-    public override IEnumerator StartMoving()
+    public override IEnumerator StartMoving(bool hideUI=false)
     {
         StartCoroutine(base.StartMoving());
         if (path[0].Attackable(this.currentPosition))

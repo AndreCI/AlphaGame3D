@@ -13,11 +13,7 @@ public abstract class UnitEffect
             return duration <= 0;
         }
     }
-    
-    public UnitEffect()
-    {
 
-    }
     public UnitEffect(SpellUtils.EffectTypes type_, Unit u_, int duration_)
     {
         type = type_;
@@ -38,7 +34,6 @@ public abstract class UnitEffect
 
     public virtual void End()
     {
-        duration = 0;
         int counter = 0;
         foreach (UnitEffect ue in u.currentEffect)
         {

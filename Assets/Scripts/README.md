@@ -11,11 +11,11 @@ Need to think about the general balance and ideas behind magic
 -> try to assign magic tree to playstyle, then balance
 give clear and coherent bondaries between schoolom
 brainstorm ideas: 
-	arcane=cheap, quick, non effective, low impact, mana sink
-	fire=aoe, self damage, aggression, buffs
-	frost=control, mana gain, disruption (food removal?)
-	green=value, economic power (food & gold?), heal
-	void=powerful, costly, high cooldown, combos?
+	arcane=cheap, quick, non effective, low impact, mana sink   [COLOR:WHITE/VIOLET/DARKBLUE] PINK?
+	fire=aoe, self damage, aggression, buffs					[COLOR:RED/ORANGE/YELLOW]
+	frost=control, mana gain, disruption (food removal?)		[COLOR:BLUE/CYAN/VIOLET]
+	green=value, economic power (food & gold?), heal			[COLOR:GREEN/YELLOW/CYAN]
+	void=powerful, costly, high cooldown, combos?				[COLOR:VIOLET/BLACK]
 Each schoolom should have spells available to all that represents its spirit:
 	arcane=[{Deal a little damage(2?) for 1 mana with no cooldown: cheap, non optimal, quick, low impact, mana sink}
 		{Create a wall (with HP, attackable) which disappears after X turns?: quick, low impact}
@@ -120,7 +120,7 @@ Look update methods
 Caching components
 
 Balance
-Refactor code (remove prefabs from other places than buttons)
+Refactor code (remove prefabs from other places than buttons?
 debug
 user test
 implement day/night for time constraint

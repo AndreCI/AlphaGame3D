@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,6 +45,8 @@ public class Player
     protected List<Node> visibleNodesPrev;
     public Dictionary<SpellUtils.SchoolOfMagic, int> schoolOfMagicLevels;
     public RequirementSystem requirementSystem;
+    private int buildingVisiblity;
+    public int buildingRange;
 
     public static Player getPlayerFromId(int id)
     {
@@ -80,7 +83,7 @@ public class Player
         visibleNodes = new List<Node>();
         foreach (Building buiding in currentBuildings)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, 3);
+            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, buildingVisiblity);
             List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
             foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
             {
@@ -141,6 +144,10 @@ public class Player
             { SpellUtils.SchoolOfMagic.FIRE, 0 },
             {SpellUtils.SchoolOfMagic.FROST, 0 }
         };
+
+
+        buildingVisiblity = 10;
+        buildingRange = 10;
     }
 
     public void AddGold(int amount)
@@ -182,7 +189,7 @@ public class Player
     public string GetUnavailableMessage(Selectable target)
     {
         List<string> messages = new List<String>();
-        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType());
+        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType()) && target.GetType()!=typeof(Shrine);
         if(alreadyOwned){
             return "You already own this building.";
         }
@@ -242,7 +249,7 @@ public class Player
 
     public bool CheckIfAvailable(Selectable target)
     {
-        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType());
+        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType()) && target.GetType() != typeof(Shrine);
         bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType(), target.isTier2);
         bool cost = target.goldCost <= gold && target.manaCost <= mana && target.actionPointCost <= actionPoints;
         bool levelbool = true;
@@ -258,9 +265,9 @@ public class Player
         return !alreadyOwned && requierementsbool && cost && levelbool && cooldown;
 
     }
-    public virtual void StartOfTurn()
+    public virtual IEnumerator StartOfTurn()
     {
-
+        yield return new WaitForSeconds(0.0f);
     }
 
     public Selectable GetSelectableFromType(Type type)

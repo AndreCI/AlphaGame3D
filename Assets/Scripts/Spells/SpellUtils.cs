@@ -37,7 +37,10 @@ public class SpellUtils : MonoBehaviour
         FROST,
         BURN,
         ATTACK_MODIFIER,
-        STARVING
+        STARVING,
+        ARMOR_GAIN,
+        MVT_GAIN,
+        NO_FOOD_CONSO
     }
 
     public static Dictionary<EffectTypes, string> effectDescriptionAbsolute = new Dictionary<EffectTypes, string>
@@ -45,7 +48,10 @@ public class SpellUtils : MonoBehaviour
         {EffectTypes.STARVING, "<b>STARVING: </b>You need more food!" },
         {EffectTypes.FROST, "<b>FREEZE: </b>Start of Turn: Lose 1 Movement Point"},
         {EffectTypes.BURN, "<b>BURN: </b>Start of Turn: Lose 5 Health" },
-        {EffectTypes.ATTACK_MODIFIER, "<b>ATTACK MODIFIED: </b>Attack is modified" }
+        {EffectTypes.ATTACK_MODIFIER, "<b>ATTACK MODIFIED: </b>Attack is modified" },
+        {EffectTypes.ARMOR_GAIN, "<b>ARMOR: </b>This unit has armor, which prevents damages taken" },
+        {EffectTypes.MVT_GAIN, "<b>FAST: </b>Mouvement points gained at the start of the turn is modified" },
+        {EffectTypes.NO_FOOD_CONSO, "<b>SELF SUSTAINING: </b>This unit does not consume food." },
     };
     public enum SchoolOfMagic
     {

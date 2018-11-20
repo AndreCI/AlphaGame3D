@@ -22,6 +22,12 @@ public class EffectFactory {
                 return new BurnEffect(type, u_, duration);
             case SpellUtils.EffectTypes.ATTACK_MODIFIER:
                 return new AttackModifierEffect(type, u_, duration, amplitude);
+            case SpellUtils.EffectTypes.MVT_GAIN:
+                return new MouvementGainEffect(type, u_, duration, amplitude);
+            case SpellUtils.EffectTypes.ARMOR_GAIN:
+                return new ArmorGainEffect(type, u_, duration, amplitude);
+            case SpellUtils.EffectTypes.NO_FOOD_CONSO:
+                return new NoFoodConsoEffect(type, u_, duration);
             default:
                 return null;
         }
@@ -37,6 +43,13 @@ public class EffectFactory {
                 return SpellUtils.effectDescriptionAbsolute[type] + " for " + duration + " turns.";
             case SpellUtils.EffectTypes.ATTACK_MODIFIER:
                 return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
+            case SpellUtils.EffectTypes.MVT_GAIN:
+                return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
+            case SpellUtils.EffectTypes.ARMOR_GAIN:
+                return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
+            case SpellUtils.EffectTypes.NO_FOOD_CONSO:
+                return SpellUtils.effectDescriptionAbsolute[type] + " by " + amplitude + " for " + duration + " turns.";
+
             default:
                 return null;
         }

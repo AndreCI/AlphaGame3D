@@ -7,10 +7,10 @@ public class HallCenter : DefensiveBuilding {
 	// Use this for initialization
 	void Start () {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        startOfTurnNotificationData = new Dictionary<Utils.notificationTypes, int> {
-            {Utils.notificationTypes.GOLD, 8 },
-            {Utils.notificationTypes.FOOD, 4 },
-            {Utils.notificationTypes.ACTION_POINT, 1 }
+        startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
+            {Utils.NotificationTypes.GOLD, 8 },
+            {Utils.NotificationTypes.FOOD, 4 },
+            {Utils.NotificationTypes.ACTION_POINT, 1 }
         };
     }
 
@@ -24,7 +24,7 @@ public class HallCenter : DefensiveBuilding {
     {
         maxHealth += maxHealthT2Upgrade;
         currentHealth += maxHealthT2Upgrade;
-        startOfTurnNotificationData[Utils.notificationTypes.ACTION_POINT] += 1;
+        startOfTurnNotificationData[Utils.NotificationTypes.ACTION_POINT] += 1;
         base.UpgradeToT2();
     }
 }

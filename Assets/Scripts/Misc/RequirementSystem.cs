@@ -39,7 +39,7 @@ public class RequirementSystem {
         //Shrine
         NodeR depth3 = new NodeR(typeof(Fireblast));
         AddUnlocksAndLocks(depth2, depth3);
-        depth3 = new NodeR(typeof(FireHammer));
+        depth3 = new NodeR(typeof(BerserkerSpirit));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(FlammingSwords));
         AddUnlocksAndLocks(depth2, depth3);
@@ -48,6 +48,8 @@ public class RequirementSystem {
         depth3 = new NodeR(typeof(Frostlance));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(Naturewrath));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(EarthLink));
         AddUnlocksAndLocks(depth2, depth3);
 
         start = depth0;

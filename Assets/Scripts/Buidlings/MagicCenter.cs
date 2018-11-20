@@ -8,15 +8,15 @@ public class MagicCenter : Building
     void Start()
     {
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
-        startOfTurnNotificationData = new Dictionary<Utils.notificationTypes, int> {
-            {Utils.notificationTypes.MANA, 4 }
+        startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
+            {Utils.NotificationTypes.MANA, 4 }
         };
     }
 
     public override void UpgradeToT2()
     {
         base.UpgradeToT2();
-        startOfTurnNotificationData[Utils.notificationTypes.MANA] += 4;
+        startOfTurnNotificationData[Utils.NotificationTypes.MANA] += 4;
     }
 
 }

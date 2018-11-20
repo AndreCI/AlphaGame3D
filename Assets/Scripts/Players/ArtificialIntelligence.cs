@@ -1,37 +1,63 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class ArtificialIntelligence : Player
 {
+    public bool turnFinished;
 
     public ArtificialIntelligence(int id_) : base(id_)
     {
+        turnFinished = true;
     }
-    public override void StartOfTurn()
+    public override IEnumerator StartOfTurn()
     {
+        turnFinished = false;
         GetVisibleNodes();
         gold += 10;
-        if (currentBuildings.Count == 1){
+        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(BasicRush());
+
+        turnFinished = true;
+        EndOfTurn();
+        yield return new WaitForSeconds(0.0f);
+    }
+    public IEnumerator BasicRush()
+    {
+        if (currentBuildings.Count == 1)
+        {
             PlaceBuilding(ConstructionManager.Instance.Barracks);
         }
         PlaceUnit(ConstructionManager.Instance.Warrior);
         //PlaceUnit(ConstructionManager.Instance.Wizard);
-        foreach (Unit u in currentUnits)
+        if (currentUnits.Count != 0)
         {
-            MoveUnit(u);
+            yield return currentUnits[0].StartCoroutine(MoveAllUnits()); //get startcoroutine from unit
         }
-        
-        EndOfTurn();
-
+        yield return new WaitForSeconds(0.0f);
+    }
+    
+    private IEnumerator MoveAllUnits()
+    {
+        foreach(Unit u in currentUnits)
+        {
+            yield return u.StartCoroutine(MoveUnit(u));
+        }
+        yield return new WaitForSeconds(0.0f) ;
     }
 
-    private void MoveUnit(Unit u)
+    private IEnumerator MoveUnit(Unit u)
     {
         Node target = DecideUnitMovement(u);
-        u.ShowPotentialMove(target);
-        u.StartAIMove();
-        u.HidePotentialMove();
-        u.HidePossibleMoves();
+        if (target != null)
+        {
+            u.ShowPotentialMove(target);
+            yield return u.StartCoroutine(u.StartAIMove());
+            u.HidePotentialMove();
+            u.HidePossibleMoves();
+        }
+        yield return new WaitForSeconds(0.0f);
     }
     private Node DecideUnitMovement(Unit u)
     {
@@ -53,47 +79,36 @@ public class ArtificialIntelligence : Player
         if (attackables.Count != 0) {
             target = DecideUnitMovementAttackableNodes(attackables);
         }
-        else {
+        else if(goable.Count!=0){
             target = DecideUnitMovementUnattackableNodes(goable);
-        }
-            return target;
+        } 
+        return target;
     }
     private Node DecideUnitMovementAttackableNodes(List<Node> attackables)
     {
-        List<int> priority = new List<int>();
+        Dictionary<Node, int> priority = new Dictionary<Node, int>();
         foreach(Node n in attackables)
         {
             if (n.building != null && typeof(DefensiveBuilding).IsAssignableFrom(n.building.GetType())) {
                 if (typeof(HallCenter).IsAssignableFrom(n.building.GetType()))
                 {
-                    priority.Add(1000);
+                    priority.Add(n, 1000);
                 }
                 else
                 {
-                    priority.Add(((DefensiveBuilding)n.building).currentHealth);
+                    priority.Add(n, ((DefensiveBuilding)n.building).currentHealth);
                 }
             } else if (n.GetUnit() != null && n.GetUnit().GetType() == typeof(Wizard))
             {
-                priority.Add(100);
+                priority.Add(n, 100);
             }
             else
             {
-                priority.Add(n.GetUnit().currentHealth);
+                priority.Add(n, n.GetUnit().currentHealth);
             }
         }
-        int maxIdx = 0;
-        int maxPrio = 0;
-        for(int j=0; j<priority.Count; j++)
-        {
-            int i = priority[j];
-            if (i > maxPrio)
-            {
-                maxIdx = j;
-                maxPrio = i;
-            }
-        }
+        return priority.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
 
-        return attackables[maxIdx];
     }
 
     private Node DecideUnitMovementUnattackableNodes(List<Node> goable)
