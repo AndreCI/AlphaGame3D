@@ -37,9 +37,15 @@ public class ArtificialIntelligence : Player
             yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
             yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
         }
-        else if(turnNumber == 6 || currentUnits.Count > 4)
+        else if(turnNumber == 6 || food < 1)
         {
             yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
+        }else if(turnNumber == 8)
+        {
+            yield return UpgradeToT2((Building)GetSelectableFromType(typeof(Barracks)));
+        }else if(turnNumber > 8)
+        {
+
         }
         yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
         yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
@@ -196,6 +202,12 @@ public class ArtificialIntelligence : Player
         {
             selectables[randIdx].SetVisible(false);
         }
+        yield return new WaitForSeconds(0.1f);
+    }
+
+    private IEnumerator UpgradeToT2(Building b)
+    {
+        b.UpgradeToT2();
         yield return new WaitForSeconds(0.1f);
     }
     

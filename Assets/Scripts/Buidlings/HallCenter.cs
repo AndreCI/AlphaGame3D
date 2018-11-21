@@ -10,7 +10,7 @@ public class HallCenter : DefensiveBuilding {
         startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
             {Utils.NotificationTypes.GOLD, 8 },
             {Utils.NotificationTypes.FOOD, 4 },
-            {Utils.NotificationTypes.ACTION_POINT, 1 }
+            {Utils.NotificationTypes.ACTION_POINT, 2 }
         };
     }
 

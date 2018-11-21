@@ -43,6 +43,7 @@ public abstract class Unit : Selectable
         currentMovementPoints = maxMovementPoints;
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
         moving = false;
+        visible = true;
         currentEffect = new List<UnitEffect>();
         armor = 0;
     }
@@ -68,7 +69,7 @@ public abstract class Unit : Selectable
         foreach (UnitEffect ue in currentEffect)
         {
             System.Object[] data = ue.ApplyEffect();
-            if (data == null)
+            if (data == null || !visible)
             {
                 yield return null;
             }
@@ -108,6 +109,7 @@ public abstract class Unit : Selectable
         }
         //prefab.SetActive(v);
         healthCanvas.enabled = v;
+        visible = v;
     }
 
     public void Heal(int amount)

@@ -15,6 +15,7 @@ public abstract class Selectable : Observer
     protected CardDisplay cardDisplay;
     public GameObject notificationPanel;
     public TextMeshProUGUI notificationText;
+    public bool visible;
 
     public bool isTier2;
     private void Start()

@@ -28,7 +28,9 @@ public class Node : MonoBehaviour
         IDLE_COLOR,
         SELECTABLE_COLOR,
         ATTACKABLE_COLOR,
-        VALIDATION_COLOR
+        VALIDATION_COLOR,
+        PLAYER1_COLOR,
+        PLAYER2_COLOR
     }
 
     private Dictionary<COLORS, Color> colorDictionary;
@@ -51,7 +53,9 @@ public class Node : MonoBehaviour
             { COLORS.IDLE_COLOR, Color.black },
             { COLORS.ATTACKABLE_COLOR, Color.red },
             { COLORS.SELECTABLE_COLOR, Color.white },
-            { COLORS.VALIDATION_COLOR, Color.green }
+            { COLORS.VALIDATION_COLOR, Color.green },
+            {COLORS.PLAYER1_COLOR, Color.green },
+            {COLORS.PLAYER2_COLOR, Color.red }
         };
         position = transform.position;
         state = STATE.IDLE;
@@ -243,6 +247,16 @@ public class Node : MonoBehaviour
     public void MakeIdle()
     {
         SetSelectedColor(COLORS.IDLE_COLOR);
+        if (unit != null && unit.visible)
+        {
+            if(unit.owner == Player.Player1)
+            {
+                SetSelectedColor(COLORS.PLAYER1_COLOR);
+            }else if (unit.owner == Player.Player2)
+            {
+                SetSelectedColor(COLORS.PLAYER2_COLOR);
+            }
+        }
         state = STATE.IDLE;
     }
 
@@ -251,11 +265,27 @@ public class Node : MonoBehaviour
         unit = null;
         building = null;
         walkable = true;
+        if (state == STATE.IDLE)
+        {
+            SetSelectedColor(COLORS.IDLE_COLOR);
+        }
+        SetSelectedColor(COLORS.IDLE_COLOR);
     }
 
     public void UpdateUnit(Unit unit_)
     {
         unit = unit_;
+        if (unit != null && unit.visible)
+        {
+            if (unit.owner == Player.Player1)
+            {
+                SetSelectedColor(COLORS.PLAYER1_COLOR);
+            }
+            else if (unit.owner == Player.Player2)
+            {
+                SetSelectedColor(COLORS.PLAYER2_COLOR);
+            }
+        }
         walkable = false;
     }
 

@@ -720,12 +720,12 @@ MonoBehaviour:
   goldCost: 0
   manaCost: 0
   actionPointCost: 0
+  notificationPanel: {fileID: 1719784916219128}
+  notificationText: {fileID: 114328273768066754}
   isTier2: 0
   prefab: {fileID: 1358547463272360}
   sprite: {fileID: 21300000, guid: 4bd667e0a518d5a4391683048f1631e1, type: 3}
-  notificationPanel: {fileID: 1719784916219128}
-  notificationText: {fileID: 114328273768066754}
-  effectDescription: 'Start of turn: Gain 8 Gold, 4 Food and 1 Action Point. '
+  effectDescription: 'Start of turn: Gain 8 Gold, 4 Food and 2 Action Point.s '
   tier2EffectDescription: 'Start of turn: Gain 1 Action Point'
   constructionTime: 0
   goldCostTier2: 10

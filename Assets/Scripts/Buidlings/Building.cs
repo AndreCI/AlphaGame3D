@@ -21,6 +21,7 @@ public abstract class Building : Selectable
     private void Start()
     {
         isTier2 = false;
+        visible = true;
     }
     public void SetVisible(bool v)
     {
@@ -31,6 +32,7 @@ public abstract class Building : Selectable
                 r.enabled = v;
             }
         }
+        visible = v;
     }
 
     public override void Select()
@@ -138,7 +140,10 @@ public abstract class Building : Selectable
                 
             data+=notificationData[type].ToString();
             Utils.ApplyNotification(type, notificationData[type], currentPlayer);
-            yield return StartCoroutine(FadeNotification(data, type));
+            if (visible)
+            {
+                yield return StartCoroutine(FadeNotification(data, type));
+            }
         }
         notificationPanel.SetActive(false);
         yield return null;
