@@ -8,6 +8,9 @@ public class WaveOfVigor : Spell
     public SpellUtils.EffectTypes effect;
     public int buffDuration;
     public int amplitude;
+    public SpellUtils.EffectTypes effect2;
+    public int buffDuration2;
+    public int amplitude2;
 
     public void Awake()
     {
@@ -16,6 +19,7 @@ public class WaveOfVigor : Spell
             Instance = this;
             base.AwakeBase();
             effects.Add(new EffectFactory(effect, buffDuration, amplitude));
+            effects.Add(new EffectFactory(effect2, buffDuration2, amplitude2));
         }
         else
         {

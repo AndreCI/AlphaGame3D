@@ -84,7 +84,7 @@ public class Wizard : Unit
 
     public override IEnumerator StartMoving(bool hideUI = false)
     {
-        StartCoroutine(base.StartMoving());
+        StartCoroutine(base.StartMoving(hideUI:hideUI));
         if (path[0].Attackable(this.currentPosition))
         {
             Attack(path[0]);
@@ -97,8 +97,14 @@ public class Wizard : Unit
         {
             anim.SetTrigger("Moving");
         }
-        yield return new WaitForSeconds(0.0f);
+        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
 
+    }
+
+    public override IEnumerator AITransitionToMove()
+    {
+        anim.SetTrigger("Moving");
+        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
     }
     public void FootR()
     {
@@ -109,6 +115,7 @@ public class Wizard : Unit
     }
     public void Hit()
     {
+        animTransform.localPosition = new Vector3(0f, 0f, 0f);
 
     }
 

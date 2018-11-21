@@ -83,6 +83,8 @@ Basic:
 	
 Engine:
 	Change way requirements are handled
+add AI difficulty	
+
 
 UI:
 	Implement help ressource bar
@@ -92,7 +94,7 @@ UI:
 	Implement menu
 	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 	Implement T2 help
-Change fontsize of carddisplay (spell overflow)
+	Change fontsize of carddisplay (spell overflow)
 	
 Graphic:
 	Implement visual effect on spell effect
@@ -101,19 +103,20 @@ Implement unit diffrence from player
 	Implement starvation effect
 	
 Content:
-Start a global reflexion before implementing anything
+	Start a global reflexion before implementing anything
 	Implement barrack T2 unit
 Construction Time?
-Implement more building
-Implement more frost spells
+Implement more building & units
+	Implement more frost spells
 	Implement more fire spells
-Implement more basic spells
-Implement more spell effects
+?Implement more basic spells
+	Implement more spell effects
 	Implement building restr(max 1 building)
 	Implement green magic
-Implement more green spells
+?Implement more green spells
+?Implement void spells
 Implement scouts (hallcenterbuilding)
-Implement better AI
+Implement better AI (more units, spells?)
 
 Optimization:
 Implement batching

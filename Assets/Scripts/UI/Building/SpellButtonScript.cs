@@ -15,6 +15,11 @@ public class SpellButtonScript : ConstructButtonScript
         spell.RegisterButton(this);
     }
 
+    public void Update()
+    {
+        UpdateInfo();
+    }
+
     public override void OnPointerEnter(PointerEventData eventData)
     {
         spell = Utils.stringToSpell[spellname];
@@ -59,8 +64,15 @@ public class SpellButtonScript : ConstructButtonScript
         {
             spell = Utils.stringToSpell[spellname];
             spell.UpdatePlayerInfos();
-            float readyScore = ((float)(spell.cooldown) - (float)spell.playerInfos[TurnManager.Instance.currentPlayer].currentCooldown) / (float)(spell.cooldown);
-            GetComponent<Image>().fillAmount = readyScore;
+            float readyScore = 0;
+            if (spell.cooldown == 0)
+            {
+                readyScore = 1;
+            }
+            else
+            {
+                readyScore = ((float)(spell.cooldown) - (float)spell.playerInfos[TurnManager.Instance.currentPlayer].currentCooldown) / (float)(spell.cooldown);
+            }
             if (readyScore < 1)
             {
                 GetComponent<Button>().interactable = false;
@@ -69,10 +81,24 @@ public class SpellButtonScript : ConstructButtonScript
             {
                 GetComponent<Button>().interactable = true;
             }
+            GetComponent<Image>().fillAmount = readyScore;
         }
         else
         {
-            GetComponent<Image>().fillAmount = 0;
+            float readyScore = 0;
+            if (spell.cooldown == 0)
+            {
+                readyScore = 1;
+            }
+            else
+            {
+                readyScore = ((float)(spell.cooldown) - (float)spell.playerInfos[TurnManager.Instance.currentPlayer].currentCooldown) / (float)(spell.cooldown);
+            }
+            if (readyScore == 1)
+            {
+                readyScore = 0;
+            }
+            GetComponent<Image>().fillAmount = readyScore;
             GetComponent<Button>().interactable = false;
         }
     }

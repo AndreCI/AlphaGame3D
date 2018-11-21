@@ -816,11 +816,11 @@ MonoBehaviour:
   goldCost: 3
   manaCost: 0
   actionPointCost: 1
+  notificationPanel: {fileID: 1716799824513046}
+  notificationText: {fileID: 114984584831579470}
   isTier2: 1
   prefab: {fileID: 1292612748988448}
   sprite: {fileID: 21300000, guid: dc186c348fe245441be88ec82c971838, type: 3}
-  notificationPanel: {fileID: 1716799824513046}
-  notificationText: {fileID: 114984584831579470}
   effectDescription: Gain 1 blue level permanently.
   tier2EffectDescription: 
   constructionTime: 1

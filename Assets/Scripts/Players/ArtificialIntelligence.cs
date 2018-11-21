@@ -7,16 +7,22 @@ using UnityEngine;
 public class ArtificialIntelligence : Player
 {
     public bool turnFinished;
+    private int turnNumber;
 
     public ArtificialIntelligence(int id_) : base(id_)
     {
         turnFinished = true;
+        buildingRange = 5;
     }
     public override IEnumerator StartOfTurn()
     {
+        turnNumber += 1;
         turnFinished = false;
         GetVisibleNodes();
-        gold += 10;
+        gold += 20;
+        actionPoints += 5;
+        foodPrediction += 4;
+        food += 4;
         yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(BasicRush());
 
         turnFinished = true;
@@ -25,11 +31,19 @@ public class ArtificialIntelligence : Player
     }
     public IEnumerator BasicRush()
     {
-        if (currentBuildings.Count == 1)
+        if (turnNumber == 1)
         {
-            PlaceBuilding(ConstructionManager.Instance.Barracks);
+            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
         }
-        PlaceUnit(ConstructionManager.Instance.Warrior);
+        else if(turnNumber == 6 || currentUnits.Count > 4)
+        {
+            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
+        }
+        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
+        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
+        //yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
         //PlaceUnit(ConstructionManager.Instance.Wizard);
         if (currentUnits.Count != 0)
         {
@@ -38,6 +52,21 @@ public class ArtificialIntelligence : Player
         yield return new WaitForSeconds(0.0f);
     }
     
+    private void ConstructUnit()
+    {
+        int warnbr = 0;
+        int wiznbr = 0;
+        foreach(Unit u in currentUnits)
+        {
+            if (u.GetType() == typeof(Warrior))
+            {
+                warnbr += 1;
+            }else if(u.GetType() == typeof(Wizard))
+            {
+                wiznbr += 1;
+            }
+        }
+    }
     private IEnumerator MoveAllUnits()
     {
         foreach(Unit u in currentUnits)
@@ -117,6 +146,18 @@ public class ArtificialIntelligence : Player
     {
         Node target = null;
         float maxDistanceToHallCenterOnX = 0.0f;
+        List<Node> goableVisible = new List<Node>();
+        foreach (Node n in goable)
+        {
+            if (Player.player1.visibleNodes.Contains(n))
+            {
+                goableVisible.Add(n);
+            }
+        }
+        if (goableVisible.Count > 0)
+        {
+            goable = goableVisible;
+        }
         foreach (Node n in goable)
         {
             float distanceOnX = Math.Abs(n.position.x - currentBuildings[0].currentPosition.position.x);
@@ -126,47 +167,36 @@ public class ArtificialIntelligence : Player
                 maxDistanceToHallCenterOnX = distanceOnX;
             }
         }
-        if (target == null)
+        if (target == null || (goableVisible.Count>0 && maxDistanceToHallCenterOnX>45 && (new System.Random().Next(0, 100)) <=20))
         {
             target = goable[(new System.Random()).Next(0, goable.Count)];
         }
         return target;
     }
 
-    private void PlaceUnit(Unit u)
+    private IEnumerator PlaceUnit(Unit u)
     {
         ConstructionManager.Instance.SetUnitToBuild(u);
-        int idx = 0;
-        List<Node> selectables = GetSelectableNodes();
-        int randIdx = 1;// (new System.Random()).Next(0, selectables.Count);
-        foreach (Node n in selectables)
-        {
-            idx += 1;
-            if (idx > randIdx)
-            {
-                n.Construct(true);
-                n.GetUnit().SetVisible(false);
-                return;
-            }
-        }
-    }
-    private void PlaceBuilding(Building b)
-    {
-        ConstructionManager.Instance.SetBuildingToBuild(b);
-        int idx = 0;
         List<Node> selectables = GetSelectableNodes();
         int randIdx = (new System.Random()).Next(0, selectables.Count);
-        foreach(Node n in selectables)
+        selectables[randIdx].Construct(true);
+        if (!Player.player1.visibleNodes.Contains(selectables[randIdx]))
         {
-                idx += 1;
-                if (idx > randIdx)
-                {
-                    n.Construct(true);
-                    n.building.SetVisible(false);
-                    return;
-                }
-                
+            selectables[randIdx].SetVisible(false);
         }
+        yield return new WaitForSeconds(0.1f);
+    }
+    private IEnumerator PlaceBuilding(Building b)
+    {
+        ConstructionManager.Instance.SetBuildingToBuild(b);
+        List<Node> selectables = GetSelectableNodes();
+        int randIdx = (new System.Random()).Next(0, selectables.Count);
+        selectables[randIdx].Construct(true);
+        if (!Player.player1.visibleNodes.Contains(selectables[randIdx]))
+        {
+            selectables[randIdx].SetVisible(false);
+        }
+        yield return new WaitForSeconds(0.1f);
     }
     
     private List<Node> GetSelectableNodes()

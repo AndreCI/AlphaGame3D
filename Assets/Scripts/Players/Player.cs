@@ -148,8 +148,8 @@ public class Player
         };
 
 
-        buildingVisiblity = 10;
-        buildingRange = 10;
+        buildingVisiblity = 3;
+        buildingRange = 3;
     }
 
     public void AddGold(int amount)

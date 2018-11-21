@@ -102,7 +102,7 @@ public class Brute : Unit
     }
     public void Hit()
     {
-
+        animTransform.localPosition = new Vector3(0f, 0f, 0f);
     }
 
     public override Type GetSpawnPoint()

@@ -64,11 +64,11 @@ public abstract class Unit : Selectable
         currentEffect.RemoveAll(ue => ue.duration<=0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
+        //Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
         foreach (UnitEffect ue in currentEffect)
         {
             System.Object[] data = ue.ApplyEffect();
-            if (ue == null)
+            if (data == null)
             {
                 yield return null;
             }
@@ -358,8 +358,15 @@ public abstract class Unit : Selectable
             }
             path.Reverse();
             path.Remove(path[0]);
-            FaceNextNode(path[0]);
-            yield return StartCoroutine(AIMove());
+            if (path.Count == 0)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            else
+            {
+                FaceNextNode(path[0]);
+                yield return StartCoroutine(AIMove());
+            }
         }
     }
 

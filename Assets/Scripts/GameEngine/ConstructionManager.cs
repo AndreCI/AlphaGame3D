@@ -25,6 +25,7 @@ public class ConstructionManager : Observer
     [Header("Building prefabs")]
     public Building Barracks;
     public Building HallCenter;
+    public Building WindMill;
     //public Building MagicCenter;
 
     [Header("Unit prefabs")]

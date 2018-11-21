@@ -31,7 +31,6 @@ public class CropFreeze : Spell
     public override void Activate(List<Node> affectedNodes_)
     {
         int waste = TurnManager.Instance.currentPlayer.food > damage ? damage : TurnManager.Instance.currentPlayer.food;
-        Debug.Log(waste);
         TurnManager.Instance.currentPlayer.food -= waste;
         //TurnManager.Instance.currentPlayer.foodPrediction -= waste;
         TurnManager.Instance.currentPlayer.manaBank += waste;

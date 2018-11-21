@@ -86,7 +86,7 @@ public abstract class Building : Selectable
             switch (e.name)
             {
                 case "CardNameText":
-                    e.text = cardName += " T2";
+                    e.text = cardName + " T2";
                     break;
                 case "CardCostText":
                     e.text = goldCostTier2.ToString();

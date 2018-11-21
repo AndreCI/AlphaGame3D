@@ -40,6 +40,7 @@ public static class Utils
         {"frostlance", Frostlance.Instance },
         {"arcaneburn", Arcaneblast.Instance },
         {"earthlink", EarthLink.Instance },
+        {"waveofvigor", WaveOfVigor.Instance },
         {"berserkerspirit", BerserkerSpirit.Instance },
         {"arcaneintellect", ArcaneIntellect.Instance }
         };

@@ -15,6 +15,7 @@ public class NodeMesh : MonoBehaviour
     public int tileResolution;
     public Texture2D texture;
     public Material material;
+
     // Use this for initialization
     void Start()
     {
@@ -26,9 +27,9 @@ public class NodeMesh : MonoBehaviour
     private void GetNodeHigh(int x_pos, int z_pos)
     {
         int sizex = sizePerNode * NodeNumberX;
-        int sizez = sizePerNode * NodeNumberY;
+        //int sizez = sizePerNode * NodeNumberY;
         int vsizex = sizex + 1;
-        int vsizez = sizez + 1;
+        //int vsizez = sizez + 1;
         int x, z;
         int z_start = z_pos * sizePerNode;
         int x_start = x_pos * sizePerNode;
@@ -52,8 +53,8 @@ public class NodeMesh : MonoBehaviour
     {
         int sizex = sizePerNode * NodeNumberX;
         int sizez = sizePerNode * NodeNumberY;
-        int texWidth = sizePerNode * NodeNumberX * tileResolution;
-        int texHeight = sizePerNode * NodeNumberY * tileResolution;
+        //int texWidth = sizePerNode * NodeNumberX * tileResolution;
+        //int texHeight = sizePerNode * NodeNumberY * tileResolution;
         Texture2D newTexture = new Texture2D(sizex, sizez);
         int x, z;
         for (z = 0; z < sizez; z+=tileResolution)

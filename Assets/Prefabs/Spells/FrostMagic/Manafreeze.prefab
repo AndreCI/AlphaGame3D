@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4030756607256136}
-  - component: {fileID: 114922349738648082}
+  - component: {fileID: 114349054540524634}
   m_Layer: 0
   m_Name: Manafreeze
   m_TagString: Untagged
@@ -83,7 +83,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1080865565193594}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -190,7 +190,7 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &114922349738648082
+--- !u!114 &114349054540524634
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -198,29 +198,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1080865565193594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63fba0486c1beb4418ab3318343507b4, type: 3}
+  m_Script: {fileID: 11500000, guid: 6435d5de7096676448d084c1f84014b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentPosition: {fileID: 0}
-  cardName: Freeze the Land
+  cardName: Mana Freeze
   goldCost: 0
-  manaCost: 3
+  manaCost: 4
   actionPointCost: 1
   notificationPanel: {fileID: 0}
   notificationText: {fileID: 0}
   isTier2: 0
-  prefab: {fileID: 0}
-  sprite: {fileID: 0}
+  prefab: {fileID: 1080865565193594}
+  sprite: {fileID: 21300000, guid: 182644b7f9ef15b4798518b687d5ed57, type: 3}
   schoolOfMagic: 2
-  requirementLevel: 2
-  effectDescription: Destroy up to 3 food. For each food destroyed this way, each
-    player loses that much food production and gain that much mana production until
-    next turn.
-  cooldown: 2
+  requirementLevel: 1
+  effectDescription: Add all remaining mana to your mana production until next turn.
+    Gain 1 Action Point.
+  cooldown: 1
   currentCooldown: 0
   areaOfEffect: 0
   castableRange: 1
-  damage: 3
+  damage: 0
   affectedNodes: []
 --- !u!198 &198000495247997846
 ParticleSystem:

@@ -109,7 +109,7 @@ public class Warrior : Unit
     }
     public void Hit()
     {
-
+        animTransform.localPosition = new Vector3(0f, 0f, 0f);
     }
 
 
