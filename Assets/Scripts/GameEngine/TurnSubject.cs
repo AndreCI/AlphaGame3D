@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 public class TurnSubject{
 
-    public List<IObserver> observers;
+    public Dictionary<IObserver, int> observers;
     public NOTIFICATION_TYPE subjectType;
     // Use this for initialization
     public TurnSubject(NOTIFICATION_TYPE subjectType_)
     {
-        observers = new List<IObserver>();
+        observers = new Dictionary<IObserver, int>();
         subjectType = subjectType_;
     }
 
     public void NotifyObservers(Player playerActive)
     {
-        foreach(IObserver o in observers)
+        observers = observers.OrderBy(x=>x.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+        foreach(IObserver o in observers.Keys)
         {
             if (o != null)
             {
@@ -22,11 +24,11 @@ public class TurnSubject{
         }
     }
 
-    public void AddObserver(IObserver o)
+    public void AddObserver(IObserver o, int priority=5)
     {
-        if (!observers.Contains(o))
+        if (!observers.ContainsKey(o))
         {
-            observers.Add(o);
+            observers.Add(o, priority);
         }
     }
     

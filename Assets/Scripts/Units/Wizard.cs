@@ -23,43 +23,26 @@ public class Wizard : Unit
     {
         if (moving)
         {
-            MoveStep();
+            base.MoveStep();
         }
     }
 
-    protected override void MoveStep()
+    protected override void SetupNextMoveStep()
     {
-        float delta = 0.5f;
-        Vector3 currentAnimBodyPosition = anim.bodyPosition;
         if (path.Count == 0)
         {
             FinishMove();
         }
-        if ((currentAnimBodyPosition.x <= path[0].position.x + delta && currentAnimBodyPosition.x >= path[0].position.x - delta) && (currentAnimBodyPosition.z <= path[0].position.z + delta && currentAnimBodyPosition.z >= path[0].position.z - delta))
+        else
         {
-            //If anim reached the node, update the sphere and reset the anim
-            Vector3 animPos = new Vector3(animTransform.localPosition.x, 0, animTransform.localPosition.z);
-            animPos = Quaternion.Euler(0, movementSphere.localEulerAngles.y, 0) * animPos;
-            movementSphere.localPosition = movementSphere.localPosition + animPos;
-            animTransform.localPosition = new Vector3(0f, 0f, 0f);
-            base.MoveStep();
-
-            path.Remove(path[0]);
-            if (path.Count == 0)
+            FaceNextNode(path[0]);
+            if (path[0].Attackable(this.currentPosition))
             {
-                FinishMove();
+                StartCoroutine(Attack(path[0], false));
             }
-            else
+            else if (path.Count >= range && path[range - 1].Attackable(this.currentPosition))
             {
-                FaceNextNode(path[0]);
-                if (path[0].Attackable(this.currentPosition))
-                {
-                    StartCoroutine(Attack(path[0], false));
-                }else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
-                {
-                    StartCoroutine(Attack(path[path.Count - 1], false));
-                }
-                
+                StartCoroutine(Attack(path[range - 1], false));
             }
         }
     }
@@ -73,8 +56,8 @@ public class Wizard : Unit
     }
     protected override void FinishMove()
     {
-        base.FinishMove();
         anim.ResetTrigger("Moving");
+        base.FinishMove();
     }
 
     public override IEnumerator StartMoving(bool hideUI = false)
@@ -84,9 +67,9 @@ public class Wizard : Unit
         {
             StartCoroutine(Attack(path[0], false));
         }
-        else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
+        else if (path.Count >= range && path[range - 1].Attackable(this.currentPosition))
         {
-            StartCoroutine(Attack(path[path.Count - 1], false));
+            StartCoroutine(Attack(path[range - 1], false));
         }
         else
         {

@@ -13,6 +13,7 @@ public abstract class DefensiveBuilding : Building
 
     public void TakeDamage(int amount)
     {
+        StartCoroutine(FadeNotification("-"+amount.ToString(), Utils.NotificationTypes.DAMAGE));
         currentHealth -= amount;
         if (currentHealth <= 0)
         {

@@ -1900,7 +1900,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1837724638259340}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 56.517967, y: 100.5, z: 21.043509}
+  m_LocalPosition: {x: 45.940155, y: 100.5, z: 14.040405}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4971355316590166}
@@ -1955,7 +1955,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1187931970117622}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.48, y: -0.5, z: -1.11}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4046954287570592}
@@ -2104,7 +2104,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 599a5242eae835b4686d12e1fb2ed77b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2167,6 +2167,7 @@ MonoBehaviour:
   healthDisplay: {fileID: 114636343855484576}
   sprite: {fileID: 21300000, guid: 4ba70ee7ef7b853488f372691a3029d7, type: 3}
   effectAnimations: {fileID: 114574658475814694}
+  speed: 2
   maxHealth: 24
   attack: 20
   maxMovementPoints: 4
@@ -2178,6 +2179,7 @@ MonoBehaviour:
   currentAttackModifier: 0
   armor: 0
   foodConso: 1
+  direction: {x: 0, y: 0, z: 0}
   animTransform: {fileID: 4877115507119868}
   physicalAttackAnimation: {fileID: 1083240323644074, guid: 89aa4ab6a03390a46971dbc51ffb07df,
     type: 2}

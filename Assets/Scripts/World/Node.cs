@@ -139,7 +139,7 @@ public class Node : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
+    public void OnMouseDown()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
@@ -149,7 +149,7 @@ public class Node : MonoBehaviour
         {
             StartCoroutine(((Unit)Selector.Instance.currentObject).StartMoving());
         }
-        else if (!walkable && ConstructionManager.Instance.canConstruct && ConstructionManager.Instance.mode == "spell" && state==STATE.SPELL_SELECTABLE_FINAL)
+        else if (ConstructionManager.Instance.canConstruct && ConstructionManager.Instance.mode == "spell" && state==STATE.SPELL_SELECTABLE_FINAL)
         {
             ConstructionManager.Instance.SpellNodeSelected(this);
         }else if(state == STATE.SPELL_SELECTED_FINAL)
@@ -196,7 +196,7 @@ public class Node : MonoBehaviour
             Selector.Instance.Select(building);
         }
     }
-    private void OnMouseOver()
+    public void OnMouseOver()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
@@ -219,7 +219,7 @@ public class Node : MonoBehaviour
             }
         }
     }
-    private void OnMouseExit()
+    public void OnMouseExit()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {

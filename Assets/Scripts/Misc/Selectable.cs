@@ -61,4 +61,27 @@ public abstract class Selectable : MonoBehaviour, IObserver
     }
 
     public abstract void Notify(Player player, TurnSubject.NOTIFICATION_TYPE subjectType);
+
+
+    private void OnMouseDown()
+    {
+        if (currentPosition != null)
+        {
+            currentPosition.OnMouseDown();
+        }
+    }
+    private void OnMouseOver()
+    {
+        if (currentPosition != null)
+        {
+            currentPosition.OnMouseOver();
+        }
+    }
+    private void OnMouseExit()
+    {
+        if (currentPosition != null)
+        {
+            currentPosition.OnMouseExit();
+        }
+    }
 }

@@ -39,10 +39,12 @@ public static class Utils
         {"manafreeze", ManaFreeze.Instance },
         {"frostlance", Frostlance.Instance },
         {"arcaneburn", Arcaneblast.Instance },
+        {"arcanemirage", ArcaneMirage.Instance },
         {"earthlink", EarthLink.Instance },
         {"waveofvigor", WaveOfVigor.Instance },
         {"berserkerspirit", BerserkerSpirit.Instance },
-        {"arcaneintellect", ArcaneIntellect.Instance }
+        {"arcaneintellect", ArcaneIntellect.Instance },
+        {"naturesblessing", NaturesBlessing.Instance }
         };
 
     public static void ApplyNotification(NotificationTypes notType, int amount, Player currentPlayer)

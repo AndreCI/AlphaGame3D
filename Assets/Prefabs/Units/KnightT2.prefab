@@ -300,7 +300,6 @@ GameObject:
   - component: {fileID: 4908420583075852}
   - component: {fileID: 95354295302957440}
   - component: {fileID: 114627411552908410}
-  - component: {fileID: 114773938406514904}
   m_Layer: 0
   m_Name: Knight Warrior
   m_TagString: Player
@@ -1915,7 +1914,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1377699209998156}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 54.724228, y: 100.5, z: 13.897739}
+  m_LocalPosition: {x: 50.564682, y: 100.5, z: 2.4733305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4681252954592170}
@@ -2169,7 +2168,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: cd2b5195c78e652429c1a2fb04913567, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2358,6 +2357,7 @@ MonoBehaviour:
   actionPointCost: 1
   notificationPanel: {fileID: 1556247514698274}
   notificationText: {fileID: 114374442260518824}
+  visible: 0
   isTier2: 1
   prefab: {fileID: 1377699209998156}
   movementSphere: {fileID: 4681252954592170}
@@ -2365,6 +2365,7 @@ MonoBehaviour:
   healthDisplay: {fileID: 114978509073224460}
   sprite: {fileID: 21300000, guid: 87aa33493cab7274c80399cfda0a0284, type: 3}
   effectAnimations: {fileID: 114786673661322482}
+  speed: 2
   maxHealth: 30
   attack: 20
   maxMovementPoints: 3
@@ -2376,22 +2377,12 @@ MonoBehaviour:
   currentAttackModifier: 0
   armor: 0
   foodConso: 0
+  direction: {x: 0, y: 0, z: 0}
   animTransform: {fileID: 4908420583075852}
   physicalAttackAnimation: {fileID: 1083240323644074, guid: 89aa4ab6a03390a46971dbc51ffb07df,
     type: 2}
   attackOffset: {x: 0, y: 2, z: 0}
 --- !u!114 &114627411552908410
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1301323622746850}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0031177203dc8e14698f52865c34e516, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114773938406514904
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

@@ -15,7 +15,7 @@ Engine:
 	Add types to subjects so that elements can handle multiples subjects.
 Add unit ability framework
 add AI difficulty	
-Rework unit movement completly by removing root motion
+	Rework unit movement completly by removing root motion
 
 
 UI:
@@ -28,6 +28,7 @@ UI:
 	Implement T2 help
 	Change fontsize of carddisplay (spell overflow)
 Implement camera automove (double click centers it, etc)
+Implement UI controler: click on barracks unlock barracks unit tab, etc.
 	
 Graphic:
 	Implement visual effect on spell effect
@@ -42,7 +43,7 @@ Implement TechTreeUI
 Balance:
 Rebalance game
 ?Construction Time?
-?Implement riposte
+	Implement riposte
 
 	
 Content:
@@ -56,7 +57,7 @@ Implement more building & units
 	Implement more spell effects
 	Implement building restr(max 1 building)
 	Implement green magic
-?Implement more green spells
+	Implement more green spells
 ?Implement void spells
 Implement scouts (hallcenterbuilding)
 Implement better AI (more units, spells?)

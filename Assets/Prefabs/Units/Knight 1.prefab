@@ -1729,7 +1729,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1588571013284832}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 52.030895, y: 100.5, z: 19.59603}
+  m_LocalPosition: {x: 57.301308, y: 100.5, z: 13.00455}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4237068548923478}
@@ -2168,7 +2168,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: cd2b5195c78e652429c1a2fb04913567, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2315,13 +2315,14 @@ MonoBehaviour:
   currentHealth: 20
   currentMovementPoints: 3
   currentAttackModifier: 0
-  abilities: []
   armor: 0
   foodConso: 0
+  direction: {x: 0, y: 0, z: 0}
   animTransform: {fileID: 4315670522438654}
   physicalAttackAnimation: {fileID: 1083240323644074, guid: 89aa4ab6a03390a46971dbc51ffb07df,
     type: 2}
   attackOffset: {x: 0, y: 2, z: 0}
+  speed: 1
 --- !u!114 &114908684082331314
 MonoBehaviour:
   m_ObjectHideFlags: 1

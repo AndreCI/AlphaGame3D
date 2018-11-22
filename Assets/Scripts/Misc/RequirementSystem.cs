@@ -48,6 +48,8 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(ArcaneIntellect));
         AddUnlocksAndLocks(depth1, depth2);
+        depth2 = new NodeR(typeof(ArcaneMirage));
+        AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);
 
         //Shrine
@@ -71,6 +73,8 @@ public class RequirementSystem {
         depth3 = new NodeR(typeof(EarthLink));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(WaveOfVigor));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(NaturesBlessing));
         AddUnlocksAndLocks(depth2, depth3);
 
         start = depth0;

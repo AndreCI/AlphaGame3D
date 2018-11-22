@@ -14,6 +14,7 @@ public abstract class Unit : Selectable
     public Image healthDisplay;
     public Sprite sprite;
     public UnitEffectAnimations effectAnimations;
+    public float speed;
 
     [Header("General Info")]
     public int maxHealth;
@@ -35,6 +36,8 @@ public abstract class Unit : Selectable
     public List<UnitAbility> abilities;
     public int armor;
     public int foodConso;
+    public Vector3 direction;
+
 
     public virtual void Setup()
     {
@@ -283,9 +286,9 @@ public abstract class Unit : Selectable
     }
     protected void FaceNextNode(Node nextNode)
     {
-        Vector3 targetDir = nextNode.position - movementSphere.position;
-        targetDir.y = 0;
-        movementSphere.localRotation = Quaternion.LookRotation(targetDir);
+        direction = nextNode.position - movementSphere.position;
+        direction.y = 0;
+        movementSphere.localRotation = Quaternion.LookRotation(direction);
     }
 
     protected virtual IEnumerator Attack(Node target, bool riposte)
@@ -311,8 +314,42 @@ public abstract class Unit : Selectable
         path = new List<Node>();
         Selector.Instance.Unselect(); //Unselect this, and thus MakeIdle all nodes
     }
-
     protected virtual void MoveStep()
+    {
+        float delta = 1.5f;
+        if (path.Count == 0)
+        {
+            FinishMove();
+        }
+        else if ((movementSphere.position.x <= path[0].position.x + delta && movementSphere.position.x >= path[0].position.x - delta) && (movementSphere.position.z <= path[0].position.z + delta && movementSphere.position.z >= path[0].position.z - delta))
+        {
+            movementSphere.position = new Vector3(path[0].position.x, movementSphere.position.y, path[0].position.z);
+            EndMoveStep();
+            path.Remove(path[0]);
+            SetupNextMoveStep();
+        }
+        else
+        {
+            movementSphere.localPosition += direction * speed * Time.deltaTime;
+        }
+    }
+    protected virtual void SetupNextMoveStep()
+    {
+        if (path.Count == 0)
+        {
+            FinishMove();
+        }
+        else
+        {
+            FaceNextNode(path[0]);
+            if (path[0].Attackable(this.currentPosition))
+            {
+                StartCoroutine(Attack(path[0], false));
+            }
+        }
+    }
+
+    protected virtual void EndMoveStep()
     {
         //Update currentPosition
         currentPosition.ResetNode();

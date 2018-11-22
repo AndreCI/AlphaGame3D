@@ -492,11 +492,12 @@ MonoBehaviour:
   goldCost: 6
   manaCost: 0
   actionPointCost: 1
+  notificationPanel: {fileID: 1203743054234156}
+  notificationText: {fileID: 114110338088556508}
+  visible: 0
   isTier2: 0
   prefab: {fileID: 1529132278137578}
   sprite: {fileID: 21300000, guid: 8d61679fe246699409313def5d345b05, type: 3}
-  notificationPanel: {fileID: 1203743054234156}
-  notificationText: {fileID: 114110338088556508}
   effectDescription: Unlock Barracks T1 Units.
   tier2EffectDescription: Unlock Barracks T2 Units.
   constructionTime: 1

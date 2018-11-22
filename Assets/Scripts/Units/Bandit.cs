@@ -31,38 +31,6 @@ public class Bandit : Unit
         }
     }
 
-    protected override void MoveStep()
-    {
-        float delta = 0.5f;
-        Vector3 currentAnimBodyPosition = anim.bodyPosition;
-        if (path.Count == 0)
-        {
-            FinishMove();
-        }
-        if ((currentAnimBodyPosition.x <= path[0].position.x + delta && currentAnimBodyPosition.x >= path[0].position.x - delta) && (currentAnimBodyPosition.z <= path[0].position.z + delta && currentAnimBodyPosition.z >= path[0].position.z - delta))
-        {
-            //If anim reached the node, update the sphere and reset the anim
-            Vector3 animPos = new Vector3(animTransform.localPosition.x, 0, animTransform.localPosition.z);
-            animPos = Quaternion.Euler(0, movementSphere.localEulerAngles.y, 0) * animPos;
-            movementSphere.localPosition = movementSphere.localPosition + animPos;
-            animTransform.localPosition = new Vector3(0f, 0f, 0f);
-            base.MoveStep();
-
-            path.Remove(path[0]);
-            if (path.Count == 0)
-            {
-                FinishMove();
-            }
-            else
-            {
-                FaceNextNode(path[0]);
-                if (path[0].Attackable(this.currentPosition))
-                {
-                    StartCoroutine(Attack(path[0], false));
-                }
-            }
-        }
-    }
     protected override IEnumerator Attack(Node target, bool riposte)
     {
         Unit attacked = target.unit;
