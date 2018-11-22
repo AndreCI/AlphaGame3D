@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Observer : MonoBehaviour
+public interface IObserver 
 {
-    public abstract void Notify(Player player);
+    void Notify(Player player, TurnSubject.NOTIFICATION_TYPE subjectType);
 }

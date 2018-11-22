@@ -99,21 +99,24 @@ public abstract class Building : Selectable
             }
         }
     }
-    public override void Notify(Player player)
+    public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         if (player.Equals(owner)) 
         {
-            if (constructionTime > 0)
+            if (type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
             {
-                constructionTime -= 1;
-                StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.NotificationTypes, int> {
+                if (constructionTime > 0)
+                {
+                    constructionTime -= 1;
+                    StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.NotificationTypes, int> {
                     {Utils.NotificationTypes.BUILDING, constructionTime }
                 }));
-                return;
-            }
-            else
-            {
-                StartCoroutine(DisplayAndApplyNotification(owner, startOfTurnNotificationData));
+                    return;
+                }
+                else
+                {
+                    StartCoroutine(DisplayAndApplyNotification(owner, startOfTurnNotificationData));
+                }
             }
         }
         else

@@ -11,8 +11,15 @@ public class RequirementSystem {
         {
             owned = true
         };
+        //shrine
+        NodeR shrine = new NodeR(typeof(Shrine));
+        shrine.needT2 = false;
+        shrine.oneUnlockInEnough = true;
+        //Windmill
         NodeR depth1 = new NodeR(typeof(Windmill));
         AddUnlocksAndLocks(depth0, depth1);
+        AddUnlocksAndLocks(depth1, shrine);
+
 
         //Barracks
         depth1 = new NodeR(typeof(Barracks));
@@ -24,6 +31,10 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Brute));
         AddUnlocksAndLocks(depth1, depth2);
+        depth2 = new NodeR(typeof(Bandit));
+        AddUnlocksAndLocks(depth1, depth2);
+        AddUnlocksAndLocks(depth1, shrine);
+
 
         //Magic Center
         depth1 = new NodeR(typeof(MagicCenter));
@@ -33,10 +44,10 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(ArcaneIntellect));
         AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Shrine));
-        AddUnlocksAndLocks(depth1, depth2);
+        AddUnlocksAndLocks(depth1, shrine);
 
         //Shrine
+        depth2 = shrine;
         NodeR depth3 = new NodeR(typeof(Fireblast));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(BerserkerSpirit));
@@ -110,6 +121,23 @@ public class RequirementSystem {
         {
             throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
         }
+        if (n.oneUnlockInEnough)
+        {
+            bool aLockIsOwned = false;
+            bool theLockIsT2 = false;
+            foreach(NodeR parent in n.locks)
+            {
+                if (parent.owned)
+                {
+                    aLockIsOwned =true;
+                    if(parent.t2 )
+                    {
+                        theLockIsT2 = true;
+                    }
+                }
+            }
+            return aLockIsOwned && (ist2 && theLockIsT2 || !ist2 || !n.needT2);
+        }
         bool allLocksOwned = true;
         bool allT2 = true;
         foreach(NodeR parent in n.locks)
@@ -123,7 +151,7 @@ public class RequirementSystem {
                 allT2 = false;
             }
         }
-        return allLocksOwned && (ist2 && allT2 || !ist2);
+        return allLocksOwned && (ist2 && allT2 || !ist2 || !n.needT2);
     }
 
     private void AddUnlocksAndLocks(NodeR parent, NodeR child)
@@ -137,15 +165,19 @@ public class RequirementSystem {
         public Type element;
         public List<NodeR> unlocks;
         public List<NodeR> locks;
+        public bool oneUnlockInEnough;
         public bool owned;
         public bool t2;
+        public bool needT2;
         public NodeR(Type element_)
         {
             element = element_;
             owned = false;
             t2 = false;
+            needT2 = true;
             unlocks = new List<NodeR>();
             locks = new List<NodeR>();
+            oneUnlockInEnough = false;
         }
         public void debugString(int depth)
         {

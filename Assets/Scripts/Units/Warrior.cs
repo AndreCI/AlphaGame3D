@@ -21,10 +21,6 @@ public class Warrior : Unit
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            anim.SetTrigger("Attack1Trigger");
-        }
         if (moving)
         {
             MoveStep();

@@ -12,9 +12,10 @@ Basic:
 	
 Engine:
 	Change way requirements are handled
-Add types to subjects so that elements can handle multiples subjects.
+	Add types to subjects so that elements can handle multiples subjects.
 Add unit ability framework
 add AI difficulty	
+Rework unit movement completly by removing root motion
 
 
 UI:
@@ -26,6 +27,7 @@ UI:
 	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 	Implement T2 help
 	Change fontsize of carddisplay (spell overflow)
+Implement camera automove (double click centers it, etc)
 	
 Graphic:
 	Implement visual effect on spell effect
@@ -35,6 +37,7 @@ Graphic:
 	Hide enemy notification
 Do card unit with ability
 Do card unit with requirement schoolom
+Implement TechTreeUI
 	
 Balance:
 Rebalance game

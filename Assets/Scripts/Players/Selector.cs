@@ -1,23 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Selector : Observer
+public class Selector : IObserver
 {
-    public static Selector Instance;
+    private static Selector instance = null;
     public Image selectionInfoPanel;
 
+    public static Selector Instance 
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new Selector();
+            }
+            return instance;
+        }
+    }
 
     // Use this for initialization
-    void Awake()
+    private Selector()
     {
-        if (Instance != null)
-        {
-            return;
-        }
         TurnManager.Instance.EndTurnSubject.AddObserver(this);
         currentObject = null;
-        Instance = this;
-
     }
     [Header("Other (todo)")]
     public Selectable currentObject;
@@ -43,19 +48,14 @@ public class Selector : Observer
         currentObject = null;
     }
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Unselect();
-        }
-    }
-
-    public override void Notify(Player player)
+    public void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         if (currentObject != null)
         {
-            Unselect();
+            if (type == TurnSubject.NOTIFICATION_TYPE.END_OF_TURN)
+            {
+                Unselect();
+            }
         }
     }
 }

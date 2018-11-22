@@ -11,14 +11,14 @@ public class WarriorAnimation : MonoBehaviour
 
     void FootR()
     {
-        body.FootR();
+        //body.FootR();
     }
     void FootL()
     {
-        body.FootL();
+        //body.FootL();
     }
     void Hit()
     {
-        body.Hit();
+        //body.Hit();
     }
 }

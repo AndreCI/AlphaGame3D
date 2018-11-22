@@ -210,10 +210,10 @@ public class Node : MonoBehaviour
             SetSelectedColor(COLORS.ATTACKABLE_COLOR);
         }else if (!walkable && CardDisplay.Instance.mode == CardDisplay.MODE.NON_DISPLAY)
         {
-            if (unit != null)
+            if (unit != null && unit.visible)
             {
                 unit.UpdateCardDisplayInfo();
-            }else if(building != null)
+            }else if(building != null && building.visible)
             {
                 building.UpdateCardDisplayInfo();
             }

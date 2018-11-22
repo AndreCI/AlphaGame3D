@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wizard : Unit
+public class Bandit : Unit
 {
     Animator anim;
     public Transform animTransform;
-    public GameObject magicAttackAnimation;
+    public GameObject physicalAttackAnimation;
     public Vector3 attackOffset;
+    public TurnSubject OnTargetDeathTurnSubject;
+    public BasicUnitAbility ability;
 
     // Use this for initialization
     public override void Setup()
@@ -16,6 +18,8 @@ public class Wizard : Unit
         anim = GetComponentInChildren<Animator>();
         anim.logWarnings = false;
         base.Setup();
+        OnTargetDeathTurnSubject = new TurnSubject(TurnSubject.NOTIFICATION_TYPE.TARGET_DEATH);
+        OnTargetDeathTurnSubject.AddObserver(ability);
     }
 
     // Update is called once per frame
@@ -55,27 +59,28 @@ public class Wizard : Unit
                 if (path[0].Attackable(this.currentPosition))
                 {
                     Attack(path[0]);
-                }else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
-                {
-                    Attack(path[path.Count - 1]);
                 }
-                
             }
         }
     }
     protected override void Attack(Node target)
     {
-        base.Attack(target);
-        GameObject attackAnim = (GameObject)Instantiate(magicAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
+        Unit attacked = target.unit;
+        GameObject attackAnim = (GameObject)Instantiate(physicalAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
         Destroy(attackAnim, 5);
         anim.SetTrigger("Attack1Trigger");
         animTransform.localPosition = new Vector3(0f, 0f, 0f);
+        base.Attack(target);
+        if (!TurnManager.Instance.inactivePlayer.currentUnits.Contains(attacked))
+        {
+            OnTargetDeathTurnSubject.NotifyObservers(owner);
+        }
 
     }
     protected override void FinishMove()
     {
-        base.FinishMove();
         anim.ResetTrigger("Moving");
+        base.FinishMove();
     }
 
     public override IEnumerator StartMoving(bool hideUI = false)
@@ -85,23 +90,20 @@ public class Wizard : Unit
         {
             Attack(path[0]);
         }
-        else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
-        {
-            Attack(path[path.Count - 1]);
-        }
         else
         {
             anim.SetTrigger("Moving");
         }
-        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
+        yield return new WaitForSeconds(currentMovementPoints<1? 0.2f :currentMovementPoints - 1.0f);
 
     }
 
     public override IEnumerator AITransitionToMove()
     {
         anim.SetTrigger("Moving");
-        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
+        yield return new WaitForSeconds(currentMovementPoints<1? 0.2f: currentMovementPoints - 1.0f);
     }
+
     public void FootR()
     {
     }
@@ -112,8 +114,8 @@ public class Wizard : Unit
     public void Hit()
     {
         animTransform.localPosition = new Vector3(0f, 0f, 0f);
-
     }
+
 
     public override Type GetSpawnPoint()
     {

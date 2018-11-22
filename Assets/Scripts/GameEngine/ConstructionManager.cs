@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class ConstructionManager : Observer
+public class ConstructionManager : MonoBehaviour, IObserver
 {
     public static ConstructionManager Instance;
 
@@ -19,6 +19,7 @@ public class ConstructionManager : Observer
         unitToConstruct = null;
         spellToConstruct = null;
         TurnManager.Instance.EndTurnSubject.AddObserver(this);
+        TurnManager.Instance.StartTurnSubject.AddObserver(this);
         canConstruct = false;
         availablePositions = new List<Node>();
     }
@@ -175,7 +176,7 @@ public class ConstructionManager : Observer
         }
     }
 
-    public override void Notify(Player player)
+    public void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         ResetConstruction();
     }

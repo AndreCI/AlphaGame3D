@@ -53,9 +53,5 @@ public class BuildingButtonScript : ConstructButtonScript
         }
         base.OnPointerClick(eventData);
     }
-
-    public override void Notify(Player player)
-    {
-        UpdateInfo();
-    }
+    
 }

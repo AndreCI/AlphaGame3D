@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public abstract class ConstructButtonScript : Observer, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public abstract class ConstructButtonScript : MonoBehaviour, IObserver, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 
     public GameObject messagePanel;
@@ -53,11 +53,14 @@ public abstract class ConstructButtonScript : Observer, IPointerEnterHandler, IP
         messagePanel.SetActive(false);
     }
 
-    public override void Notify(Player player)
+    public void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         if (player.Equals(TurnManager.Instance.currentPlayer))
         {
-            UpdateInfo();
+            if(type==TurnSubject.NOTIFICATION_TYPE.START_OF_TURN || type == TurnSubject.NOTIFICATION_TYPE.UI_BUTTON_PRESSED)
+            {
+                UpdateInfo();
+            }
         }
     }
 }

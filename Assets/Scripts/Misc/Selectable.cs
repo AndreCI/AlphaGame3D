@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public abstract class Selectable : Observer
+public abstract class Selectable : MonoBehaviour, IObserver
 {
     public Node currentPosition;
     public Player owner;
@@ -59,4 +59,6 @@ public abstract class Selectable : Observer
         notificationPanel.transform.localPosition = pos;
         yield break;
     }
+
+    public abstract void Notify(Player player, TurnSubject.NOTIFICATION_TYPE subjectType);
 }

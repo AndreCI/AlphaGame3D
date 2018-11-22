@@ -154,7 +154,12 @@ public class Player
 
     public void AddGold(int amount)
     {
-        gold += amount;
+        if(gold + amount < 0) {
+            gold = 0;
+        }
+        else {
+            gold += amount;
+        }
     }
     public override bool Equals(object obj)
     {

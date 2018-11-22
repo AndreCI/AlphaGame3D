@@ -32,6 +32,7 @@ public abstract class Unit : Selectable
     protected List<Node> path; //selected path to node
     protected bool moving;
     public List<UnitEffect> currentEffect;
+    public List<UnitAbility> abilities;
     public int armor;
     public int foodConso;
 
@@ -45,17 +46,21 @@ public abstract class Unit : Selectable
         moving = false;
         visible = true;
         currentEffect = new List<UnitEffect>();
+        abilities = new List<UnitAbility>();
         armor = 0;
     }
 
-    public override void Notify(Player player)
+    public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         if (player.Equals(owner))
         {
-            currentMovementPoints = maxMovementPoints;
-            currentAttackModifier = 0;
-            armor = 0;
-            StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
+            if (type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
+            {
+                currentMovementPoints = maxMovementPoints;
+                currentAttackModifier = 0;
+                armor = 0;
+                StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
+            }
         }
 
     }
@@ -150,7 +155,9 @@ public abstract class Unit : Selectable
             ue.End();
         }
         currentEffect = new List<UnitEffect>();
+        TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
         owner.currentUnits.Remove(this);
+        
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         currentPosition.ResetNode();
         Destroy(prefab);

@@ -1,26 +1,28 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 
 public class TurnSubject{
 
-    public ArrayList observers;
+    public List<IObserver> observers;
+    public NOTIFICATION_TYPE subjectType;
     // Use this for initialization
-    public TurnSubject()
+    public TurnSubject(NOTIFICATION_TYPE subjectType_)
     {
-        observers = new ArrayList();
+        observers = new List<IObserver>();
+        subjectType = subjectType_;
     }
 
     public void NotifyObservers(Player playerActive)
     {
-        foreach(Observer o in observers)
+        foreach(IObserver o in observers)
         {
             if (o != null)
             {
-                o.Notify(playerActive);
+                o.Notify(playerActive, subjectType);
             }
         }
     }
 
-    public void AddObserver(Observer o)
+    public void AddObserver(IObserver o)
     {
         if (!observers.Contains(o))
         {
@@ -28,8 +30,15 @@ public class TurnSubject{
         }
     }
     
-    public void RemoveObserver(Observer observer)
+    public void RemoveObserver(IObserver observer)
     {
         observers.Remove(observer);
+    }
+    public enum NOTIFICATION_TYPE
+    {
+        START_OF_TURN,
+        END_OF_TURN,
+        UI_BUTTON_PRESSED,
+        TARGET_DEATH
     }
 }

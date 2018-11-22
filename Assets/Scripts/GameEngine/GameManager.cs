@@ -44,7 +44,14 @@ public class GameManager : MonoBehaviour
         {
             menu.SetActive(true);
         }
-        turnManager.Update();
+        else if (Input.GetMouseButtonDown(1))
+        {
+            Selector.Instance.Unselect();
+        }
+        else if (Input.GetKeyDown("space"))
+        {
+            turnManager.TryEndTurn();
+        }
     }
 
     public void SetUIVisible(bool v)

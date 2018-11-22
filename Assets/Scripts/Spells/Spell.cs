@@ -41,11 +41,14 @@ public abstract class Spell : Selectable
         }
     }
 
-    public override void Notify(Player player)
+    public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
         if (playerInfos[player].currentCooldown > 0)
         {
-            playerInfos[player].currentCooldown -= 1;
+            if (type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
+            {
+                playerInfos[player].currentCooldown -= 1;
+            }
         }
     }
 

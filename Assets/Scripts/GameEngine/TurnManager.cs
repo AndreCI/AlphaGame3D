@@ -43,9 +43,9 @@ public class TurnManager{
     {
         againstAI = true;// typeof(ArtificialIntelligence).IsAssignableFrom(Player.Player2.GetType());
         TurnNumber = 0;
-        StartTurnSubject = new TurnSubject();
-        EndTurnSubject = new TurnSubject();
-        ButtonUpdateSubject = new TurnSubject();
+        StartTurnSubject = new TurnSubject(TurnSubject.NOTIFICATION_TYPE.START_OF_TURN);
+        EndTurnSubject = new TurnSubject(TurnSubject.NOTIFICATION_TYPE.END_OF_TURN);
+        ButtonUpdateSubject = new TurnSubject(TurnSubject.NOTIFICATION_TYPE.UI_BUTTON_PRESSED);
         playerActiveIndex = 1;
         playerActive = new List<Player>
         {
@@ -55,13 +55,10 @@ public class TurnManager{
     }
 	
 	// Update is called once per frame
-	public void Update () {
-        if (Input.GetKeyDown("space"))
+	public void TryEndTurn () {
+        if (againstAI && ((ArtificialIntelligence)Player.Player2).turnFinished)
         {
-            if (againstAI && ((ArtificialIntelligence)Player.Player2).turnFinished)
-            {
-                EndTurn();
-            }
+            EndTurn();
         }
 	}
     
