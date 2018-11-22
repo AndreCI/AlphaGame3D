@@ -87,7 +87,7 @@ public abstract class Unit : Selectable
         currentEffect.RemoveAll(ue => ue.effectEnded); //safe removing of elements
         yield return null;
     }
-    public IEnumerator DisplayNotifications(Player currentPlayer, Dictionary<Utils.NotificationTypes, int> notifications)
+    public IEnumerator DisplayNotifications(Dictionary<Utils.NotificationTypes, int> notifications)
     {
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
@@ -124,11 +124,21 @@ public abstract class Unit : Selectable
         {
             currentHealth = maxHealth;
         }
-        StartCoroutine(DisplayNotifications(owner, new Dictionary<Utils.NotificationTypes, int> {
+        StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> {
             { Utils.NotificationTypes.HEAL, amount } }));
         healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
 
 
+    }
+
+    public void IsAttacked(int amount, Unit source, bool riposte)
+    {
+        FaceNextNode(source.currentPosition);
+        TakesDamage(amount);
+        if(NodeUtils.GetNeighborsNode(currentPosition, 1).Search(source.currentPosition).Count != 0 && range==0 && !riposte)
+        {
+            StartCoroutine(Attack(source.currentPosition, true));
+        }
     }
 
     public void TakesDamage(int amount)
@@ -139,7 +149,7 @@ public abstract class Unit : Selectable
             amountReduced = 0;
         }
         currentHealth = currentHealth - amountReduced;
-        StartCoroutine(DisplayNotifications(owner, new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
+        StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
         if (currentHealth <= 0)
         {
             Death();
@@ -148,19 +158,29 @@ public abstract class Unit : Selectable
         healthDisplay.fillAmount = (float)currentHealth/(float)(maxHealth);
     }
 
-    private void Death()
+    public void Death(bool AIcall=false)
     {
-        foreach(UnitEffect ue in currentEffect)
+        if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
         {
-            ue.End();
+            foreach (UnitEffect ue in currentEffect)
+            {
+                ue.End();
+            }
+
+            TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
+            currentPosition.ResetNode();
+            currentEffect = new List<UnitEffect>();
+            TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
+            if (!(owner.GetType() == typeof(ArtificialIntelligence) && TurnManager.Instance.currentPlayer.Equals(owner))){
+                owner.currentUnits.Remove(this);
+                Destroy(prefab);
+            } //For riposte,safe remove after
         }
-        currentEffect = new List<UnitEffect>();
-        TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
-        owner.currentUnits.Remove(this);
-        
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-        currentPosition.ResetNode();
-        Destroy(prefab);
+        else
+        {
+            currentPosition.ResetNode();
+            SetVisible(false);
+        }
     }
     public override void Select()
     {
@@ -268,12 +288,21 @@ public abstract class Unit : Selectable
         movementSphere.localRotation = Quaternion.LookRotation(targetDir);
     }
 
-    protected virtual void Attack(Node target)
+    protected virtual IEnumerator Attack(Node target, bool riposte)
     {
-        target.Damage(attack + currentAttackModifier);
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
+        yield return new WaitForSeconds(1.0f);
+        if (target.unit != null)
+        {
+            target.unit.IsAttacked(attack + currentAttackModifier, this, riposte);
+        }
+        else
+        {
+            target.Damage(attack + currentAttackModifier);
+        }
+        yield return new WaitForEndOfFrame();
     }
 
     protected virtual void FinishMove()

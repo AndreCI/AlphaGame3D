@@ -58,24 +58,24 @@ public class Bandit : Unit
                 FaceNextNode(path[0]);
                 if (path[0].Attackable(this.currentPosition))
                 {
-                    Attack(path[0]);
+                    StartCoroutine(Attack(path[0], false));
                 }
             }
         }
     }
-    protected override void Attack(Node target)
+    protected override IEnumerator Attack(Node target, bool riposte)
     {
         Unit attacked = target.unit;
         GameObject attackAnim = (GameObject)Instantiate(physicalAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
         Destroy(attackAnim, 5);
         anim.SetTrigger("Attack1Trigger");
         animTransform.localPosition = new Vector3(0f, 0f, 0f);
-        base.Attack(target);
+        yield return StartCoroutine(base.Attack(target, riposte));
+
         if (!TurnManager.Instance.inactivePlayer.currentUnits.Contains(attacked))
         {
             OnTargetDeathTurnSubject.NotifyObservers(owner);
         }
-
     }
     protected override void FinishMove()
     {
@@ -88,7 +88,7 @@ public class Bandit : Unit
         StartCoroutine(base.StartMoving(hideUI:hideUI));
         if (path[0].Attackable(this.currentPosition))
         {
-            Attack(path[0]);
+            yield return StartCoroutine(Attack(path[0], false));
         }
         else
         {

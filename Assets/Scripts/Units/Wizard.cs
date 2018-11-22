@@ -54,23 +54,22 @@ public class Wizard : Unit
                 FaceNextNode(path[0]);
                 if (path[0].Attackable(this.currentPosition))
                 {
-                    Attack(path[0]);
+                    StartCoroutine(Attack(path[0], false));
                 }else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
                 {
-                    Attack(path[path.Count - 1]);
+                    StartCoroutine(Attack(path[path.Count - 1], false));
                 }
                 
             }
         }
     }
-    protected override void Attack(Node target)
+    protected override IEnumerator Attack(Node target, bool riposte)
     {
-        base.Attack(target);
         GameObject attackAnim = (GameObject)Instantiate(magicAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
         Destroy(attackAnim, 5);
         anim.SetTrigger("Attack1Trigger");
         animTransform.localPosition = new Vector3(0f, 0f, 0f);
-
+        yield return StartCoroutine(base.Attack(target, riposte));
     }
     protected override void FinishMove()
     {
@@ -83,11 +82,11 @@ public class Wizard : Unit
         StartCoroutine(base.StartMoving(hideUI:hideUI));
         if (path[0].Attackable(this.currentPosition))
         {
-            Attack(path[0]);
+            StartCoroutine(Attack(path[0], false));
         }
         else if (path[path.Count - 1].Attackable(this.currentPosition) && path.Count <= range)
         {
-            Attack(path[path.Count - 1]);
+            StartCoroutine(Attack(path[path.Count - 1], false));
         }
         else
         {

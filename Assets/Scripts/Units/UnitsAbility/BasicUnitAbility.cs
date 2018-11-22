@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 
 [System.Serializable]
@@ -23,10 +24,13 @@ public class BasicUnitAbility : UnitAbility
         switch (type)
         {
             case UnitAbilityUtils.TYPES.GOLD_MODIFIER:
-                Debug.Log("gold added");
+                abilityOwner.DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> {
+                    { Utils.NotificationTypes.GOLD, amplitude} });
                 abilityOwner.owner.AddGold(amplitude);
                 break;
             case UnitAbilityUtils.TYPES.HEAL:
+                abilityOwner.DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> {
+                    { Utils.NotificationTypes.HEAL, amplitude} });
                 abilityOwner.Heal(amplitude);
                 break;
         }

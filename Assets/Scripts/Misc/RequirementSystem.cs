@@ -7,17 +7,21 @@ public class RequirementSystem {
 
     public RequirementSystem()
     {
-        NodeR depth0 = new NodeR(typeof(HallCenter))
-        {
-            owned = true
-        };
+        NodeR depth0;
+        NodeR depth1;
+        NodeR depth2;
+        
+        depth0 = new NodeR(typeof(HallCenter)){ owned = true};
         //shrine
-        NodeR shrine = new NodeR(typeof(Shrine));
+        NodeR shrine = new NodeR(typeof(Shrine)) { maxAllowed = 12};
         shrine.needT2 = false;
         shrine.oneUnlockInEnough = true;
-        //Windmill
-        NodeR depth1 = new NodeR(typeof(Windmill));
+        //Market
+        depth1 = new NodeR(typeof(Market));
         AddUnlocksAndLocks(depth0, depth1);
+
+        depth2 = new NodeR(typeof(Windmill)) { maxAllowed = 2};
+        AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);
 
 
@@ -25,7 +29,7 @@ public class RequirementSystem {
         depth1 = new NodeR(typeof(Barracks));
         AddUnlocksAndLocks(depth0, depth1);
 
-        NodeR depth2 = new NodeR(typeof(Warrior));
+        depth2 = new NodeR(typeof(Warrior));
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Wizard));
         AddUnlocksAndLocks(depth1, depth2);
@@ -72,7 +76,7 @@ public class RequirementSystem {
         start = depth0;
     }
 
-    public void SetUnlocked(Type type)
+    public void AddCopy(Type type)
     {
         NodeR n = start.Search(type);
         if(n == null)
@@ -80,6 +84,7 @@ public class RequirementSystem {
             throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
         }
         n.owned = true;
+        n.currentOwned += 1;
     }
     public void SetTier2(Type type)
     {
@@ -90,14 +95,15 @@ public class RequirementSystem {
         }
         n.t2 = true;
     }
-    public bool IsAlreadyUnlocked(Type type)
+
+    public bool MaxCopyOwned(Type type)
     {
         NodeR n = start.Search(type);
         if (n == null)
         {
             throw new NotImplementedException("Not implemented in the requirement system: " + type.ToString());
         }
-        return n.owned;
+        return n.currentOwned >= n.maxAllowed;
     }
     public bool IsAlreadyT2(Type type)
     {
@@ -169,12 +175,16 @@ public class RequirementSystem {
         public bool owned;
         public bool t2;
         public bool needT2;
+        public int maxAllowed;
+        public int currentOwned;
         public NodeR(Type element_)
         {
             element = element_;
             owned = false;
             t2 = false;
             needT2 = true;
+            maxAllowed = 1;
+            currentOwned = 0;
             unlocks = new List<NodeR>();
             locks = new List<NodeR>();
             oneUnlockInEnough = false;

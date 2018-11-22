@@ -2168,9 +2168,9 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 4ba70ee7ef7b853488f372691a3029d7, type: 3}
   effectAnimations: {fileID: 114574658475814694}
   maxHealth: 24
-  attack: 14
+  attack: 20
   maxMovementPoints: 4
-  range: 4
+  range: 0
   visionRange: 4
   effectDescription: Gains gold on kill.
   currentHealth: 24

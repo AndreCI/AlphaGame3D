@@ -196,7 +196,7 @@ public class Player
     public string GetUnavailableMessage(Selectable target)
     {
         List<string> messages = new List<String>();
-        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType()) && target.GetType()!=typeof(Shrine);
+        bool alreadyOwned = requirementSystem.MaxCopyOwned(target.GetType()) && target.GetType()!=typeof(Shrine);
         if(alreadyOwned){
             return "You already own this building.";
         }
@@ -256,7 +256,7 @@ public class Player
 
     public bool CheckIfAvailable(Selectable target)
     {
-        bool alreadyOwned = requirementSystem.IsAlreadyUnlocked(target.GetType()) && target.GetType() != typeof(Shrine);
+        bool alreadyOwned = requirementSystem.MaxCopyOwned(target.GetType()) && target.GetType() != typeof(Shrine);
         bool requierementsbool = requirementSystem.CheckIfRequirementAreSatisfied(target.GetType(), target.isTier2);
         bool cost = target.goldCost <= gold && target.manaCost <= mana && target.actionPointCost <= actionPoints;
         bool levelbool = true;

@@ -78,7 +78,16 @@ public class ArtificialIntelligence : Player
         foreach(Unit u in currentUnits)
         {
             yield return u.StartCoroutine(MoveUnit(u));
+            
         }
+        foreach(Unit u in currentUnits)
+        {
+            if (u.currentHealth <= 0)
+            {
+                u.Death(AIcall: true);
+            }
+        }
+        currentUnits.RemoveAll(u => u.currentHealth <= 0);
         yield return new WaitForSeconds(0.0f) ;
     }
 

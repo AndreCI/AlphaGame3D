@@ -73,7 +73,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
         building.SetCurrentPosition(node);
         building.owner = TurnManager.Instance.currentPlayer;
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
-        TurnManager.Instance.currentPlayer.requirementSystem.SetUnlocked(building.GetType());
+        TurnManager.Instance.currentPlayer.requirementSystem.AddCopy(building.GetType());
         TurnManager.Instance.currentPlayer.gold -= building.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= building.actionPointCost;
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();

@@ -6,7 +6,7 @@ public class UnitAbilityUtils
     public enum TYPES
     {
         HEAL,
-        APPLYEFFECT,
+        APPLY_EFFECT,
         GOLD_MODIFIER
     }
 }

@@ -54,19 +54,20 @@ public class Brute : Unit
                 FaceNextNode(path[0]);
                 if (path[0].Attackable(this.currentPosition))
                 {
-                    Attack(path[0]);
+                    StartCoroutine(Attack(path[0], false));
                 }
             }
         }
     }
-    protected override void Attack(Node target)
+    protected override IEnumerator Attack(Node target, bool riposte)
     {
 
         GameObject attackAnim = (GameObject)Instantiate(physicalAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
         Destroy(attackAnim, 5);
         anim.SetTrigger("Attack1Trigger");
         animTransform.localPosition = new Vector3(0f, 0f, 0f);
-        base.Attack(target);
+
+        yield return StartCoroutine(base.Attack(target, riposte));
 
     }
     protected override void FinishMove()
@@ -80,7 +81,7 @@ public class Brute : Unit
         StartCoroutine(base.StartMoving());
         if (path[0].Attackable(this.currentPosition))
         {
-            Attack(path[0]);
+            StartCoroutine(Attack(path[0], false));
         }
         else
         {
