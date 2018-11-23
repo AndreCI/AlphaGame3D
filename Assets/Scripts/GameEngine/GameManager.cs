@@ -51,6 +51,18 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown("space"))
         {
             turnManager.TryEndTurn();
+        }else if (turnManager.currentPlayer.isAi && turnManager.debugCounter > 1 && ((ArtificialIntelligence)Player.Player2).turnShouldBeFinished)
+        {
+            ((ArtificialIntelligence)Player.Player2).UpdateUnitEffect();
+            ((ArtificialIntelligence)Player.Player2).turnFinished = true;
+            Debug.Log("AI did not end turn. Finishing it now.");
+
+            turnManager.EndTurn();
+            turnManager.debugCounter = -1;
+        }
+        if (turnManager.debugCounter >= 0)
+        {
+            turnManager.debugCounter += Time.deltaTime;
         }
     }
 

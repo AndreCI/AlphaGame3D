@@ -7,6 +7,7 @@ using UnityEngine;
 public class ArtificialIntelligence : Player
 {
     public bool turnFinished;
+    public bool turnShouldBeFinished;
     private int turnNumber;
     private List<Unit> deactivatedUnits;
     private MonoBehaviour coroutineStarter;
@@ -28,6 +29,7 @@ public class ArtificialIntelligence : Player
         Debug.Log("AI starts a new Turn");
         turnNumber += 1;
         turnFinished = false;
+        turnShouldBeFinished = false;
         GetVisibleNodes();
         gold += 20;
         actionPoints += 5;
@@ -48,25 +50,20 @@ public class ArtificialIntelligence : Player
     }
     public IEnumerator BasicRush()
     {
+        yield return new WaitForSeconds(0.5f);
         if (turnNumber == 1)
         {
             yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
-            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
-            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            //yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            //yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
         }
-        else if(turnNumber == 2)// || food < 1)
+        else if (turnNumber == 2)// || food < 1)
         {
             yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
-        }else if(turnNumber == 8)
-        {
-            //yield return UpgradeToT2((Building)GetSelectableFromType(typeof(Barracks)));
-        }else if(turnNumber > 8)
-        {
-
         }
         yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
         yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
-        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
+        //yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
 
         //yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
         Debug.Log("Current units:" + currentUnits.Count);
@@ -75,7 +72,6 @@ public class ArtificialIntelligence : Player
             yield return coroutineStarter.StartCoroutine(MoveAllUnits()); //get startcoroutine from unit
         }
         Debug.Log("Basic method ended");
-        yield return null;
     }
     
     private void ConstructUnit()
@@ -94,7 +90,7 @@ public class ArtificialIntelligence : Player
         }
     }
 
-    private void UpdateUnitEffect()
+    public void UpdateUnitEffect()
     {
         Debug.Log("AI starts updating its units");
         int count = 0;
@@ -122,6 +118,8 @@ public class ArtificialIntelligence : Player
                 yield return u.StartCoroutine(MoveUnit(u));
             }
         }
+        turnShouldBeFinished = true;
+        TurnManager.Instance.debugCounter = 0;
         Debug.Log("AI finished moving units");
         yield return new WaitForSeconds(0.0f) ;
     }

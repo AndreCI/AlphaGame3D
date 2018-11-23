@@ -12,6 +12,7 @@ public class TurnManager{
     public TurnSubject EndTurnSubject;
     public TurnSubject ButtonUpdateSubject;
     public bool againstAI;
+    public float debugCounter;
 
     public Player inactivePlayer
     {
@@ -86,6 +87,7 @@ public class TurnManager{
 
     void NewTurn()
     {
+        //debugCounter = 0;
         TurnNumber += 1;
         if (playerActiveIndex == 1)
         {
