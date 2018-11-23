@@ -8,7 +8,7 @@
     public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
-        u.TakesDamage(5);
+        u.TakesDamage(5, unsafeDeath:true);
         System.Object[] e = { Utils.NotificationTypes.DAMAGE, "-5" };
         return e;
     }

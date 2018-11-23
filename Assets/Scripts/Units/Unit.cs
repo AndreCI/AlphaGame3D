@@ -45,12 +45,14 @@ public abstract class Unit : Selectable
         currentAttackModifier = 0;
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
+        healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
         moving = false;
         visible = true;
         currentEffect = new List<UnitEffect>();
         abilities = new List<UnitAbility>();
         armor = 0;
+        movementSphere.localPosition = new Vector3(0, movementSphere.localPosition.y, 0);
     }
 
     public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
@@ -64,6 +66,10 @@ public abstract class Unit : Selectable
                 armor = 0;
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
             }
+        }
+        if (currentHealth <= 0)
+        {
+            Death();
         }
 
     }
@@ -144,7 +150,7 @@ public abstract class Unit : Selectable
         }
     }
 
-    public void TakesDamage(int amount)
+    public void TakesDamage(int amount, bool unsafeDeath=false)
     {
         int amountReduced = amount - armor;
         if (amountReduced <= 0)
@@ -152,8 +158,9 @@ public abstract class Unit : Selectable
             amountReduced = 0;
         }
         currentHealth = currentHealth - amountReduced;
+        Debug.Log("unit current hp:"+currentHealth);
         StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !unsafeDeath)
         {
             Death();
         }
@@ -163,27 +170,33 @@ public abstract class Unit : Selectable
 
     public void Death(bool AIcall=false)
     {
+        Debug.Log("A unit died with AIcall:" + AIcall);
         if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
         {
             foreach (UnitEffect ue in currentEffect)
             {
+                Debug.Log("         Ending effects " + ue.ToString());
                 ue.End();
             }
+            Debug.Log("       Effect ended");
 
-            TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-            currentPosition.ResetNode();
             currentEffect = new List<UnitEffect>();
             TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
-            if (!(owner.GetType() == typeof(ArtificialIntelligence) && TurnManager.Instance.currentPlayer.Equals(owner))){
+            if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))){
                 owner.currentUnits.Remove(this);
                 Destroy(prefab);
+                currentPosition.ResetNode(); //No double reset as a new unit could stand here now
             } //For riposte,safe remove after
+            TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
+            Debug.Log("     reset correctly");
         }
         else
         {
             currentPosition.ResetNode();
             SetVisible(false);
         }
+        Debug.Log("Unit died correctly");
+
     }
     public override void Select()
     {
@@ -316,7 +329,7 @@ public abstract class Unit : Selectable
     }
     protected virtual void MoveStep()
     {
-        float delta = 1.5f;
+        float delta = visible? 0.5f : 1.5f;
         if (path.Count == 0)
         {
             FinishMove();
@@ -330,7 +343,7 @@ public abstract class Unit : Selectable
         }
         else
         {
-            movementSphere.localPosition += direction * speed * Time.deltaTime;
+            movementSphere.localPosition += direction * Time.deltaTime * (visible? speed:3.9f);
         }
     }
     protected virtual void SetupNextMoveStep()
@@ -342,9 +355,21 @@ public abstract class Unit : Selectable
         else
         {
             FaceNextNode(path[0]);
+            if(!TurnManager.Instance.currentPlayer.isAi || TurnManager.Instance.inactivePlayer.visibleNodes.Contains(path[0]))
+            {
+                SetVisible(true);
+            }
+            else
+            {
+                SetVisible(false);
+            }
             if (path[0].Attackable(this.currentPosition))
             {
                 StartCoroutine(Attack(path[0], false));
+            }
+            else if (range>0 && path.Count >= range && path[range - 1].Attackable(this.currentPosition))
+            {
+                StartCoroutine(Attack(path[range - 1], false));
             }
         }
     }
@@ -356,14 +381,14 @@ public abstract class Unit : Selectable
         currentPosition = path[0];
         currentPosition.UpdateUnit(this);
         currentMovementPoints -= 1;
-        if (!(TurnManager.Instance.againstAI && TurnManager.Instance.currentPlayer.Equals(Player.Player2)))
+        if (!(TurnManager.Instance.currentPlayer.isAi))
         {
             UpdateCardDisplayInfo();
         }
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
     }
 
-    public virtual IEnumerator StartMoving(bool hideUI=false)
+    public virtual IEnumerator StartMoving()
     {
         moving = true;
         path = new List<Node>();
@@ -371,77 +396,33 @@ public abstract class Unit : Selectable
         {
             path.Add(node.root);
         }
-        if (hideUI)
+        if (TurnManager.Instance.currentPlayer.isAi)
         {
             HidePotentialMove();
             HidePossibleMoves();
         }
-        path.Reverse();
-        path.Remove(path[0]);
-        FaceNextNode(path[0]);
-        yield return new WaitForSeconds(0.0f);
-
-    }
-    public virtual IEnumerator AITransitionToMove()
-    {
-        yield return new WaitForEndOfFrame();
-    }
-    public IEnumerator AIMove()
-    {
-        bool visible = false;
-        while(path.Count > 0 && !visible)
+        if (path.Count >= 0)
         {
-            if (Player.Player1.visibleNodes.Contains(path[0]))
+            path.Reverse();
+            path.Remove(path[0]);
+            SetupNextMoveStep();
+            bool hiddenPath = false;
+            if (TurnManager.Instance.currentPlayer.isAi)
             {
-                SetVisible(true);
-                visible = true;
-                moving = true;
-                HidePotentialMove();
-                HidePossibleMoves();
-                yield return StartCoroutine(AITransitionToMove());
+                hiddenPath = true;
+                foreach (Node n in path)
+                {
+                    if (TurnManager.Instance.inactivePlayer.visibleNodes.Contains(n))
+                    {
+                        hiddenPath = false;
+                    }
+                }
             }
-            else
-            {
-                FaceNextNode(path[0]);
-                movementSphere.localPosition = new Vector3(path[0].position.x - transform.position.x, movementSphere.localPosition.y, path[0].position.z - transform.position.z);
-                currentPosition.ResetNode();
-                currentPosition = path[0];
-                currentPosition.UpdateUnit(this);
-                currentMovementPoints -= 1;
-                path.Remove(path[0]);
-                //yield return new WaitForSeconds(0.2f);
-            }
-        }
-        HidePotentialMove();
-        HidePossibleMoves();
-
-        yield return new WaitForSeconds(0.1f);
-    }
-
-    public IEnumerator StartAIMove()
-    {
-        if (Player.Player1.visibleNodes.Contains(currentPosition))
-        {
-            yield return StartCoroutine(StartMoving(hideUI:true));
+            yield return new WaitForSeconds(currentMovementPoints < 1 || hiddenPath ? 0.5f : currentMovementPoints - 1.0f);
         }
         else
         {
-            path = new List<Node>();
-            foreach (NodeUtils.NodeWrapper node in potentialMove)
-            {
-                path.Add(node.root);
-            }
-            path.Reverse();
-            path.Remove(path[0]);
-            if (path.Count == 0)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-            else
-            {
-                FaceNextNode(path[0]);
-                yield return StartCoroutine(AIMove());
-            }
+            yield return new WaitForEndOfFrame();
         }
     }
 

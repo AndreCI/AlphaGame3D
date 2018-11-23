@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.3.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -293,8 +291,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Huge Mocap Library\demo\scripts\demo.cs" />
-    <Compile Include="Assets\Huge Mocap Library\demo\scripts\smoothFollow.cs" />
     <Compile Include="Assets\Imported\KY_effects\Script\ConGUI.cs" />
     <Compile Include="Assets\Imported\KY_effects\Script\Lighting.cs" />
     <Compile Include="Assets\Imported\Warrior Pack Bundle 3 FREE\Code\IKHands.cs" />
@@ -305,9 +301,9 @@
     <Compile Include="Assets\Scripts\Buidlings\DefensiveBuilding.cs" />
     <Compile Include="Assets\Scripts\Buidlings\HallCenter.cs" />
     <Compile Include="Assets\Scripts\Buidlings\MagicalBuildings\ArcaneMirageBuilding.cs" />
+    <Compile Include="Assets\Scripts\Buidlings\MagicalBuildings\NaturesBlessingBuilding.cs" />
     <Compile Include="Assets\Scripts\Buidlings\MagicCenter.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Market.cs" />
-    <Compile Include="Assets\Scripts\Buidlings\MagicalBuildings\NaturesBlessingBuilding.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Shrine.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Windmill.cs" />
     <Compile Include="Assets\Scripts\GameEngine\ConstructionManager.cs" />
@@ -419,8 +415,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Huge Mocap Library\READTHIS.txt" />
-    <None Include="Assets\Huge Mocap Library\mocap animations\cmu-mocap-index-text.txt" />
     <None Include="Assets\Imported\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Imported\low poly medieval buildings\readme.txt" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />

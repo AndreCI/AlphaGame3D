@@ -8,54 +8,74 @@ public class ArtificialIntelligence : Player
 {
     public bool turnFinished;
     private int turnNumber;
+    private List<Unit> deactivatedUnits;
+    private MonoBehaviour coroutineStarter;
 
     public ArtificialIntelligence(int id_) : base(id_)
     {
         turnFinished = true;
         buildingRange = 5;
+        isAi = true;
+        deactivatedUnits = new List<Unit>();
     }
     public override IEnumerator StartOfTurn()
     {
+        if(coroutineStarter == null)
+        {
+            coroutineStarter = currentBuildings[0];
+        }
+        Debug.Log("--------------------");
+        Debug.Log("AI starts a new Turn");
         turnNumber += 1;
         turnFinished = false;
         GetVisibleNodes();
         gold += 20;
         actionPoints += 5;
-        foodPrediction += 4;
-        food += 4;
-        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(BasicRush());
+        foodPrediction -= 2;
+        UpdateUnitEffect();
+        
+        
+            yield return coroutineStarter.StartCoroutine(BasicRush());
 
-        turnFinished = true;
-        EndOfTurn();
+
+        UpdateUnitEffect();
+
+        Debug.Log("AI ends the turn.");
+            turnFinished = true;
+            EndOfTurn();
+        
         yield return new WaitForSeconds(0.0f);
     }
     public IEnumerator BasicRush()
     {
         if (turnNumber == 1)
         {
-            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
-            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
-            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
+            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
         }
-        else if(turnNumber == 6 || food < 1)
+        else if(turnNumber == 2)// || food < 1)
         {
-            yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
+            yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
         }else if(turnNumber == 8)
         {
-            yield return UpgradeToT2((Building)GetSelectableFromType(typeof(Barracks)));
+            //yield return UpgradeToT2((Building)GetSelectableFromType(typeof(Barracks)));
         }else if(turnNumber > 8)
         {
 
         }
-        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
-        yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
-        //yield return GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
-        //PlaceUnit(ConstructionManager.Instance.Wizard);
+        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
+        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
+        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
+
+        //yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
+        Debug.Log("Current units:" + currentUnits.Count);
         if (currentUnits.Count != 0)
         {
-            yield return currentUnits[0].StartCoroutine(MoveAllUnits()); //get startcoroutine from unit
+            yield return coroutineStarter.StartCoroutine(MoveAllUnits()); //get startcoroutine from unit
         }
-        yield return new WaitForSeconds(0.0f);
+        Debug.Log("Basic method ended");
+        yield return null;
     }
     
     private void ConstructUnit()
@@ -73,36 +93,56 @@ public class ArtificialIntelligence : Player
             }
         }
     }
-    private IEnumerator MoveAllUnits()
+
+    private void UpdateUnitEffect()
     {
-        foreach(Unit u in currentUnits)
-        {
-            yield return u.StartCoroutine(MoveUnit(u));
-            
-        }
-        foreach(Unit u in currentUnits)
+        Debug.Log("AI starts updating its units");
+        int count = 0;
+        foreach (Unit u in currentUnits)
         {
             if (u.currentHealth <= 0)
             {
                 u.Death(AIcall: true);
+                deactivatedUnits.Add(u);
+                count += 1;
+            }
+
+        }
+        Debug.Log("AI finished updating. " + count + " units dead found.");
+        currentUnits.RemoveAll(u => u.currentHealth <= 0);
+        Debug.Log("   Currents units :" + currentUnits.Count);
+    }
+    private IEnumerator MoveAllUnits()
+    {
+        Debug.Log("AI starts moving all units");
+        foreach(Unit u in currentUnits)
+        {
+            if (u.currentHealth > 0) //sanity check
+            {
+                yield return u.StartCoroutine(MoveUnit(u));
             }
         }
-        currentUnits.RemoveAll(u => u.currentHealth <= 0);
+        Debug.Log("AI finished moving units");
         yield return new WaitForSeconds(0.0f) ;
     }
 
     private IEnumerator MoveUnit(Unit u)
     {
+        Debug.Log("AI starts moving a unit");
         Node target = DecideUnitMovement(u);
+        Debug.Log("   Unit target decided");
         if (target != null)
         {
             u.ShowPotentialMove(target);
+            Debug.Log("   Unit path found");
             CardDisplay.Instance.DisableCardDisplay();
-            yield return u.StartCoroutine(u.StartAIMove());
+            yield return u.StartCoroutine(u.StartMoving());
+            Debug.Log("   Movement finished");
             CardDisplay.Instance.DisableCardDisplay();
             u.HidePotentialMove();
             u.HidePossibleMoves();
         }
+        Debug.Log("AI move done.");
         yield return new WaitForSeconds(0.0f);
     }
     private Node DecideUnitMovement(Unit u)
@@ -191,26 +231,66 @@ public class ArtificialIntelligence : Player
 
     private IEnumerator PlaceUnit(Unit u)
     {
+        Debug.Log("AI place unit");
         ConstructionManager.Instance.SetUnitToBuild(u);
         List<Node> selectables = GetSelectableNodes();
-        int randIdx = (new System.Random()).Next(0, selectables.Count);
-        selectables[randIdx].Construct(true);
-        if (!Player.player1.visibleNodes.Contains(selectables[randIdx]))
+        if (selectables.Count > 0)
         {
-            selectables[randIdx].SetVisible(false);
+            Node node = selectables[(new System.Random()).Next(0, selectables.Count)];
+            bool instanceInDeactivatedUnits = false;
+            foreach (Unit u_ in deactivatedUnits)
+            {
+                if (u.GetType() == u_.GetType())
+                {
+                    instanceInDeactivatedUnits = true;
+                    u = u_;
+                    Debug.Log("        Found a dead units to respawn");
+                }
+            }
+            if (!instanceInDeactivatedUnits)
+            {
+                node.Construct(true);
+                Debug.Log("   New units using constructor");
+            }
+            else
+            {
+                ConstructionManager.Instance.ResetConstruction();
+                u.transform.position = node.transform.position + node.positionOffset;
+                u.transform.rotation = node.transform.rotation;
+                u.Setup();
+                u.SetCurrentPosition(node);
+                u.owner = this;
+                currentUnits.Add(u);
+                deactivatedUnits.Remove(u);
+                gold -= u.goldCost;
+                actionPoints -= u.actionPointCost;
+                GetVisibleNodes();
+                Debug.Log("   New units using respawn");
+
+            }
+            if (!TurnManager.Instance.inactivePlayer.visibleNodes.Contains(node))
+            {
+                node.SetVisible(false);
+            }
         }
+        Debug.Log("Unit placed.");
         yield return new WaitForSeconds(0.1f);
     }
     private IEnumerator PlaceBuilding(Building b)
     {
+        Debug.Log("AI is placing a building.");
         ConstructionManager.Instance.SetBuildingToBuild(b);
         List<Node> selectables = GetSelectableNodes();
-        int randIdx = (new System.Random()).Next(0, selectables.Count);
-        selectables[randIdx].Construct(true);
-        if (!Player.player1.visibleNodes.Contains(selectables[randIdx]))
+        if (selectables.Count > 0)
         {
-            selectables[randIdx].SetVisible(false);
+            int randIdx = (new System.Random()).Next(0, selectables.Count);
+            selectables[randIdx].Construct(true);
+            if (!Player.player1.visibleNodes.Contains(selectables[randIdx]))
+            {
+                selectables[randIdx].SetVisible(false);
+            }
         }
+        Debug.Log("Building placed.");
         yield return new WaitForSeconds(0.1f);
     }
 

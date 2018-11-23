@@ -51,25 +51,12 @@ public class Bandit : Unit
         base.FinishMove();
     }
 
-    public override IEnumerator StartMoving(bool hideUI = false)
-    {
-        StartCoroutine(base.StartMoving(hideUI:hideUI));
-        if (path[0].Attackable(this.currentPosition))
-        {
-            yield return StartCoroutine(Attack(path[0], false));
-        }
-        else
-        {
-            anim.SetTrigger("Moving");
-        }
-        yield return new WaitForSeconds(currentMovementPoints<1? 0.2f :currentMovementPoints - 1.0f);
-
-    }
-
-    public override IEnumerator AITransitionToMove()
+    public override IEnumerator StartMoving()
     {
         anim.SetTrigger("Moving");
-        yield return new WaitForSeconds(currentMovementPoints<1? 0.2f: currentMovementPoints - 1.0f);
+        StartCoroutine(base.StartMoving());
+        yield return new WaitForSeconds(currentMovementPoints<1? 0.2f :currentMovementPoints - 1.0f);
+
     }
 
     public void FootR()

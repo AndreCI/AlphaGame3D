@@ -141,7 +141,7 @@ public class Node : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && TurnManager.Instance.currentPlayer.GetType() == typeof(ArtificialIntelligence))
         {
             return;
         }
@@ -161,7 +161,7 @@ public class Node : MonoBehaviour
             Select();
             return;
         }
-        else if (ConstructionManager.Instance.canConstruct && ConstructionManager.Instance.mode != "spell" && state==STATE.SELECTABLE_CONSTRUCT_FINAL)
+        else if (ConstructionManager.Instance.canConstruct || ConstructionManager.Instance.mode != "spell" && state==STATE.SELECTABLE_CONSTRUCT_FINAL)
         {
             Construct(true);
         }
@@ -198,7 +198,7 @@ public class Node : MonoBehaviour
     }
     public void OnMouseOver()
     {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() || TurnManager.Instance.currentPlayer.GetType() == typeof(ArtificialIntelligence))
         {
             return;
         }
@@ -221,7 +221,7 @@ public class Node : MonoBehaviour
     }
     public void OnMouseExit()
     {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() || TurnManager.Instance.currentPlayer.GetType() == typeof(ArtificialIntelligence))
         {
             return;
         }

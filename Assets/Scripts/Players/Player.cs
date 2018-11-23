@@ -33,6 +33,7 @@ public class Player
     }
 
     public int id;
+    public bool isAi;
     public int gold;
     public int mana;
     public int manaBank;
@@ -133,6 +134,7 @@ public class Player
         food = 4;
         foodPrediction = 4;
         id = id_;
+        isAi = false;
         requirementSystem = new RequirementSystem();
         currentBuildings = new List<Building>();
         currentUnits = new List<Unit>();

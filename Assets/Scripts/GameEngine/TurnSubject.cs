@@ -15,11 +15,15 @@ public class TurnSubject{
     public void NotifyObservers(Player playerActive)
     {
         observers = observers.OrderBy(x=>x.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
-        foreach(IObserver o in observers.Keys)
+        foreach(IObserver o in observers.Keys.ToList<IObserver>())
         {
             if (o != null)
             {
                 o.Notify(playerActive, subjectType);
+            }
+            else
+            {
+                observers.Remove(o);
             }
         }
     }

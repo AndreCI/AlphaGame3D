@@ -27,25 +27,6 @@ public class Wizard : Unit
         }
     }
 
-    protected override void SetupNextMoveStep()
-    {
-        if (path.Count == 0)
-        {
-            FinishMove();
-        }
-        else
-        {
-            FaceNextNode(path[0]);
-            if (path[0].Attackable(this.currentPosition))
-            {
-                StartCoroutine(Attack(path[0], false));
-            }
-            else if (path.Count >= range && path[range - 1].Attackable(this.currentPosition))
-            {
-                StartCoroutine(Attack(path[range - 1], false));
-            }
-        }
-    }
     protected override IEnumerator Attack(Node target, bool riposte)
     {
         GameObject attackAnim = (GameObject)Instantiate(magicAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
@@ -60,30 +41,12 @@ public class Wizard : Unit
         base.FinishMove();
     }
 
-    public override IEnumerator StartMoving(bool hideUI = false)
-    {
-        StartCoroutine(base.StartMoving(hideUI:hideUI));
-        if (path[0].Attackable(this.currentPosition))
-        {
-            StartCoroutine(Attack(path[0], false));
-        }
-        else if (path.Count >= range && path[range - 1].Attackable(this.currentPosition))
-        {
-            StartCoroutine(Attack(path[range - 1], false));
-        }
-        else
-        {
-            anim.SetTrigger("Moving");
-        }
-        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
-
-    }
-
-    public override IEnumerator AITransitionToMove()
+    public override IEnumerator StartMoving()
     {
         anim.SetTrigger("Moving");
-        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
+        yield return StartCoroutine(base.StartMoving());
     }
+
     public void FootR()
     {
     }

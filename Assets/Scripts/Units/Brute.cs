@@ -44,19 +44,12 @@ public class Brute : Unit
         base.FinishMove();
     }
 
-    public override IEnumerator StartMoving(bool hideUI=false)
+    public override IEnumerator StartMoving()
     {
-        StartCoroutine(base.StartMoving());
-        if (path[0].Attackable(this.currentPosition))
-        {
-            StartCoroutine(Attack(path[0], false));
-        }
-        else
-        {
-            anim.SetTrigger("Moving");
-        }
-        yield return new WaitForSeconds(3.0f);
+        anim.SetTrigger("Moving");
 
+        StartCoroutine(base.StartMoving());
+        yield return new WaitForSeconds(currentMovementPoints < 1 ? 0.2f : currentMovementPoints - 1.0f);
     }
     public void FootR()
     {

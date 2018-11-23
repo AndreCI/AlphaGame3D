@@ -15,9 +15,8 @@
     public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
-        u.TakesDamage(10);
-        System.Object[] e = { Utils.NotificationTypes.DAMAGE, "-10" };
-        return e;
+        u.TakesDamage(10, unsafeDeath:true);
+        return null;
     }
 
     public override string GetDescriptionRelative()
