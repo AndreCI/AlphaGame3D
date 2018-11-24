@@ -8,7 +8,7 @@ public class NaturesBlessingBuilding : DefensiveBuilding
 
     private void Start()
     {
-        TurnManager.Instance.StartTurnSubject.AddObserver(this, 6);
+        TurnManager.Instance.StartTurnSubject.AddObserver(this, 4); 
         startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
             {Utils.NotificationTypes.FOOD, 1 }
         };
@@ -36,7 +36,8 @@ public class NaturesBlessingBuilding : DefensiveBuilding
                     }
                     if (ue.duration > 0)
                     {
-                        n.root.unit.currentEffect.Add(ue);
+                        n.root.unit.currentEffect.Add(ue); //Adding effect during opening phase should be done in 
+                        //a better way.
                     }
                 }
             }TakeDamage(1);

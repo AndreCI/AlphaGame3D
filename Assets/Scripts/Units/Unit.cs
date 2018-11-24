@@ -67,21 +67,20 @@ public abstract class Unit : Selectable
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
             }
         }
-        if (currentHealth <= 0)
-        {
-            Death();
-        }
+        
 
     }
 
     public IEnumerator DisplayAndApplyCurrentEffects(Player currentPlayer, List<UnitEffect> currentEffects)
     {
-        currentEffect.RemoveAll(ue => ue.duration<=0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
+
+        currentEffects.RemoveAll(ue => ue.duration<=0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
-        //Dictionary<Utils.NotificationTypes, int> effectNotification = new Dictionary<Utils.NotificationTypes, int>();
-        foreach (UnitEffect ue in currentEffect)
-        {
+
+        for (int i =0; i<currentEffects.Count; i++) {
+            UnitEffect ue = currentEffects[i]; //No foreach as effects can be added during opening phase.
+            //However, maybe this should be fixed... See NaturesBlessingBuilding
             System.Object[] data = ue.ApplyEffect();
             if (data == null || !visible)
             {
@@ -93,7 +92,11 @@ public abstract class Unit : Selectable
             }
         }
         notificationPanel.SetActive(false);
-        currentEffect.RemoveAll(ue => ue.effectEnded); //safe removing of elements
+        currentEffects.RemoveAll(ue => ue.effectEnded); //safe removing of elements
+        if (currentHealth <= 0)
+        {
+            Death();
+        }
         yield return null;
     }
     public IEnumerator DisplayNotifications(Dictionary<Utils.NotificationTypes, int> notifications)
@@ -158,7 +161,6 @@ public abstract class Unit : Selectable
             amountReduced = 0;
         }
         currentHealth = currentHealth - amountReduced;
-        Debug.Log("unit current hp:"+currentHealth);
         StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
         if (currentHealth <= 0 && !unsafeDeath)
         {
@@ -309,7 +311,7 @@ public abstract class Unit : Selectable
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
         if (target.unit != null)
         {
             target.unit.IsAttacked(attack + currentAttackModifier, this, riposte);

@@ -15,6 +15,7 @@ Engine:
 	Add types to subjects so that elements can handle multiples subjects.
 Add unit ability framework
 add AI difficulty	
+Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 
 

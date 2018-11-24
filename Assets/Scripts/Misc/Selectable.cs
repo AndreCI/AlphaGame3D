@@ -38,7 +38,7 @@ public abstract class Selectable : MonoBehaviour, IObserver
         {
             float fontSize = notificationText.fontSize;
 
-            notificationText.fontSize = fontSize / 2; //TODO: DEBUG
+            notificationText.fontSize = fontSize; //TODO: REDUCE FONTSIZE
             notificationText.text = "BUILDING FOR " + notif + " TURNS";
             notificationText.fontSize = fontSize;
         }

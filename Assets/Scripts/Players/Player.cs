@@ -127,10 +127,10 @@ public class Player
     }
     protected Player(int id_)
     {
-        gold = 8;
+        gold = 28;
         mana = 0;
         manaBank = 0;
-        actionPoints = 6;
+        actionPoints = 16;
         food = 4;
         foodPrediction = 4;
         id = id_;

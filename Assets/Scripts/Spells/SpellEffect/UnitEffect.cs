@@ -33,7 +33,7 @@ public abstract class UnitEffect
     }
 
     public virtual void End()
-    {
+    { 
         int counter = 0;
         foreach (UnitEffect ue in u.currentEffect)
         {
