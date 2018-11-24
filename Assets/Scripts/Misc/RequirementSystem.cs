@@ -48,6 +48,8 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(ArcaneIntellect));
         AddUnlocksAndLocks(depth1, depth2);
+        depth2 = new NodeR(typeof(ArcaneMissile));
+        AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(ArcaneMirage));
         AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);

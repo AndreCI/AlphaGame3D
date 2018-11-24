@@ -15,7 +15,7 @@ Engine:
 	Add types to subjects so that elements can handle multiples subjects.
 Add unit ability framework
 add AI difficulty	
-Fix effect and death mechanics
+	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 
 
@@ -54,7 +54,7 @@ Continue the global reflexion: Units & buildings.
 Implement more building & units
 	Implement more frost spells
 	Implement more fire spells
-?Implement more basic spells
+	Implement more basic spells
 	Implement more spell effects
 	Implement building restr(max 1 building)
 	Implement green magic

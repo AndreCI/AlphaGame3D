@@ -39,6 +39,7 @@ public static class Utils
         {"manafreeze", ManaFreeze.Instance },
         {"frostlance", Frostlance.Instance },
         {"arcaneburn", Arcaneblast.Instance },
+        {"arcanemissile", ArcaneMissile.Instance },
         {"arcanemirage", ArcaneMirage.Instance },
         {"earthlink", EarthLink.Instance },
         {"waveofvigor", WaveOfVigor.Instance },
