@@ -19,6 +19,7 @@ add AI difficulty
 	Rework unit movement completly by removing root motion
 Implement units keywords
 transform ranged into just an attribute?
+	Rework BFS
 
 UI:
 	Implement help ressource bar
@@ -31,7 +32,8 @@ UI:
 	Change fontsize of carddisplay (spell overflow)
 Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
-	
+Rework the UI?
+
 Graphic:
 	Implement visual effect on spell effect
 	Implement unit diffrence from player
@@ -63,7 +65,7 @@ Implement more building & units
 	Implement building restr(max 1 building)
 	Implement green magic
 	Implement more green spells
-Implement range attack indé from mvt
+	Implement range attack indé from mvt
 ?Implement void spells
 Implement scouts (hallcenterbuilding)
 Implement better AI (more units, spells?)
@@ -75,6 +77,10 @@ Add spell sounds
 Add untis sounds
 Add barracks sounds
 Add Menu & button sounds
+
+AI
+Rework range attack
+Rework attack priority
 
 Debug:
 Found a bug on double click for a spell: 

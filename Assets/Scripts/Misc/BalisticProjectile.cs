@@ -6,9 +6,10 @@ public class BalisticProjectile : MonoBehaviour
     [Header("Projectile Data")]
     public int speed;
     public int resolution;
-    //public int gravity;
+    public Vector3 gravity;
     public LineRenderer ray;
-    public float correction;
+    public GameObject projectile;
+    public float animationDuration;
 
     [Header("Projectile initialization")]
     public Node source;
@@ -16,7 +17,8 @@ public class BalisticProjectile : MonoBehaviour
     private List<Vector3> trajectory;
     private Vector3 direction;
     private float maxDistance;
-    private float alpha = 2f;
+    private bool shooting;
+    private float timeIdx;
 
     // Use this for initialization
     void Start()
@@ -27,35 +29,59 @@ public class BalisticProjectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (shooting)
+        {
+            timeIdx += Time.deltaTime;
+            if (timeIdx > animationDuration)
+            {
+                shooting = false;
+                projectile.SetActive(false);
+            }
+            else
+            {
+                int idx =Mathf.FloorToInt(resolution * timeIdx / animationDuration);
+                projectile.transform.position = trajectory[idx];
+                if (idx + resolution / 10 < resolution)
+                {
+                    projectile.transform.LookAt(trajectory[idx+Mathf.FloorToInt(resolution/10)]);
+                }
+                else
+                {
+                    projectile.transform.LookAt(target.position + new Vector3(0, 1.5f, 0));
+                }
+            }
+
+        }
     }
 
-    public void Setup(Node source_, Node target_)
+    public void ShowArc(Node source_, Node target_)
     {
-       
         source = source_;
         target = target_;
-        Debug.Log(source.ToString());
-        Debug.Log(target.ToString());
         SetTrajectory();
         RenderArc();
     }
 
+    public void HideArc()
+    {
+        ray.positionCount = 0;
+    }
+
     void RenderArc()
     {
+        transform.position = new Vector3(0, 0, 0) ;
         ray.positionCount=resolution +1;
         ray.SetPositions(trajectory.ToArray());
         ray.materials[0].mainTextureScale = new Vector3(maxDistance, 1, 1);
-
+         
 
     }
 
     public void SetTrajectory()
     {
-        //throw new System.NotImplementedException();
+        trajectory = new List<Vector3>();
         GetAngle();
         maxDistance = Vector3.Distance(source.position, target.position);
-        
         for(int i =0; i<=resolution; i++)
         {
             float t = (float)i / (float)(resolution);
@@ -65,18 +91,18 @@ public class BalisticProjectile : MonoBehaviour
 
     private void GetAngle()
     {
-        float x = target.position.x - source.position.x;
-        float z = target.position.z - source.position.z;
-        float y = 0;
-        direction = new Vector3(x, y, z);
+        direction = -0.5f*gravity - source.position + target.position;
     }
 
     private Vector3 CalculateArcPoint(float t)
     {
-        float x = t * direction.x;
-        float z = t * direction.z;
-        float y = -Mathf.Pow((t * maxDistance - maxDistance/2), alpha) + Mathf.Pow(maxDistance/2,alpha);
-        //float y = Mathf.Tan(radianAngle) - ((gravity * x * x) / (2 * speed * speed * Mathf.Cos(radianAngle) * Mathf.Cos(radianAngle));
-        return new Vector3(x, y/correction, z);
+        return 0.5f * gravity * Mathf.Pow(t, 2) + direction * t + source.position + new Vector3(0, 1.5f, 0);
+        
+    }
+
+    public void Shoot() {
+        timeIdx = 0;
+        shooting = true;
+        projectile.SetActive(true);
     }
 }

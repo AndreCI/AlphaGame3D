@@ -16,7 +16,8 @@ public abstract class Unit : Selectable
     public UnitEffectAnimations effectAnimations;
     public float speed;
     public Transform animTransform;
-    public GameObject attackAnimation;
+    public GameObject meleeAttackAnimation;
+    public BalisticProjectile rangedAttackAnimation;
     public Vector3 attackOffset;
 
     [Header("Unit Information")]
@@ -61,7 +62,6 @@ public abstract class Unit : Selectable
         abilities = new List<UnitAbility>();
         armor = 0;
         movementSphere.localPosition = new Vector3(0, movementSphere.localPosition.y, 0);
-
     }
 
     void Update()
@@ -329,17 +329,30 @@ public abstract class Unit : Selectable
             ))
         {
             target.state = Node.STATE.ATTACKABLE;
-
+            Node attackSource = currentPosition;
             int removeRange = Mathf.Min(potentialPath.Count, attackRange);
             for (int i = 1; i < removeRange; i++)
             {
                 potentialPath[i].state = Node.STATE.SELECTABLE;
             }
+            if (potentialPath.Count >= 1 && attackRange<potentialPath.Count)
+            {
+                attackSource = potentialPath[removeRange]; //0 is enemy, 1 is last movable node
+            }
+            if (rangedAttackAnimation != null) //Sanity check
+            {
+                rangedAttackAnimation.ShowArc(attackSource, target);
+            }
+
         }
     }
 
     public void HidePotentialMove(Node target)
     {
+        if (rangedAttackAnimation != null)
+        {
+            rangedAttackAnimation.HideArc();
+        }
         if (rangedAttackableMoves.Contains(target)) //Meaning attackable at range
         {
             target.state = Node.STATE.ATTACKABLE_HIDDEN;
@@ -374,22 +387,31 @@ public abstract class Unit : Selectable
 
     protected virtual IEnumerator Attack(Node target, bool riposte)
     {
-        GameObject attackAnim = (GameObject)Instantiate(attackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
-        Destroy(attackAnim, 5);
         anim.SetTrigger("Attack1Trigger");
-        animTransform.localPosition = new Vector3(0f, 0f, 0f);
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
-        yield return new WaitForSeconds(0.5f);
-        if (target.unit != null)
+        if (currentPosition.adjacentNodes.Contains(target))
         {
-            target.unit.IsAttacked(attack + currentAttackModifier, this, riposte);
-        }
-        else
+            GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
+            Destroy(attackAnim, 5);
+            yield return new WaitForSeconds(0.5f);
+        }else if(rangedAttackAnimation != null)
         {
-            target.Damage(attack + currentAttackModifier);
+            rangedAttackAnimation.HideArc();
+            rangedAttackAnimation.Shoot();
+            yield return new WaitForSeconds(rangedAttackAnimation.animationDuration);
         }
+        
+            animTransform.localPosition = new Vector3(0f, 0f, 0f);
+            if (target.unit != null)
+            {
+                target.unit.IsAttacked(attack + currentAttackModifier, this, riposte);
+            }
+            else
+            {
+                target.Damage(attack + currentAttackModifier);
+            }
         yield return new WaitForEndOfFrame();
     }
 
