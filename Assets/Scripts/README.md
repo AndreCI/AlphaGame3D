@@ -18,7 +18,6 @@ add AI difficulty
 	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 Implement units keywords
-transform ranged into just an attribute?
 	Rework BFS
 
 UI:
@@ -45,7 +44,8 @@ Do card unit with requirement schoolom
 Implement TechTreeUI
 Add footsteps? Using FootR FootL?
 	Change models in order to add more units
-Balistic projectiles
+	Balistic projectiles
+	On Target Attack Range
 	
 Balance:
 Rebalance game
@@ -83,6 +83,8 @@ Rework range attack
 Rework attack priority
 
 Debug:
+Fix building out of places
+	Add animations attack
 Found a bug on double click for a spell: 
 NullReferenceException: Object reference not set to an instance of an object
 ConstructionManager.ConstructSpell (.Node node) (at Assets/Scripts/GameEngine/ConstructionManager.cs:108)

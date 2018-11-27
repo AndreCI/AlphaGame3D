@@ -315,6 +315,8 @@
     <Compile Include="Assets\Scripts\GameEngine\TurnSubject.cs" />
     <Compile Include="Assets\Scripts\Misc\BalisticProjectile.cs" />
     <Compile Include="Assets\Scripts\Misc\Observer.cs" />
+    <Compile Include="Assets\Scripts\Misc\OnTargetRangedAttack.cs" />
+    <Compile Include="Assets\Scripts\Misc\RangedAttackAnimation.cs" />
     <Compile Include="Assets\Scripts\Misc\RequirementSystem.cs" />
     <Compile Include="Assets\Scripts\Misc\Selectable.cs" />
     <Compile Include="Assets\Scripts\Misc\Utils.cs" />

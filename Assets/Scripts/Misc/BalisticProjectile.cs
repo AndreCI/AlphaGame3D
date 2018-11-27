@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
-public class BalisticProjectile : MonoBehaviour
+public class BalisticProjectile : RangedAttackAnimation
 {
     [Header("Projectile Data")]
     public int speed;
@@ -9,23 +10,25 @@ public class BalisticProjectile : MonoBehaviour
     public Vector3 gravity;
     public LineRenderer ray;
     public GameObject projectile;
-    public float animationDuration;
+    public ParticleSystem hitAnimation;
+    public float projectileFadePerSecond;
 
     [Header("Projectile initialization")]
-    public Node source;
-    public Node target;
     private List<Vector3> trajectory;
     private Vector3 direction;
     private float maxDistance;
     private bool shooting;
     private float timeIdx;
-
+    private bool fadeProjectile;
+    private MeshRenderer projectileRenderer;
     // Use this for initialization
     void Start()
     {
         trajectory = new List<Vector3>();
+        shooting = false;
+        fadeProjectile = false;
+        projectileRenderer = projectile.GetComponentInChildren<MeshRenderer>();
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -35,9 +38,11 @@ public class BalisticProjectile : MonoBehaviour
             if (timeIdx > animationDuration)
             {
                 shooting = false;
-                projectile.SetActive(false);
+                hitAnimation.Play();
+                fadeProjectile = true;
+                //projectile.SetActive(false);
             }
-            else
+            else if(timeIdx>0)
             {
                 int idx =Mathf.FloorToInt(resolution * timeIdx / animationDuration);
                 projectile.transform.position = trajectory[idx];
@@ -47,14 +52,23 @@ public class BalisticProjectile : MonoBehaviour
                 }
                 else
                 {
-                    projectile.transform.LookAt(target.position + new Vector3(0, 1.5f, 0));
+                    projectile.transform.LookAt(trajectory[resolution]);
                 }
             }
 
+        }else if (fadeProjectile)
+        {
+            Color color = projectileRenderer.material.color; //Does not work
+            projectileRenderer.material.color = new Color(color.r, color.g, color.b, color.a - (projectileFadePerSecond * Time.deltaTime));
+            if (projectileRenderer.material.color.a <= 0)
+            {
+                fadeProjectile = false;
+                projectile.SetActive(false);
+            }
         }
     }
 
-    public void ShowArc(Node source_, Node target_)
+    public override void ShowAttackPreview(Node source_, Node target_)
     {
         source = source_;
         target = target_;
@@ -62,7 +76,7 @@ public class BalisticProjectile : MonoBehaviour
         RenderArc();
     }
 
-    public void HideArc()
+    public override void HideAttackPreview()
     {
         ray.positionCount = 0;
     }
@@ -91,7 +105,10 @@ public class BalisticProjectile : MonoBehaviour
 
     private void GetAngle()
     {
-        direction = -0.5f*gravity - source.position + target.position;
+        float bornes = 1.2f;
+        System.Random randsys = new System.Random();
+        Vector3 randomOffset = new Vector3((float)(randsys.NextDouble()*2-1)*bornes, 0, (float)(randsys.NextDouble() * 2 - 1)*bornes);
+        direction = -0.5f*gravity - source.position + (target.position + randomOffset);
     }
 
     private Vector3 CalculateArcPoint(float t)
@@ -100,8 +117,8 @@ public class BalisticProjectile : MonoBehaviour
         
     }
 
-    public void Shoot() {
-        timeIdx = 0;
+    public override void PlayAnimation() {
+        timeIdx = -delay;
         shooting = true;
         projectile.SetActive(true);
     }

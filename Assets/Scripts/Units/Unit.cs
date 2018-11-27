@@ -17,7 +17,7 @@ public abstract class Unit : Selectable
     public float speed;
     public Transform animTransform;
     public GameObject meleeAttackAnimation;
-    public BalisticProjectile rangedAttackAnimation;
+    public RangedAttackAnimation rangedAttackAnimation;
     public Vector3 attackOffset;
 
     [Header("Unit Information")]
@@ -341,7 +341,7 @@ public abstract class Unit : Selectable
             }
             if (rangedAttackAnimation != null) //Sanity check
             {
-                rangedAttackAnimation.ShowArc(attackSource, target);
+                rangedAttackAnimation.ShowAttackPreview(attackSource, target);
             }
 
         }
@@ -351,7 +351,7 @@ public abstract class Unit : Selectable
     {
         if (rangedAttackAnimation != null)
         {
-            rangedAttackAnimation.HideArc();
+            rangedAttackAnimation.HideAttackPreview();
         }
         if (rangedAttackableMoves.Contains(target)) //Meaning attackable at range
         {
@@ -391,6 +391,7 @@ public abstract class Unit : Selectable
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
+        FaceNextNode(target);
         if (currentPosition.adjacentNodes.Contains(target))
         {
             GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
@@ -398,9 +399,9 @@ public abstract class Unit : Selectable
             yield return new WaitForSeconds(0.5f);
         }else if(rangedAttackAnimation != null)
         {
-            rangedAttackAnimation.HideArc();
-            rangedAttackAnimation.Shoot();
-            yield return new WaitForSeconds(rangedAttackAnimation.animationDuration);
+            rangedAttackAnimation.HideAttackPreview();
+            rangedAttackAnimation.PlayAnimation();
+            yield return new WaitForSeconds(rangedAttackAnimation.animationDuration + rangedAttackAnimation.delay);
         }
         
             animTransform.localPosition = new Vector3(0f, 0f, 0f);
@@ -421,6 +422,7 @@ public abstract class Unit : Selectable
         moving = false;
         path = new List<Node>();
         Selector.Instance.Unselect(); //Unselect this, and thus MakeIdle all nodes
+        HidePossibleMoves();
     }
     protected virtual void MoveStep()
     {
