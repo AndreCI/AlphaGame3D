@@ -150,7 +150,7 @@ public class Node : MonoBehaviour
         }
         if (state == STATE.ON_UNIT_PATH_FINAL || state == STATE.ATTACKALBE_FINAL)
         {
-            StartCoroutine(((Unit)Selector.Instance.currentObject).StartMoving());
+            StartCoroutine(((Unit)Selector.Instance.currentObject).StartMoving(this));
         }
         else if (ConstructionManager.Instance.canConstruct && ConstructionManager.Instance.mode == "spell" && state==STATE.SPELL_SELECTABLE_FINAL)
         {
@@ -230,7 +230,7 @@ public class Node : MonoBehaviour
         }
         if (state == STATE.SELECTABLE_FINAL || state == STATE.ON_UNIT_PATH_FINAL || state == STATE.ATTACKALBE_FINAL)
         {
-            ((Unit)Selector.Instance.currentObject).HidePotentialMove();
+            ((Unit)Selector.Instance.currentObject).HidePotentialMove(this);
         }else if (state == STATE.SPELL_SELECTABLE_FINAL)
         {
             SetSelectedColor(COLORS.SELECTABLE_COLOR);

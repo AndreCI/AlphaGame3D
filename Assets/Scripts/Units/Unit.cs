@@ -23,7 +23,7 @@ public abstract class Unit : Selectable
     public int maxHealth;
     public int attack;
     public int maxMovementPoints;
-    public int range;
+    public int attackRange;
     public int visionRange;
     public string effectDescription;
 
@@ -43,6 +43,7 @@ public abstract class Unit : Selectable
     protected bool moving;
     protected NodeUtils.NodeWrapper currentPositionWrapped; //NodeWrapper containing the root of the movement tree
     protected List<Node> possibleMoves; //List of all the nodes where the unit can go
+    protected List<Node> rangedAttackableMoves; //List of all the nodes where the unit can go
 
 
     public virtual void Setup()
@@ -163,7 +164,7 @@ public abstract class Unit : Selectable
     {
         FaceNextNode(source.currentPosition);
         TakesDamage(amount);
-        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && range==0 && !riposte)
+        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && attackRange==0 && !riposte)
         {
             StartCoroutine(Attack(source.currentPosition, true));
         }
@@ -201,7 +202,8 @@ public abstract class Unit : Selectable
             currentEffect = new List<UnitEffect>();
             TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
             if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))){
-                //owner.currentUnits.Remove(this);
+            
+                owner.currentUnits.Remove(this);
                 Destroy(prefab);
                 currentPosition.ResetNode(); //No double reset as a new unit could stand here now
             } //For riposte,safe remove after
@@ -252,8 +254,21 @@ public abstract class Unit : Selectable
                     node.state = Node.STATE.SELECTABLE;
                 }
             }
-        
         }
+        rangedAttackableMoves = new List<Node>();
+        foreach (Node node in NodeUtils.BFSNodesAdj(currentPosition, attackRange).GetChildrens())
+        {
+            if (TurnManager.Instance.currentPlayer.visibleNodes.Contains(node))
+            {
+                if (node.Attackable(currentPosition))
+                {
+                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
+                    rangedAttackableMoves.Add(node);
+                }
+            }
+        }
+
+
         return possibleMoves;
     }
 
@@ -280,11 +295,20 @@ public abstract class Unit : Selectable
             }
             possibleMoves = null;
         }
+        if(rangedAttackableMoves != null)
+        {
+            foreach (Node node in rangedAttackableMoves)
+            {
+                node.MakeIdle();
+            }
+            rangedAttackableMoves = null;
+        }
     }
 
     public void ShowPotentialMove(Node target)
     {
-        potentialPath = currentPositionWrapped.GetPath(target);
+        potentialPath = currentPositionWrapped.GetPath(target); //empty if ranged is out
+        
         foreach (Node node in potentialPath)
         {
             if (node == currentPosition)
@@ -299,10 +323,27 @@ public abstract class Unit : Selectable
                 node.state = Node.STATE.ON_UNIT_PATH;
             }
         }
+        if (rangedAttackableMoves.Contains(target) || //Meaning attackable at range
+            (currentMovementPoints + attackRange > potentialPath.Count &&
+            target.Attackable(currentPosition)
+            ))
+        {
+            target.state = Node.STATE.ATTACKABLE;
+
+            int removeRange = Mathf.Min(potentialPath.Count, attackRange);
+            for (int i = 1; i < removeRange; i++)
+            {
+                potentialPath[i].state = Node.STATE.SELECTABLE;
+            }
+        }
     }
 
-    public void HidePotentialMove()
+    public void HidePotentialMove(Node target)
     {
+        if (rangedAttackableMoves.Contains(target)) //Meaning attackable at range
+        {
+            target.state = Node.STATE.ATTACKABLE_HIDDEN;
+        }
         if (potentialPath != null)
         {
             foreach (Node node in potentialPath)
@@ -399,9 +440,9 @@ public abstract class Unit : Selectable
             {
                 StartCoroutine(Attack(path[0], false));
             }
-            else if (range>0 && path.Count >= range && path[path.Count - 1].Attackable(this.currentPosition))
+            else if (attackRange>0 && path.Count <= attackRange && path[path.Count - 1].Attackable(this.currentPosition))
             {
-                StartCoroutine(Attack(path[range - 1], false));
+                StartCoroutine(Attack(path[path.Count - 1], false));
             }
         }
     }
@@ -420,38 +461,45 @@ public abstract class Unit : Selectable
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
     }
 
-    public virtual IEnumerator StartMoving()
+    public virtual IEnumerator StartMoving(Node target)
     {
-        moving = true;
-        path = potentialPath;
-        if (TurnManager.Instance.currentPlayer.isAi)
+        if (rangedAttackableMoves.Contains(target))
         {
-            HidePotentialMove();
-            HidePossibleMoves();
-        }
-        if (path.Count >= 0)
-        {
-            anim.SetTrigger("Moving");
-            path.Reverse();
-            path.Remove(path[0]);
-            SetupNextMoveStep();
-            bool hiddenPath = false;
-            if (TurnManager.Instance.currentPlayer.isAi)
-            {
-                hiddenPath = true;
-                foreach (Node n in path)
-                {
-                    if (TurnManager.Instance.inactivePlayer.visibleNodes.Contains(n))
-                    {
-                        hiddenPath = false;
-                    }
-                }
-            }
-            yield return new WaitForSeconds(currentMovementPoints < 1 || hiddenPath ? 0.5f : currentMovementPoints - 1.0f);
+            yield return StartCoroutine(Attack(target, false));
         }
         else
         {
-            yield return new WaitForEndOfFrame();
+            moving = true;
+            path = potentialPath;
+            if (TurnManager.Instance.currentPlayer.isAi)
+            {
+                HidePotentialMove(path[path.Count - 1]);
+                HidePossibleMoves();
+            }
+            if (path.Count >= 0)
+            {
+                anim.SetTrigger("Moving");
+                path.Reverse();
+                path.Remove(path[0]);
+                SetupNextMoveStep();
+                bool hiddenPath = false;
+                if (TurnManager.Instance.currentPlayer.isAi)
+                {
+                    hiddenPath = true;
+                    foreach (Node n in path)
+                    {
+                        if (TurnManager.Instance.inactivePlayer.visibleNodes.Contains(n))
+                        {
+                            hiddenPath = false;
+                        }
+                    }
+                }
+                yield return new WaitForSeconds(currentMovementPoints < 1 || hiddenPath ? 0.5f : currentMovementPoints - 1.0f);
+            }
+            else
+            {
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
 

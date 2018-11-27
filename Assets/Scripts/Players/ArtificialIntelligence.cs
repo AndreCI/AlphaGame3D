@@ -37,7 +37,7 @@ public class ArtificialIntelligence : Player
         UpdateUnitEffect();
         
         
-         //   yield return coroutineStarter.StartCoroutine(BasicRush());
+            yield return coroutineStarter.StartCoroutine(BasicRush());
 
 
         UpdateUnitEffect();
@@ -134,10 +134,10 @@ public class ArtificialIntelligence : Player
             u.ShowPotentialMove(target);
             Debug.Log("   Unit path found");
             CardDisplay.Instance.DisableCardDisplay();
-            yield return u.StartCoroutine(u.StartMoving());
+            yield return u.StartCoroutine(u.StartMoving(target));
             Debug.Log("   Movement finished");
             CardDisplay.Instance.DisableCardDisplay();
-            u.HidePotentialMove();
+           // u.HidePotentialMove(null);
             u.HidePossibleMoves();
         }
         Debug.Log("AI move done.");
