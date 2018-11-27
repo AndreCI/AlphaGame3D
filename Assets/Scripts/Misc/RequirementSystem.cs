@@ -23,6 +23,11 @@ public class RequirementSystem {
         depth2 = new NodeR(typeof(Windmill)) { maxAllowed = 2};
         AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);
+        //Stables
+        depth1 = new NodeR(typeof(Stables));
+        AddUnlocksAndLocks(depth0, depth1);
+        depth2 = new NodeR(typeof(Horseman));
+        AddUnlocksAndLocks(depth1, depth2);
 
 
         //Barracks
@@ -32,6 +37,8 @@ public class RequirementSystem {
         depth2 = new NodeR(typeof(Warrior));
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Wizard));
+        AddUnlocksAndLocks(depth1, depth2);
+        depth2 = new NodeR(typeof(Archer));
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Brute));
         AddUnlocksAndLocks(depth1, depth2);

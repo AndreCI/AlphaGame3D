@@ -7,7 +7,7 @@ using System;
 
 public abstract class Unit : Selectable
 {
-    [Header("Prefab, animations, and unity stuff")]
+    [Header("Prefab, animations utils, and UI")]
     public GameObject prefab;
     public Transform movementSphere;
     public Canvas healthCanvas;
@@ -15,8 +15,11 @@ public abstract class Unit : Selectable
     public Sprite sprite;
     public UnitEffectAnimations effectAnimations;
     public float speed;
+    public Transform animTransform;
+    public GameObject attackAnimation;
+    public Vector3 attackOffset;
 
-    [Header("General Info")]
+    [Header("Unit Information")]
     public int maxHealth;
     public int attack;
     public int maxMovementPoints;
@@ -24,24 +27,28 @@ public abstract class Unit : Selectable
     public int visionRange;
     public string effectDescription;
 
+    [Header("Internal variables (no preset is needed)")]
     public int currentHealth;
     public int currentMovementPoints;
     public int currentAttackModifier;
-    protected NodeUtils.NodeWrapper currentPositionWrapped; //NodeWrapper containing the root of the movement tree
-    public List<NodeUtils.NodeWrapper> possibleMoves; //List of all the nodes where the unit can go
-    protected List<NodeUtils.NodeWrapper> potentialMove; //Current path for the target node
-    protected List<Node> path; //selected path to node
-    protected bool moving;
     public List<UnitEffect> currentEffect;
     public List<UnitAbility> abilities;
     public int armor;
     public int foodConso;
     public Vector3 direction;
 
+    protected Animator anim;
+    protected List<Node> potentialPath; //Current path for the target node
+    protected List<Node> path; //selected path to node
+    protected bool moving;
+    protected NodeUtils.NodeWrapper currentPositionWrapped; //NodeWrapper containing the root of the movement tree
+    protected List<Node> possibleMoves; //List of all the nodes where the unit can go
+
 
     public virtual void Setup()
     {
-        foodConso = 1;
+        anim = GetComponentInChildren<Animator>();
+        anim.logWarnings = false;
         currentAttackModifier = 0;
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
@@ -53,6 +60,15 @@ public abstract class Unit : Selectable
         abilities = new List<UnitAbility>();
         armor = 0;
         movementSphere.localPosition = new Vector3(0, movementSphere.localPosition.y, 0);
+
+    }
+
+    void Update()
+    {
+        if (moving)
+        {
+            MoveStep();
+        }
     }
 
     public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
@@ -147,7 +163,7 @@ public abstract class Unit : Selectable
     {
         FaceNextNode(source.currentPosition);
         TakesDamage(amount);
-        if(NodeUtils.GetNeighborsNode(currentPosition, 1).Search(source.currentPosition).Count != 0 && range==0 && !riposte)
+        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && range==0 && !riposte)
         {
             StartCoroutine(Attack(source.currentPosition, true));
         }
@@ -185,7 +201,7 @@ public abstract class Unit : Selectable
             currentEffect = new List<UnitEffect>();
             TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
             if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))){
-                owner.currentUnits.Remove(this);
+                //owner.currentUnits.Remove(this);
                 Destroy(prefab);
                 currentPosition.ResetNode(); //No double reset as a new unit could stand here now
             } //For riposte,safe remove after
@@ -214,24 +230,29 @@ public abstract class Unit : Selectable
         ShowPossibleMoves();
     }
 
-    public List<NodeUtils.NodeWrapper> ShowPossibleMoves()
+    public List<Node> ShowPossibleMoves()
     {
-        currentPositionWrapped = NodeUtils.GetPossibleNodes(currentPosition, currentMovementPoints);
-        possibleMoves = currentPositionWrapped.GetNodeChildren();
-        foreach (NodeUtils.NodeWrapper node in possibleMoves)
+        currentPositionWrapped = NodeUtils.BFSNodesAdj(currentPosition, currentMovementPoints, true);
+        possibleMoves = currentPositionWrapped.GetChildrens();
+
+
+        foreach (Node node in possibleMoves)
         {
-            if (node.root == currentPosition)
-            {
-                node.root.state = Node.STATE.IDLE;
+            if (TurnManager.Instance.currentPlayer.visibleNodes.Contains(node)) { 
+
+                if (node == currentPosition)
+                {
+                    node.MakeIdle();
+                }else if (node.Attackable(currentPosition))
+                {
+                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
+                }
+                else 
+                {
+                    node.state = Node.STATE.SELECTABLE;
+                }
             }
-            else if (node.state == NodeUtils.NodeWrapper.STATE.EMPTY)
-            {
-                node.root.state = Node.STATE.SELECTABLE;
-            }
-            else
-            {
-                node.root.state = Node.STATE.ATTACKABLE_HIDDEN;
-            }
+        
         }
         return possibleMoves;
     }
@@ -253,9 +274,9 @@ public abstract class Unit : Selectable
     {
         if (possibleMoves != null)
         {
-            foreach (NodeUtils.NodeWrapper node in possibleMoves)
+            foreach (Node node in possibleMoves)
             {
-                node.root.MakeIdle();
+                node.MakeIdle();
             }
             possibleMoves = null;
         }
@@ -263,40 +284,44 @@ public abstract class Unit : Selectable
 
     public void ShowPotentialMove(Node target)
     {
-        potentialMove = currentPositionWrapped.Search(target);
-        foreach (NodeUtils.NodeWrapper node in potentialMove)
+        potentialPath = currentPositionWrapped.GetPath(target);
+        foreach (Node node in potentialPath)
         {
-            if (node.root == currentPosition)
+            if (node == currentPosition)
             {
-                node.root.state = Node.STATE.IDLE;
+                node.MakeIdle();
+            }else if (node.Attackable(currentPosition))
+            {
+                node.state = Node.STATE.ATTACKABLE;
             }
-            else if (node.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+            else 
             {
-                node.root.state = Node.STATE.ON_UNIT_PATH;
-            }
-            else
-            {
-                node.root.state = Node.STATE.ATTACKABLE;
+                node.state = Node.STATE.ON_UNIT_PATH;
             }
         }
     }
 
     public void HidePotentialMove()
     {
-        if (potentialMove != null)
+        if (potentialPath != null)
         {
-            foreach (NodeUtils.NodeWrapper node in potentialMove)
+            foreach (Node node in potentialPath)
             {
-                if (node.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+                if (node.Equals(currentPosition))
                 {
-                    node.root.state = Node.STATE.SELECTABLE;
+                    node.MakeIdle();
+                }
+                else if (node.Attackable(currentPosition))
+                {
+                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
                 }
                 else
                 {
-                    node.root.state = Node.STATE.ATTACKABLE_HIDDEN;
+                    node.state = Node.STATE.SELECTABLE;
                 }
+                
             }
-            potentialMove = null;
+            potentialPath = null;
         }
     }
     protected void FaceNextNode(Node nextNode)
@@ -308,6 +333,10 @@ public abstract class Unit : Selectable
 
     protected virtual IEnumerator Attack(Node target, bool riposte)
     {
+        GameObject attackAnim = (GameObject)Instantiate(attackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
+        Destroy(attackAnim, 5);
+        anim.SetTrigger("Attack1Trigger");
+        animTransform.localPosition = new Vector3(0f, 0f, 0f);
         FinishMove();
         path = new List<Node>();
         currentMovementPoints = 0;
@@ -325,6 +354,7 @@ public abstract class Unit : Selectable
 
     protected virtual void FinishMove()
     {
+        anim.ResetTrigger("Moving");
         moving = false;
         path = new List<Node>();
         Selector.Instance.Unselect(); //Unselect this, and thus MakeIdle all nodes
@@ -369,7 +399,7 @@ public abstract class Unit : Selectable
             {
                 StartCoroutine(Attack(path[0], false));
             }
-            else if (range>0 && path.Count >= range && path[range - 1].Attackable(this.currentPosition))
+            else if (range>0 && path.Count >= range && path[path.Count - 1].Attackable(this.currentPosition))
             {
                 StartCoroutine(Attack(path[range - 1], false));
             }
@@ -393,11 +423,7 @@ public abstract class Unit : Selectable
     public virtual IEnumerator StartMoving()
     {
         moving = true;
-        path = new List<Node>();
-        foreach (NodeUtils.NodeWrapper node in potentialMove)
-        {
-            path.Add(node.root);
-        }
+        path = potentialPath;
         if (TurnManager.Instance.currentPlayer.isAi)
         {
             HidePotentialMove();
@@ -405,6 +431,7 @@ public abstract class Unit : Selectable
         }
         if (path.Count >= 0)
         {
+            anim.SetTrigger("Moving");
             path.Reverse();
             path.Remove(path[0]);
             SetupNextMoveStep();

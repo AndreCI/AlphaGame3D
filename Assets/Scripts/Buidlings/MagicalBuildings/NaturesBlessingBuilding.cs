@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class NaturesBlessingBuilding : DefensiveBuilding
 {
-    private NodeUtils.NodeWrapper adjacentNodes;
+    private List<Node> affectedNodes;
     public EffectFactory effect;
 
     private void Start()
@@ -12,7 +12,7 @@ public class NaturesBlessingBuilding : DefensiveBuilding
         startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
             {Utils.NotificationTypes.FOOD, 1 }
         };
-        adjacentNodes = NodeUtils.GetNeighborsNode(currentPosition, 1);
+        affectedNodes = currentPosition.adjacentNodes;
     }
 
     public override void Death()
@@ -25,18 +25,18 @@ public class NaturesBlessingBuilding : DefensiveBuilding
     {
         if (player.Equals(owner) &&type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
         {
-            foreach (NodeUtils.NodeWrapper n in adjacentNodes.GetNodeChildren())
+            foreach (Node n in affectedNodes)
             {
-                if (n.root.unit != null)
+                if (n.unit != null)
                 {
-                    UnitEffect ue = effect.GetEffect(n.root.unit);
+                    UnitEffect ue = effect.GetEffect(n.unit);
                     if (ue.applyOnTouch)
                     {
                         ue.ApplyEffect();
                     }
                     if (ue.duration > 0)
                     {
-                        n.root.unit.currentEffect.Add(ue); //Adding effect during opening phase should be done in 
+                        n.unit.currentEffect.Add(ue); //Adding effect during opening phase should be done in 
                         //a better way.
                     }
                 }

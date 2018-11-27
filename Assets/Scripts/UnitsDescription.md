@@ -23,3 +23,28 @@ Aggressive: +X attack when attacking
 Spells cost less, spell have less cooldown, more damage, zone buff (attack/regen/armor?)
 gain mvt points/vision range if it hasn't attack last turn
 when a units dies, do...
+
+Unit ability, effect, notif reflexion
+
+Unit should be defined at their core by:
+	name
+	health
+	armor
+	attack
+	mouvementpoints
+	vision
+	List<Ability>
+	List<Status>
+
+Status right now are called Effects (bad), and are defined by a type, a duration and (an amplitude).
+Status should probably not always have a duration, and should be the only possible modifier of a units attribute such as attack, etc.
+Status can either modifiy the units, or modify units on trigger, or apply status on trigger: +3attack, deal 5 damage when attacking, gain 2 regen at the start of turn?
+
+Abilities should be able to apply status, but not always is an ability a status???
+Abilities and effects starts to pile up with notifs. How to articulate it in a meanigful and efficient way?
+1)What do we want?
+->Triggered abilities, such as start of turn, etc. but also activable, which are a trigger
+->Aura abilities, such as cost reduction, unit around
+->Diverse effects: gain gold, gain buff, but also heal nearby units, apply debuff to target(s)...
+->Unit status: burn, regen, temp attack buffed
+

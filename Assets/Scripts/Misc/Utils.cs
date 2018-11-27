@@ -8,7 +8,7 @@ public static class Utils
     public static void EatFood(Player currentPlayer)
     {
         currentPlayer.food = currentPlayer.foodPrediction;
-        List<Unit> eatingUnits = currentPlayer.currentUnits;
+        List<Unit> eatingUnits = currentPlayer.currentUnits.ToList(); //Don't forget to copy!
         eatingUnits.RemoveAll(u => u.foodConso == 0);
         int i = currentPlayer.food;
         if (i < eatingUnits.Count)

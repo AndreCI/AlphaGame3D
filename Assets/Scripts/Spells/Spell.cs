@@ -170,18 +170,16 @@ public abstract class Spell : Selectable
             node.MakeIdle();
         }
         source.state = Node.STATE.SPELL_SELECTED;
-        NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(source, areaOfEffect);
-        List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-        foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
+        foreach (Node node in NodeUtils.BFSNodesAdj(source, areaOfEffect).GetChildrens())
         {
-            nodeWrapped.root.state = Node.STATE.SPELL_EFFECT;
-            affectedNodes.Add(nodeWrapped.root);
+            node.state = Node.STATE.SPELL_EFFECT;
+            affectedNodes.Add(node);
         }
         source.state = Node.STATE.SPELL_SELECTED;
         castableNodes = new List<Node>();
     }
 
-    protected void GetCastableNodes()
+    protected virtual void GetCastableNodes()
     {
         castableNodes = new List<Node>();
         List<Unit> currentUnits = TurnManager.Instance.currentPlayer.currentUnits;
@@ -189,29 +187,27 @@ public abstract class Spell : Selectable
         
         foreach (Unit unit in currentUnits)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(unit.currentPosition, castableRange);
-            List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-            foreach(NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
-            {
-                if (!castableNodes.Contains(nodeWrapped.root))
+            foreach(Node node in NodeUtils.BFSNodesAdj(unit.currentPosition, castableRange).GetChildrens()){
+                if (!castableNodes.Contains(node))
                 {
-                    castableNodes.Add(nodeWrapped.root);
-                    nodeWrapped.root.state = Node.STATE.SPELL_SELECTABLE;
+                    castableNodes.Add(node);
                 }
             }
+            
         }
         foreach (Building buiding in currentBuildings)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, castableRange);
-            List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-            foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
+            foreach (Node node in NodeUtils.BFSNodesAdj(buiding.currentPosition, castableRange).GetChildrens())
             {
-                if (!castableNodes.Contains(nodeWrapped.root))
+                if (!castableNodes.Contains(node))
                 {
-                    castableNodes.Add(nodeWrapped.root);
-                    nodeWrapped.root.state = Node.STATE.SPELL_SELECTABLE;
+                    castableNodes.Add(node);
                 }
             }
+        }
+        foreach (Node n in castableNodes)
+        {
+            n.state = Node.STATE.SPELL_SELECTABLE;
         }
     }
 

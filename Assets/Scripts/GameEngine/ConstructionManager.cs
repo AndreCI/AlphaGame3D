@@ -52,13 +52,15 @@ public class ConstructionManager : MonoBehaviour, IObserver
         {
             Selector.Instance.currentObject = (building);
             building.UpdateCardDisplayInfo();
-            NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, TurnManager.Instance.currentPlayer.buildingRange);
-            foreach (NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
+            foreach (Node n in NodeUtils.BFSNodesAdj(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, 
+                                                    TurnManager.Instance.currentPlayer.buildingRange).
+                                                    GetChildrens())
+            
             {
-                if (nw.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+                if (n.walkable)
                 {
-                    nw.root.state = Node.STATE.SELECTABLE_CONSTRUCT;
-                    availablePositions.Add(nw.root);
+                    n.state = Node.STATE.SELECTABLE_CONSTRUCT;
+                    availablePositions.Add(n);
                 }
             }
         }
@@ -127,13 +129,12 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Selector.Instance.currentObject = (unit);
         unit.UpdateCardDisplayInfo();
         Selectable spawnPoint = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetSpawnPoint());
-        NodeUtils.NodeWrapper nodeWrapper = NodeUtils.GetPossibleNodes(spawnPoint.currentPosition, 1);
-        foreach(NodeUtils.NodeWrapper nw in nodeWrapper.GetNodeChildren())
+        foreach(Node n in NodeUtils.BFSNodesAdj(spawnPoint.currentPosition, 1).GetChildrens())
         {
-            if (nw.state == NodeUtils.NodeWrapper.STATE.EMPTY)
+            if (n.walkable)
             {
-                nw.root.state = Node.STATE.SELECTABLE_CONSTRUCT;
-                availablePositions.Add(nw.root);
+                n.state = Node.STATE.SELECTABLE_CONSTRUCT;
+                availablePositions.Add(n);
             }
         }
 

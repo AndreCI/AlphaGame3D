@@ -33,6 +33,20 @@ public class NaturesBlessing : Spell
         }
         GetComponentInChildren<Animation>().Play();
     }
+
+    protected override void GetCastableNodes()
+    {
+        base.GetCastableNodes();
+        foreach(Node n in castableNodes)
+        {
+            if (!n.walkable)
+            {
+                n.MakeIdle();
+            }
+        }
+        castableNodes.RemoveAll(n => n.state == Node.STATE.IDLE);
+    }
+
     public override void Activate(List<Node> affectedNodes_)
     {
         StartCoroutine(WaitForEffect(affectedNodes_));

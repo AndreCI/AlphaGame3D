@@ -307,11 +307,13 @@
     <Compile Include="Assets\Scripts\Buidlings\MagicCenter.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Market.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Shrine.cs" />
+    <Compile Include="Assets\Scripts\Buidlings\Stables.cs" />
     <Compile Include="Assets\Scripts\Buidlings\Windmill.cs" />
     <Compile Include="Assets\Scripts\GameEngine\ConstructionManager.cs" />
     <Compile Include="Assets\Scripts\GameEngine\GameManager.cs" />
     <Compile Include="Assets\Scripts\GameEngine\TurnManager.cs" />
     <Compile Include="Assets\Scripts\GameEngine\TurnSubject.cs" />
+    <Compile Include="Assets\Scripts\Misc\BalisticProjectile.cs" />
     <Compile Include="Assets\Scripts\Misc\Observer.cs" />
     <Compile Include="Assets\Scripts\Misc\RequirementSystem.cs" />
     <Compile Include="Assets\Scripts\Misc\Selectable.cs" />
@@ -319,10 +321,10 @@
     <Compile Include="Assets\Scripts\Players\ArtificialIntelligence.cs" />
     <Compile Include="Assets\Scripts\Players\Player.cs" />
     <Compile Include="Assets\Scripts\Players\Selector.cs" />
-    <Compile Include="Assets\Scripts\Spells\BasicMagic\ArcaneMissile.cs" />
     <Compile Include="Assets\Scripts\Spells\BasicMagic\Arcaneblast.cs" />
     <Compile Include="Assets\Scripts\Spells\BasicMagic\ArcaneIntellect.cs" />
     <Compile Include="Assets\Scripts\Spells\BasicMagic\ArcaneMirage.cs" />
+    <Compile Include="Assets\Scripts\Spells\BasicMagic\ArcaneMissile.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\BerserkerSpirit.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\Fireblast.cs" />
     <Compile Include="Assets\Scripts\Spells\FireMagic\FireHammer.cs" />
@@ -371,10 +373,13 @@
     <Compile Include="Assets\Scripts\Units\Animation\BruteAnimation.cs" />
     <Compile Include="Assets\Scripts\Units\Animation\WarriorAnimation.cs" />
     <Compile Include="Assets\Scripts\Units\Animation\WizardAnimation.cs" />
+    <Compile Include="Assets\Scripts\Units\Archer.cs" />
     <Compile Include="Assets\Scripts\Units\Bandit.cs" />
     <Compile Include="Assets\Scripts\Units\Brute.cs" />
+    <Compile Include="Assets\Scripts\Units\Horseman.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
-    <Compile Include="Assets\Scripts\Units\UnitsAbility\BasicUnitAbility.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitsAbility\AuraUnitAbility.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitsAbility\TriggeredUnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbilityUtils.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
@@ -418,6 +423,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\3DForge\FantasyExteriors\Village &amp; Towns\Documents\Village Exteriors Kit v1.0 - user guide.txt" />
     <None Include="Assets\Imported\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Imported\low poly medieval buildings\readme.txt" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />

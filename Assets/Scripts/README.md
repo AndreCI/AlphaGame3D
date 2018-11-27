@@ -17,7 +17,8 @@ Add unit ability framework
 add AI difficulty	
 	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
-
+Implement units keywords
+transform ranged into just an attribute?
 
 UI:
 	Implement help ressource bar
@@ -40,6 +41,9 @@ Graphic:
 Do card unit with ability
 Do card unit with requirement schoolom
 Implement TechTreeUI
+Add footsteps? Using FootR FootL?
+	Change models in order to add more units
+Balistic projectiles
 	
 Balance:
 Rebalance game
@@ -59,9 +63,11 @@ Implement more building & units
 	Implement building restr(max 1 building)
 	Implement green magic
 	Implement more green spells
+Implement range attack indé from mvt
 ?Implement void spells
 Implement scouts (hallcenterbuilding)
 Implement better AI (more units, spells?)
+Start a reflexion on play during enemy turn/interaction
 
 Audio:
 Add audio track
@@ -69,6 +75,14 @@ Add spell sounds
 Add untis sounds
 Add barracks sounds
 Add Menu & button sounds
+
+Debug:
+Found a bug on double click for a spell: 
+NullReferenceException: Object reference not set to an instance of an object
+ConstructionManager.ConstructSpell (.Node node) (at Assets/Scripts/GameEngine/ConstructionManager.cs:108)
+Node.Construct (Boolean makeUnwalkable) (at Assets/Scripts/World/Node.cs:180)
+Node.OnMouseDown () (at Assets/Scripts/World/Node.cs:157)
+UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
 
 Optimization:
 Implement batching

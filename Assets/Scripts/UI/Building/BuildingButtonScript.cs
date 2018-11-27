@@ -17,11 +17,11 @@ public class BuildingButtonScript : ConstructButtonScript
         base.UpdateInfo();
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(building))
         {
-            GetComponent<Button>().interactable = true;
+            GetComponent<UnityEngine.UI.Button>().interactable = true;
         }
         else
         {
-            GetComponent<Button>().interactable = false;
+            GetComponent<UnityEngine.UI.Button>().interactable = false;
         }
     }
 

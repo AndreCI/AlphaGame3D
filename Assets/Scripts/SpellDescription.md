@@ -29,3 +29,5 @@ Each schoolom should have spells available to all that represents its spirit:
 	void=[{Apply specific debuff: exemple: start of turn, take X damage, where X is the number of turns remaining on the effect}
 	{Exploit specific debuff: exemple: Deals X damages to a unit, if it dies & had the debuff, it explodes and apply the debuff to nearby enemies}
 	]?
+
+Shrine : add mana? Augment gold cost? Special void shrines? with drawback? 

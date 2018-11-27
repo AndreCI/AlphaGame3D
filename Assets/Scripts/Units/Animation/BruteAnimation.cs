@@ -8,17 +8,4 @@ public class BruteAnimation : MonoBehaviour
     {
         body = GetComponentInParent<Brute>();
     }
-
-    void FootR()
-    {
-        body.FootR();
-    }
-    void FootL()
-    {
-        body.FootL();
-    }
-    void Hit()
-    {
-        body.Hit();
-    }
 }

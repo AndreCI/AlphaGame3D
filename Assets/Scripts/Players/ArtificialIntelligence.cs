@@ -37,7 +37,7 @@ public class ArtificialIntelligence : Player
         UpdateUnitEffect();
         
         
-            yield return coroutineStarter.StartCoroutine(BasicRush());
+         //   yield return coroutineStarter.StartCoroutine(BasicRush());
 
 
         UpdateUnitEffect();
@@ -148,16 +148,16 @@ public class ArtificialIntelligence : Player
         Node target = null;
         List<Node> attackables = new List<Node>();
         List<Node> goable = new List<Node>();
-        List<NodeUtils.NodeWrapper> possibleMoves = u.ShowPossibleMoves();
-        foreach(NodeUtils.NodeWrapper n in possibleMoves)
+        List<Node> possibleMoves = u.ShowPossibleMoves();
+        foreach(Node n in possibleMoves)
         {
-            if (n.root.Attackable(u.currentPosition))
+            if (n.Attackable(u.currentPosition))
             {
-                attackables.Add(n.root);
+                attackables.Add(n);
             }
             else
             {
-                goable.Add(n.root);
+                goable.Add(n);
             }
         }
         if (attackables.Count != 0) {
@@ -327,37 +327,36 @@ public class ArtificialIntelligence : Player
 
     private void GetVisibleNodes()
     {
-            foreach (Building b in currentBuildings)
+
+        foreach (Building b in currentBuildings)
+        {
+            if (!knownBuilding.Contains(b.currentPosition))
             {
-                if (!knownBuilding.Contains(b.currentPosition))
-                {
-                    knownBuilding.Add(b.currentPosition);
-                }
+                knownBuilding.Add(b.currentPosition);
             }
-            visibleNodes = new List<Node>();
-            foreach (Building buiding in currentBuildings)
+        }
+        visibleNodes = new List<Node>();
+        foreach (Building buiding in currentBuildings)
+        {
+            List<Node> currentBuildingVisibleNodes = NodeUtils.BFSNodesAdj(buiding.currentPosition, buildingVisiblity).GetChildrens();
+            foreach (Node node in currentBuildingVisibleNodes)
             {
-                NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, 3);
-                List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-                foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
+                if (!visibleNodes.Contains(node))
                 {
-                    if (!visibleNodes.Contains(nodeWrapped.root))
-                    {
-                        visibleNodes.Add(nodeWrapped.root);
-                    }
-                }
-            }
-            foreach (Unit unit in currentUnits)
-            {
-                NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(unit.currentPosition, unit.visionRange);
-                List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-                foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
-                {
-                    if (!visibleNodes.Contains(nodeWrapped.root))
-                    {
-                        visibleNodes.Add(nodeWrapped.root);
-                    }
+                    visibleNodes.Add(node);
                 }
             }
         }
+        foreach (Unit unit in currentUnits)
+        {
+            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.visionRange).GetChildrens();
+            foreach (Node node in currentUnitVisibleNodes)
+            {
+                if (!visibleNodes.Contains(node))
+                {
+                    visibleNodes.Add(node);
+                }
+            }
+        }
+    }
 }

@@ -45,6 +45,8 @@ public class Node : MonoBehaviour
     private List<Renderer> infoRenderers;
     public STATE state;
 
+    public List<Node> adjacentNodes;
+
     // Use this for initialization
     void Awake()
     {
@@ -71,6 +73,7 @@ public class Node : MonoBehaviour
                 infoRenderers.Add(rend);
             }
         }
+        adjacentNodes = NodeUtils.GetAdjNodes(new NodeUtils.NodeWrapper(this));
     }
 
     // Update is called once per frame
@@ -324,5 +327,16 @@ public class Node : MonoBehaviour
         return false;
     }
 
-    
+    public override bool Equals(object other)
+    {
+        if(other== null)
+        {
+            return false;
+        }
+        if (other.GetType()==(typeof(Node)))
+        {
+            return ((Node)other).position == position;
+        }
+        return false;
+    }
 }

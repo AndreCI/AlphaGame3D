@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -23,12 +24,15 @@ public class NodeUtils
             children = new List<NodeWrapper>();
             distance = 9001;
         }
-
-        public List<NodeWrapper> GetNodeChildren()
+        public override string ToString()
         {
-            List<NodeWrapper> possibleMoves = new List<NodeWrapper>
+            return root.ToString() + " d=" + distance.ToString() + " p=" + (parent==null? "null" :parent.ToString());
+        }
+        public List<Node> GetChildrens()
+        {
+            List<Node> possibleMoves = new List<Node>
             {
-                this
+                root
             };
             if (children.Count == 0)
             {
@@ -36,157 +40,102 @@ public class NodeUtils
             }
             foreach (NodeWrapper n in children)
             {
-                possibleMoves.AddRange(n.GetNodeChildren());
+                possibleMoves.AddRange(n.GetChildrens());
             }
             return possibleMoves;
         }
 
-        public List<NodeWrapper> Search(Node target)
+        public List<Node> GetPath(Node target)
         {
-            List<NodeWrapper> path = new List<NodeWrapper>();
+            List<Node> path = new List<Node>();
             if (root == target)
             {
-                path.Add(this);
+                path.Add(root);
             }
             else
             {
-                foreach(NodeWrapper child in children)
+                foreach (NodeWrapper child in children)
                 {
-                    path.AddRange(child.Search(target));
+                    path.AddRange(child.GetPath(target));
                 }
                 if (path.Count != 0)
                 {
-                    path.Add(this);
+                    path.Add(root);
                 }
             }
             return path;
         }
+
+
+        
     }
 
-    public static NodeWrapper GetNeighborsNode(Node sourceNode, int depth)
+    public static NodeWrapper BFSNodesAdj(Node sourceNode, int depth, bool selectOnlyWalkable=false)
     {
-        List<Node> availableNodes = new List<Node>();
-        List<NodeWrapper> unvisitedNeighborsNodes = new List<NodeWrapper>();
-        List<NodeWrapper> nextUnvisitedNeighborsNodes = new List<NodeWrapper>();
-
-        NodeWrapper currentNodeWrapped = new NodeWrapper(sourceNode)
+        NodeWrapper source = new NodeWrapper(sourceNode)
         {
-            parent = null,
-            distance = 0,
-            state = NodeWrapper.STATE.NONEMPTY
+            distance = 0
         };
-        if (depth == 0)
+        Queue<NodeWrapper> queue = new Queue<NodeWrapper>();
+        queue.Enqueue(source);
+        List<NodeWrapper> knownNodes = new List<NodeWrapper> { { source} };
+        while (queue.Count > 0)
         {
-            return currentNodeWrapped;
-        }
-        availableNodes.Add(sourceNode);
-        AddAdjacentNodes(currentNodeWrapped, availableNodes, unvisitedNeighborsNodes, sourceNode, true);
-        for (int i = 1; i < depth; i++)
-        {
-            nextUnvisitedNeighborsNodes = new List<NodeWrapper>();
-            foreach (NodeWrapper unvisited in unvisitedNeighborsNodes)
+            NodeWrapper currentNode = queue.Dequeue();
+            if(currentNode.distance < depth)
             {
-                AddAdjacentNodes(unvisited, availableNodes, nextUnvisitedNeighborsNodes, sourceNode, true);
+                foreach (Node n in currentNode.root.adjacentNodes)
+                {
+                    if(knownNodes.Find(n_ => n_.root.Equals(n)) == null)
+                    {
+                        if ((!selectOnlyWalkable || n.walkable))
+                        {
+                            NodeWrapper adjWrapped = new NodeWrapper(n)
+                            {
+                                parent = currentNode,
+                                distance = currentNode.distance + 1
+                            };
+                            currentNode.children.Add(adjWrapped);
+                            knownNodes.Add(adjWrapped);
+                            queue.Enqueue(adjWrapped);
+                        }else if (n.Attackable(sourceNode)) {
+                            NodeWrapper adjWrapped = new NodeWrapper(n)
+                            {
+                                parent = currentNode,
+                                distance = currentNode.distance + 1
+                            };
+                            currentNode.children.Add(adjWrapped);
+                            knownNodes.Add(adjWrapped);
+                        }
+                    }
+                }
             }
-            unvisitedNeighborsNodes = nextUnvisitedNeighborsNodes;
         }
-        return currentNodeWrapped;
+        return source;
     }
-
-    public static NodeWrapper GetPossibleNodes(Node sourceNode, int depth)
+    public static List<Node> GetAdjNodes(NodeWrapper currentNode)
     {
-        List<Node> availableNodes = new List<Node>();
-        List<NodeWrapper> unvisitedNeighborsNodes = new List<NodeWrapper>();
-        List<NodeWrapper> nextUnvisitedNeighborsNodes = new List<NodeWrapper>();
-
-        NodeWrapper currentNodeWrapped = new NodeWrapper(sourceNode);
-        currentNodeWrapped.parent = null;
-        currentNodeWrapped.distance = 0;
-        currentNodeWrapped.state = NodeWrapper.STATE.NONEMPTY;
-        if (depth == 0)
-        {
-            return currentNodeWrapped;
-        }
-        availableNodes.Add(sourceNode);
-        AddAdjacentNodes(currentNodeWrapped, availableNodes, unvisitedNeighborsNodes, sourceNode, false);
-        for (int i=1; i<depth; i++)
-        {
-            nextUnvisitedNeighborsNodes = new List<NodeWrapper>();
-            foreach (NodeWrapper unvisited in unvisitedNeighborsNodes)
-            {
-                AddAdjacentNodes(unvisited, availableNodes, nextUnvisitedNeighborsNodes, sourceNode, false);
-            }
-            unvisitedNeighborsNodes = nextUnvisitedNeighborsNodes;
-        }
-        return currentNodeWrapped;
-    }
-    private static void AddAdjacentNodes(NodeWrapper currentNode, List<Node> knownNeighbors, List<NodeWrapper> unvisitedNeighborsNodes, Node sourceNode, bool explorationOnly)
-    {
-
-        AddNodeToListsFromDirection(Vector3.forward, currentNode, unvisitedNeighborsNodes, knownNeighbors, sourceNode, explorationOnly);
-        AddNodeToListsFromDirection(-Vector3.forward, currentNode, unvisitedNeighborsNodes, knownNeighbors, sourceNode, explorationOnly);
-        AddNodeToListsFromDirection(Vector3.right, currentNode, unvisitedNeighborsNodes, knownNeighbors, sourceNode, explorationOnly);
-        AddNodeToListsFromDirection(-Vector3.right, currentNode, unvisitedNeighborsNodes, knownNeighbors, sourceNode, explorationOnly);
-
-    }
-    private static void AddNodeToListsFromDirection(Vector3 dir, NodeWrapper currentNode, List<NodeWrapper> unvisitedNeighborsNode, List<Node> knownNeighbors, Node sourceNode, bool explorationOnly)
-    {
+        List<Vector3> dirs = new List<Vector3> {
+        { Vector3.forward },
+        {Vector3.right },
+        { -Vector3.forward },
+        {-Vector3.right }
+        };
+        List<Node> adjNodes = new List<Node>();
         Vector3 halfExtend = new Vector3(1f, 1f, 1f);
-        Collider[] colliders = Physics.OverlapBox(currentNode.root.transform.position + dir, halfExtend);
-        foreach (Collider collider in colliders)
+        foreach (Vector3 dir in dirs)
         {
-            Node node = collider.GetComponent<Node>();
-            if (node != null && !knownNeighbors.Contains(node))
+            Collider[] colliders = Physics.OverlapBox(currentNode.root.transform.position + dir, halfExtend);
+            foreach (Collider collider in colliders)
             {
-                bool found = false;
-                foreach (NodeWrapper n in unvisitedNeighborsNode)
+                Node node = collider.GetComponent<Node>();
+                if (node != null && !node.Equals(currentNode.root) && !node.Equals(currentNode.parent))
                 {
-                    if (n.root == (node))
-                    {
-                        found = true;
-                        if(currentNode.distance + 1 < n.distance)
-                        {
-                            n.distance = currentNode.distance + 1;
-                            currentNode.children.Add(n);
-                            n.parent.children.Remove(n);
-                            n.parent = currentNode;
-                        }
-                    }
-                }
-                if (!found)
-                {
-                    if (explorationOnly || TurnManager.Instance.currentPlayer.visibleNodes.Contains(node))
-                    {
-                        NodeWrapper nodeWrap = new NodeWrapper(node);
-                        if (node.walkable || explorationOnly)
-                        {
-                            nodeWrap.state = NodeWrapper.STATE.EMPTY;
-                            unvisitedNeighborsNode.Add(nodeWrap);
-                            currentNode.children.Add(nodeWrap);
-                            knownNeighbors.Add(node);
-                            nodeWrap.distance = currentNode.distance + 1;
-                            nodeWrap.parent = currentNode;
-                        }
-                        else if (node.Attackable(sourceNode))
-                        {
-                            nodeWrap.state = NodeWrapper.STATE.NONEMPTY;
-                            currentNode.children.Add(nodeWrap);
-                            knownNeighbors.Add(node);
-                            nodeWrap.distance = currentNode.distance + 1;
-                            nodeWrap.parent = currentNode;
-                        }
-                        else if (node.SpellInteractable(sourceNode))
-                        {
-                            nodeWrap.state = NodeWrapper.STATE.NONEMPTY;
-                            unvisitedNeighborsNode.Add(nodeWrap);
-                            currentNode.children.Add(nodeWrap);
-                            knownNeighbors.Add(node);
-                            nodeWrap.distance = currentNode.distance + 1;
-                            nodeWrap.parent = currentNode;
-                        }
-                    }
+                    adjNodes.Add(node);
                 }
             }
         }
+        return adjNodes;
     }
-}
+
+   }

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 
 [System.Serializable]
-public class BasicUnitAbility : UnitAbility
+public class TriggeredUnitAbility : UnitAbility, IObserver
 {
     
-    public UnitAbilityUtils.TYPES type;
     public int amplitude;
     public TurnSubject.NOTIFICATION_TYPE trigger;
 
-    public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE subjectType)
+    public void Notify(Player player, TurnSubject.NOTIFICATION_TYPE subjectType)
     {
         if(abilityOwner.owner.Equals(player) && subjectType == trigger)
         {
@@ -18,7 +17,7 @@ public class BasicUnitAbility : UnitAbility
         }
     }
 
-    public override void Trigger()
+    public void Trigger()
     {
         switch (type)
         {
@@ -31,6 +30,13 @@ public class BasicUnitAbility : UnitAbility
                 abilityOwner.DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> {
                     { Utils.NotificationTypes.HEAL, amplitude} });
                 abilityOwner.Heal(amplitude);
+                break;
+            case UnitAbilityUtils.TYPES.ARMOR:
+                abilityOwner.DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> {
+                    { Utils.NotificationTypes.BUFF_ARMOR, amplitude} });
+                abilityOwner.armor+=(amplitude);
+                break;
+            case UnitAbilityUtils.TYPES.APPLY_EFFECT:
                 break;
         }
     }

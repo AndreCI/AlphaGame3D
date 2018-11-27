@@ -47,7 +47,7 @@ public class Player
     protected List<Node> visibleNodesPrev;
     public Dictionary<SpellUtils.SchoolOfMagic, int> schoolOfMagicLevels;
     public RequirementSystem requirementSystem;
-    private int buildingVisiblity;
+    protected int buildingVisiblity;
     public int buildingRange;
 
     public static Player getPlayerFromId(int id)
@@ -85,25 +85,23 @@ public class Player
         visibleNodes = new List<Node>();
         foreach (Building buiding in currentBuildings)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(buiding.currentPosition, buildingVisiblity);
-            List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-            foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
+            List<Node> currentBuildingVisibleNodes = NodeUtils.BFSNodesAdj(buiding.currentPosition, buildingVisiblity).GetChildrens();
+            foreach (Node node in currentBuildingVisibleNodes)
             {
-                if (!visibleNodes.Contains(nodeWrapped.root))
+                if (!visibleNodes.Contains(node))
                 {
-                    visibleNodes.Add(nodeWrapped.root);
+                    visibleNodes.Add(node);
                 }
             }
         }
         foreach (Unit unit in currentUnits)
         {
-            NodeUtils.NodeWrapper currentPositionWrapped = NodeUtils.GetNeighborsNode(unit.currentPosition, unit.visionRange);
-            List<NodeUtils.NodeWrapper> castableNodesWrapped = currentPositionWrapped.GetNodeChildren();
-            foreach (NodeUtils.NodeWrapper nodeWrapped in castableNodesWrapped)
+            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.visionRange).GetChildrens();
+            foreach (Node node in currentUnitVisibleNodes)
             {
-                if (!visibleNodes.Contains(nodeWrapped.root))
+                if (!visibleNodes.Contains(node))
                 {
-                    visibleNodes.Add(nodeWrapped.root);
+                    visibleNodes.Add(node);
                 }
             }
         }
@@ -180,18 +178,18 @@ public class Player
 
     public override string ToString()
     {
-        string returnDebugVal = "PLAYER_DEBUG : ["+id+";"+gold+";"+mana+";"+actionPoints+";  ";
+        string returnDebugVal = "PLAYER_DEBUG : [" + id + ";" + gold + ";" + mana + ";" + actionPoints + ";  ";
         returnDebugVal += "Buildings: {";
-        foreach(Building b in currentBuildings)
+        foreach (Building b in currentBuildings)
         {
             returnDebugVal += b.ToString() + "; ";
         }
         returnDebugVal += "}. Units: {";
-        foreach(Unit u in currentUnits)
+        foreach (Unit u in currentUnits)
         {
             returnDebugVal += u.ToString() + "; ";
         }
-        returnDebugVal += "]";
+        returnDebugVal += "}]";
         return returnDebugVal;
     }
 

@@ -6,6 +6,7 @@ public class UnitAbilityUtils
     {
         HEAL,
         APPLY_EFFECT,
-        GOLD_MODIFIER
+        GOLD_MODIFIER,
+        ARMOR
     }
 }

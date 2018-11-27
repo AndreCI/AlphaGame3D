@@ -19,11 +19,11 @@ public class UnitButton : ConstructButtonScript
         base.UpdateInfo();
         if (TurnManager.Instance.currentPlayer.CheckIfAvailable(unit))
         {
-            GetComponent<Button>().interactable = true;
+            GetComponent<UnityEngine.UI.Button>().interactable = true;
         }
         else
         {
-            GetComponent<Button>().interactable = false;
+            GetComponent<UnityEngine.UI.Button>().interactable = false;
         }
     }
     public override void OnPointerEnter(PointerEventData eventData)

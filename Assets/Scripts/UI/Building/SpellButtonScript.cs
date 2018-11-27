@@ -75,11 +75,11 @@ public class SpellButtonScript : ConstructButtonScript
             }
             if (readyScore < 1)
             {
-                GetComponent<Button>().interactable = false;
+                GetComponent<UnityEngine.UI.Button>().interactable = false;
             }
             else
             {
-                GetComponent<Button>().interactable = true;
+                GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
             GetComponent<Image>().fillAmount = readyScore;
         }
@@ -99,7 +99,7 @@ public class SpellButtonScript : ConstructButtonScript
                 readyScore = 0;
             }
             GetComponent<Image>().fillAmount = readyScore;
-            GetComponent<Button>().interactable = false;
+            GetComponent<UnityEngine.UI.Button>().interactable = false;
         }
     }
 }

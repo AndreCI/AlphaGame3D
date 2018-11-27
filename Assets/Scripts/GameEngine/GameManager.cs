@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
     [Header("General starting objects")]
     public Node startNode;
-    public static List<Node> allNodes;
     private TurnManager turnManager;
     public GameObject menu;
     public GameObject selectionPanel;
@@ -21,11 +20,6 @@ public class GameManager : MonoBehaviour
     {
         selectionPanel.SetActive(true);
         turnManager = TurnManager.Instance;
-        allNodes = new List<Node>();
-        foreach (NodeUtils.NodeWrapper node in NodeUtils.GetNeighborsNode(startNode, 20).GetNodeChildren())
-        {
-            allNodes.Add(node.root);
-        }
         turnManager.StartGame(startNode);
         Instance = this;
 
