@@ -61,7 +61,7 @@ public class ArtificialIntelligence : Player
         {
             yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.WindMill));
         }
-        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
+        yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.SkeletonWarrior));
         yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Wizard));
         //yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
 
@@ -161,14 +161,14 @@ public class ArtificialIntelligence : Player
             }
         }
         if (attackables.Count != 0) {
-            target = DecideUnitMovementAttackableNodes(attackables);
+            target = DecideUnitMovementAttackableNodes(attackables, u);
         }
         else if(goable.Count!=0){
             target = DecideUnitMovementUnattackableNodes(goable);
         } 
         return target;
     }
-    private Node DecideUnitMovementAttackableNodes(List<Node> attackables)
+    private Node DecideUnitMovementAttackableNodes(List<Node> attackables, Unit attacker)
     {
         Dictionary<Node, int> priority = new Dictionary<Node, int>();
         foreach(Node n in attackables)
@@ -182,13 +182,25 @@ public class ArtificialIntelligence : Player
                 {
                     priority.Add(n, ((DefensiveBuilding)n.building).currentHealth);
                 }
-            } else if (n.GetUnit() != null && n.GetUnit().GetType() == typeof(Wizard))
-            {
-                priority.Add(n, 100);
-            }
+            } 
             else
             {
-                priority.Add(n, n.GetUnit().currentHealth);
+                //Prefer to kill unit (if possible without wasting damage)
+                //Then to attack ranged units (prioritize high range units)
+                //Then prioritize high damage units
+                int prio = 0;
+                bool killable = n.GetUnit().currentHealth <= attacker.currentAttackModifier + attacker.attack;
+                bool ranged = n.GetUnit().attackRange > 0;
+                if (killable)
+                {
+                    prio += 200 + n.GetUnit().currentHealth - attacker.currentAttackModifier - attacker.attack;
+                }
+                if (ranged)
+                {
+                    prio += 100 + n.GetUnit().attackRange;
+                }
+                prio += n.GetUnit().attack + n.GetUnit().currentAttackModifier;
+                priority.Add(n, prio);
             }
         }
         return priority.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
@@ -349,7 +361,7 @@ public class ArtificialIntelligence : Player
         }
         foreach (Unit unit in currentUnits)
         {
-            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.visionRange).GetChildrens();
+            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.GetVisionRange()).GetChildrens();
             foreach (Node node in currentUnitVisibleNodes)
             {
                 if (!visibleNodes.Contains(node))

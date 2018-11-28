@@ -36,6 +36,7 @@ public abstract class Unit : Selectable
     public List<UnitAbility> abilities;
     public int armor;
     public int foodConso;
+    public int currentVisionRangeModifier;
     public Vector3 direction;
 
     protected Animator anim;
@@ -52,6 +53,7 @@ public abstract class Unit : Selectable
         anim = GetComponentInChildren<Animator>();
         anim.logWarnings = false;
         currentAttackModifier = 0;
+        currentVisionRangeModifier = 0;
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
         healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
@@ -80,6 +82,7 @@ public abstract class Unit : Selectable
             {
                 currentMovementPoints = maxMovementPoints;
                 currentAttackModifier = 0;
+                currentVisionRangeModifier = 0;
                 armor = 0;
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
             }
@@ -112,7 +115,7 @@ public abstract class Unit : Selectable
         currentEffects.RemoveAll(ue => ue.effectEnded); //safe removing of elements
         if (currentHealth <= 0)
         {
-            Death();
+            yield return StartCoroutine(Death());
         }
         yield return null;
     }
@@ -164,7 +167,10 @@ public abstract class Unit : Selectable
     {
         FaceNextNode(source.currentPosition);
         TakesDamage(amount);
-        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && attackRange==0 && !riposte)
+        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && 
+            attackRange==0 && 
+            !riposte &&
+            currentHealth>0)
         {
             StartCoroutine(Attack(source.currentPosition, true));
         }
@@ -181,14 +187,15 @@ public abstract class Unit : Selectable
         StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
         if (currentHealth <= 0 && !unsafeDeath)
         {
-            Death();
+            StartCoroutine(Death());
         }
         
         healthDisplay.fillAmount = (float)currentHealth/(float)(maxHealth);
     }
 
-    public void Death(bool AIcall=false)
+    public IEnumerator Death(bool AIcall=false)
     {
+        anim.SetTrigger("Death");
         Debug.Log("A unit died with AIcall:" + AIcall);
         if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
         {
@@ -202,16 +209,18 @@ public abstract class Unit : Selectable
             currentEffect = new List<UnitEffect>();
             TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
             if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))){
-            
-                owner.currentUnits.Remove(this);
-                Destroy(prefab);
+
                 currentPosition.ResetNode(); //No double reset as a new unit could stand here now
+                owner.currentUnits.Remove(this);
+                yield return new WaitForSeconds(1.5f);
+                Destroy(prefab);
             } //For riposte,safe remove after
             TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
             Debug.Log("     reset correctly");
         }
         else
         {
+            yield return new WaitForSeconds(1.5f);
             currentPosition.ResetNode();
             SetVisible(false);
         }
@@ -580,5 +589,11 @@ public abstract class Unit : Selectable
             }
         }
     }
+
+    public int GetVisionRange()
+    {
+        return currentVisionRangeModifier + visionRange < 0 ? 0 : currentVisionRangeModifier + visionRange;
+    }
+
     public abstract Type GetSpawnPoint();
 }

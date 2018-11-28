@@ -29,9 +29,10 @@ public class ConstructionManager : MonoBehaviour, IObserver
     public Building WindMill;
     //public Building MagicCenter;
 
-    [Header("Unit prefabs")]
+    [Header("Unit prefabs for IA")]
     public Unit Warrior;
     public Unit Wizard;
+    public Unit SkeletonWarrior;
     
 
     private Building buildingToConstruct;
@@ -161,7 +162,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Selector.Instance.currentObject = null;
         CardDisplay.Instance.DisableCardDisplay();
         TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
-
+        unit.currentPosition.MakeIdle(); //not needed?
         return unit;
     }
 

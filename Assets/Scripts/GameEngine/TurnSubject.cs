@@ -45,6 +45,8 @@ public class TurnSubject{
         START_OF_TURN,
         END_OF_TURN,
         UI_BUTTON_PRESSED,
-        TARGET_DEATH
+        TARGET_DEATH,
+        ATTACKING,
+        NO_MOUVEMENT
     }
 }

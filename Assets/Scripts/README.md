@@ -31,7 +31,7 @@ UI:
 	Change fontsize of carddisplay (spell overflow)
 Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
-Rework the UI?
+Rework the UI
 
 Graphic:
 	Implement visual effect on spell effect
@@ -42,7 +42,6 @@ Graphic:
 Do card unit with ability
 Do card unit with requirement schoolom
 Implement TechTreeUI
-Add footsteps? Using FootR FootL?
 	Change models in order to add more units
 	Balistic projectiles
 	On Target Attack Range
@@ -58,6 +57,7 @@ Content:
 	Implement barrack T2 unit
 Continue the global reflexion: Units & buildings.
 Implement more building & units
+Implement terrain effect
 	Implement more frost spells
 	Implement more fire spells
 	Implement more basic spells
@@ -67,7 +67,7 @@ Implement more building & units
 	Implement more green spells
 	Implement range attack indé from mvt
 ?Implement void spells
-Implement scouts (hallcenterbuilding)
+	Implement scouts (hallcenterbuilding)
 Implement better AI (more units, spells?)
 Start a reflexion on play during enemy turn/interaction
 
@@ -80,7 +80,7 @@ Add Menu & button sounds
 
 AI
 Rework range attack
-Rework attack priority
+	Rework attack priority
 
 Debug:
 Fix building out of places

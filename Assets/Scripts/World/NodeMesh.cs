@@ -6,7 +6,8 @@ public class NodeMesh : MonoBehaviour
     public int sizePerNode;
     public int NodeNumberX;
     public int NodeNumberY;
-    public float NodeSize;
+    public int NodeSize;
+    public int offset;
     private Vector3[] vertices;
     private Vector3[] normals;
     private Vector2[] uv;
@@ -20,10 +21,15 @@ public class NodeMesh : MonoBehaviour
     void Start()
     {
         GenerateMesh();
-        LoadMaterial();
-        //GetNodeHigh(4, 4);
+        //LoadMaterial();
+        LoadTexture();
+        //BuildTexture();
+        GetNodeHigh(4, 4);
     }
-
+    private void Update()
+    {
+        //BuildTexture();
+    }
     private void GetNodeHigh(int x_pos, int z_pos)
     {
         int sizex = sizePerNode * NodeNumberX;
@@ -31,13 +37,15 @@ public class NodeMesh : MonoBehaviour
         int vsizex = sizex + 1;
         //int vsizez = sizez + 1;
         int x, z;
-        int z_start = z_pos * sizePerNode;
-        int x_start = x_pos * sizePerNode;
-        for (z = z_start; z < z_start + sizePerNode; z++)
+        int z_start = z_pos * sizePerNode + offset;
+        int x_start = x_pos * sizePerNode + offset;
+        int z_end = z_start + sizePerNode - offset;
+        int x_end = x_start + sizePerNode - offset;
+        for (z = z_start; z < z_end; z++)
         {
-            for (x = x_start; x < x_start + sizePerNode; x++)
+            for (x = x_start; x < x_end; x++)
             {
-                float high =new FractalBrownianMotion().GetHeight(x, z) * 4;
+                float high = (x - x_start) * (x_end - x) * (z - z_start) * (z_end - z)/(tileResolution*2);//new FractalBrownianMotion().GetHeight(x, z) * 8;
                 vertices[z * vsizex + x] = new Vector3(x * tileSize, high, z * tileSize);
             }
         }
@@ -55,14 +63,24 @@ public class NodeMesh : MonoBehaviour
         int sizez = sizePerNode * NodeNumberY;
         //int texWidth = sizePerNode * NodeNumberX * tileResolution;
         //int texHeight = sizePerNode * NodeNumberY * tileResolution;
+        Color[] red = new Color[tileResolution * tileResolution*NodeSize*NodeSize];
+        for (int i = 0; i < tileResolution * tileResolution*NodeSize*NodeSize; i++)
+        {
+            red[i] = Color.blue;
+        }
         Texture2D newTexture = new Texture2D(sizex, sizez);
         int x, z;
-        for (z = 0; z < sizez; z+=tileResolution)
+        for (z = 0; z < sizez; z+= (int)(sizePerNode * NodeSize))
         {
-            for (x = 0; x < sizex; x+=tileResolution)
+            for (x = 0; x < sizex; x+=(int)(sizePerNode*NodeSize))
             {
-                Color[] colors = texture.GetPixels(0, 0, tileResolution, tileResolution);
-                newTexture.SetPixels(x * tileResolution, z * tileResolution, tileResolution, tileResolution, colors);
+                Color[] colors = texture.GetPixels(0, 0, tileResolution*NodeSize, tileResolution*NodeSize);
+                Debug.Log(colors);
+                if (Random.Range(0f,1f)<0.5f)
+                {
+                    colors = red;
+                }
+                newTexture.SetPixels(x, z , tileResolution*NodeSize, tileResolution*NodeSize, colors);
             }
         }
         newTexture.filterMode = FilterMode.Point;
@@ -79,20 +97,30 @@ public class NodeMesh : MonoBehaviour
         int texHeight = sizePerNode * NodeNumberY * tileResolution;
         Texture2D texture = new Texture2D(texWidth, texHeight);
         int x, z;
-        Color[] color = { Color.blue, Color.blue, Color.blue, Color.blue };
+        Color[] red = new Color[tileResolution*tileResolution];
+        for(int i=0; i < tileResolution * tileResolution; i++)
+        {
+            red[i] = Color.red;
+        }
+        Color[] blue = new Color[tileResolution * tileResolution];
+        for (int i = 0; i < tileResolution * tileResolution; i++)
+        {
+            blue[i] = Color.blue;
+        }
+
         for (z = 0; z < sizez; z++)
         {
             for (x = 0; x < sizex; x++)
             {
                 if ((x+z) % 2 == 0)
                 {
-                    color[0] =  Color.blue;
+                    texture.SetPixels(x * tileResolution, z * tileResolution, tileResolution, tileResolution, red);
                 }
                 else
                 {
-                    color[0] = Color.red;
+                    texture.SetPixels(x * tileResolution, z * tileResolution, tileResolution, tileResolution, blue);
                 }
-                texture.SetPixels(x * tileResolution, z * tileResolution, tileResolution, tileResolution, color);
+                
             }
         }
         texture.filterMode = FilterMode.Point;

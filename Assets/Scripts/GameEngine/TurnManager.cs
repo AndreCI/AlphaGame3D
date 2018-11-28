@@ -81,7 +81,7 @@ public class TurnManager{
         currentPlayer.manaBank = 0;
         Utils.EatFood(currentPlayer);
         StartTurnSubject.NotifyObservers(currentPlayer);
-
+        currentPlayer.UpdateVisibleNodes();
         GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(currentPlayer.StartOfTurn());
     }
 

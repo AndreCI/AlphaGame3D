@@ -7,6 +7,7 @@ public class UnitAbilityUtils
         HEAL,
         APPLY_EFFECT,
         GOLD_MODIFIER,
-        ARMOR
+        ARMOR,
+        
     }
 }

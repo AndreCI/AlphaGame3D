@@ -96,7 +96,7 @@ public class Player
         }
         foreach (Unit unit in currentUnits)
         {
-            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.visionRange).GetChildrens();
+            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.GetVisionRange()).GetChildrens();
             foreach (Node node in currentUnitVisibleNodes)
             {
                 if (!visibleNodes.Contains(node))

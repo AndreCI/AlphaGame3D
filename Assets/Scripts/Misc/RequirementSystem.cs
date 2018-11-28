@@ -12,10 +12,14 @@ public class RequirementSystem {
         NodeR depth2;
         
         depth0 = new NodeR(typeof(HallCenter)){ owned = true};
+        depth1 = new NodeR(typeof(Scout));
+        AddUnlocksAndLocks(depth0, depth1);
+
         //shrine
-        NodeR shrine = new NodeR(typeof(Shrine)) { maxAllowed = 12};
-        shrine.needT2 = false;
-        shrine.oneUnlockInEnough = true;
+        NodeR shrine = new NodeR(typeof(Shrine)) { maxAllowed = 12,
+                                                    needT2 = false,
+                                                    oneUnlockInEnough=true};
+
         //Market
         depth1 = new NodeR(typeof(Market));
         AddUnlocksAndLocks(depth0, depth1);
