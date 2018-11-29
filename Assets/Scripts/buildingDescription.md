@@ -19,3 +19,9 @@ Smith: improvement? +1Atck, +1regen, +1armor?
 Warehouse: allow for keeping food?/mana? between turns? Other stuff?
 Quarry: lose food agains gold?
 market?
+
+World:
+Multiples biome with minor impact: impassible obstacle for now
+Lets start with 2 biome: default and montains
+biome are an aggregation of nodes which shares a property. 
+Biome are created at the start of the game proceduraly

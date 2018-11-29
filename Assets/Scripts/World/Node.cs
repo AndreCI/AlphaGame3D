@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour
@@ -36,7 +37,21 @@ public class Node : MonoBehaviour
     private Dictionary<COLORS, Color> colorDictionary;
    
     public Vector3 positionOffset;
-
+    public WorldGeneration.BIOME_TYPES biomeInternal;
+    public WorldGeneration.BIOME_TYPES biome {
+        get
+        {
+            return biomeInternal;
+        }
+        set
+        {
+            if (value == WorldGeneration.BIOME_TYPES.MOUNTAIN)
+            {
+                walkable = false;
+            }
+            biomeInternal = value;
+        }
+    }
     public bool walkable;
     public GameObject FogOfWar;
     public Vector3 position;
@@ -44,9 +59,10 @@ public class Node : MonoBehaviour
     public Unit unit;
     private List<Renderer> infoRenderers;
     public STATE state;
+    public MeshRenderer hideMesh;
 
     public List<Node> adjacentNodes;
-
+    private bool hideMeshCleared;
     // Use this for initialization
     void Awake()
     {
@@ -116,15 +132,37 @@ public class Node : MonoBehaviour
         }
 
     }
+
+    private IEnumerator removeHideMesh()
+    {
+        int numberOfTicks = 60;
+        float waitBetween = 0.01f;
+        float alpha = 1f;
+        Color c = hideMesh.material.color;
+        for (int i=0; i<numberOfTicks; i++)
+        {
+            alpha -= 1 / (float)numberOfTicks;
+            hideMesh.material.color = new Color(alpha, alpha, alpha, alpha);
+            yield return new WaitForSeconds(waitBetween);
+        }
+    }
     public void SetVisible(bool v)
     {
         if (v)
         {
             FogOfWar.GetComponent<ParticleSystem>().Stop();
+            if (!hideMeshCleared)
+            {
+                StartCoroutine(removeHideMesh());
+                hideMeshCleared = true;
+            }
         }
         else
         {
-            FogOfWar.GetComponent<ParticleSystem>().Play();
+            if (hideMeshCleared)
+            {
+                FogOfWar.GetComponent<ParticleSystem>().Play();
+            }
         }
         if (building != null)
         {
