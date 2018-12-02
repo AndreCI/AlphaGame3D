@@ -1,17 +1,35 @@
 ﻿using System;
 using UnityEngine;
 
-public class FractalBrownianMotion
-{
-    float h_fBm = 1.2f;
-    float lacunarity_fBm = 3.7f;
-    int octaves_fBm = 12;
-    float offset_fBm = 0.32f;
-    float time;
+[Serializable]
+public class FractalBrownianMotion { 
+    public float h_fBm = 1.2f;
+    public float lacunarity_fBm = 3.7f;
+    public int octaves_fBm = 12;
+    public float offset_fBm = 0.32f;
+
+    public float randA = 12.9898f;
+    public float randB = 78.233f;
+    public float randC = 43758.5453f;
+    public float randomOffset = 0f;
+    private float a;
+    private float b;
+    private float c;
     public FractalBrownianMotion() {
     }
-    public float GetHeight(int x, int y)
+
+    public void Update()
     {
+        a = UnityEngine.Random.Range(randA - randomOffset, randA + randomOffset);
+        b = UnityEngine.Random.Range(randB - randomOffset, randB + randomOffset);
+        c = UnityEngine.Random.Range(randC - randomOffset, randC + randomOffset);
+    }
+    public float GetHeight(float x, float y)
+    {
+        if(a==0 && b==0 && c == 0)
+        {
+            Update();
+        }
         float uv = (fBm(new Vector2(x, y) * 3, h_fBm, lacunarity_fBm, octaves_fBm, offset_fBm)); 
 
         return uv;
@@ -19,7 +37,8 @@ public class FractalBrownianMotion
 
 
     private float rand(Vector2 co) {
-        float x = (float)Math.Sin(Vector2.Dot(co, new Vector2(12.9898f, 78.233f))) * 43758.5453f;
+        //12.9898f, 78.233f))) * 43758.5453f;
+        float x = (float)Math.Sin(Vector2.Dot(co, new Vector2(a, b)*c));
         return fract(x);
     }
 

@@ -12,30 +12,55 @@ public class NodeMesh : MonoBehaviour
             return instance;
         }
     }
+    [Header("General Map info")]
     public int nodeResolution; //Number of point per node
     public int nodeNumberX;
     public int nodeNumberY;
     public float nodeSize; //size of the node in game
     public int offset;
-    private Vector3[] vertices;
-    private Vector3[] normals;
-    private Vector2[] uv;
-    private List<int> triangles;
-    private float tileSize; //Number of squares per Node
+
+    [Header("World generation parameters")]
+    [SerializeField]
+    private AnimationCurve heightCurve;
+    public float heightMultiplication = 1f;
+    public FractalBrownianMotion fbm;
+
+    [Header("Materials")]
     public Material defaultMaterial;
     public Material mountainMaterial;
+    public Material waterMaterial;
+    public Material forestMaterial;
+    public Material treeForestMaterial;
+    public GameObject treePrefab1;
+    public GameObject treePrefab2;
+    public GameObject treePrefab3;
+    public GameObject treePrefab4;
+    public GameObject treePrefab5;
+
     public List<List<int>> submeshesTriangles;
     private List<Material> materialForNodes;
     private Mesh mesh;
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-
+    private Vector3[] vertices;
+    private Vector3[] normals;
+    private Vector2[] uv;
+    private List<int> triangles;
+    private float tileSize; //Number of squares per Node
     private Dictionary<WorldGeneration.BIOME_TYPES, Material> biomesToMaterial;
+    private float[,] heightMap;
+    [HideInInspector]
+    public Dictionary<Vector2, float> xzToHeight;
+    [HideInInspector]
     public int sizex; //Total size
+    [HideInInspector]
     public int sizez;//8 nodes which have 16 vectrices each
+    [HideInInspector]
     public int vsizex;//Total number of vectrices in the x directions
+    [HideInInspector]
     public int vsizez;
-
+    [HideInInspector]
+    public List<GameObject> prefabTreeList;
     // Use this for initialization
     void Awake()
     {
@@ -46,13 +71,24 @@ public class NodeMesh : MonoBehaviour
         biomesToMaterial = new Dictionary<WorldGeneration.BIOME_TYPES, Material>()
         {
             { WorldGeneration.BIOME_TYPES.DEFAULT, defaultMaterial },
-            {WorldGeneration.BIOME_TYPES.MOUNTAIN,  mountainMaterial}
+            {WorldGeneration.BIOME_TYPES.MOUNTAIN,  mountainMaterial},
+            {WorldGeneration.BIOME_TYPES.FOREST_NOTREE,  forestMaterial},
+            {WorldGeneration.BIOME_TYPES.FOREST_TREE,  treeForestMaterial},
+            {WorldGeneration.BIOME_TYPES.WATER,  waterMaterial}
         };
         sizex = nodeResolution * nodeNumberX; //Total size
         sizez = nodeResolution * nodeNumberY; //8 nodes which have 16 vectrices each
         vsizex = sizex + 1; //Total number of vectrices in the x directions
         vsizez = sizez + 1;
         instance = this;
+        prefabTreeList = new List<GameObject>()
+        {
+            treePrefab1,
+            treePrefab2,
+            treePrefab3,
+            treePrefab4,
+            treePrefab5,
+        };
         //LoadTexture();
         //BuildTexture();
         // GetNodeHigh(4, 4);
@@ -76,13 +112,54 @@ public class NodeMesh : MonoBehaviour
                 UpdateMesh();
     }
 
+    public void ReloadMap()
+    {
+        GenerateMesh();
+        Debug.Log(submeshesTriangles.Count);
+        ReLoadMaterials();
+    }
+
+    
+
+    private float[,] GetNoise(int mapDepth, int mapWidth, float scale)
+    {
+        
+            // create an empty noise map with the mapDepth and mapWidth coordinates
+            float[,] noiseMap = new float[mapDepth, mapWidth];
+
+            for (int zIndex = 0; zIndex < mapDepth; zIndex++)
+            {
+                for (int xIndex = 0; xIndex < mapWidth; xIndex++)
+                {
+                    // calculate sample indices based on the coordinates and the scale
+                    float sampleX = xIndex / scale;
+                    float sampleZ = zIndex / scale;
+
+                    // generate noise value using PerlinNoise
+                    float noise = Mathf.PerlinNoise(sampleX, sampleZ);
+
+                    noiseMap[zIndex, xIndex] = noise;
+                }
+        }
+        return noiseMap;
+    }
+
+    private void GenerateHeightMap2()
+    {
+        Vector3[] meshVertices = meshFilter.mesh.vertices;
+        int tileDepth = sizex;
+        int tileWidth = sizez ;
+
+        // calculate the offsets based on the tile position
+       // heightMap = GetNoise(tileDepth, tileWidth, mapScale);
+        
+    }
+
     public void LoadMaterialForNode(Node node)
     {
+        throw new System.Exception("Should not use");
         int x = (int)(node.position.x / nodeSize);
-        Debug.Log("------");
-        Debug.Log(node.biome.ToString());
         int z = (int)(node.position.z / nodeSize);
-        Debug.Log(x + "::" + z);
         materialForNodes[z * nodeNumberX + x] = biomesToMaterial[node.biome];
         mesh.SetTriangles(submeshesTriangles[z * nodeNumberX + x], z * nodeNumberX + x);
     }
@@ -96,8 +173,9 @@ public class NodeMesh : MonoBehaviour
             mesh.SetTriangles(submeshesTriangles[i], i);
         }
 
-        //mesh.RecalculateNormals();
+        mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
+        
     }
 
     public void LoadMaterial(List<WorldGeneration.BIOME_TYPES> biomes)
@@ -117,6 +195,7 @@ public class NodeMesh : MonoBehaviour
 
     private void BuildTexture()
     {
+        throw new System.Exception("Should not use");
         int tileResolution = nodeResolution;
         int sizex = nodeResolution * nodeNumberX;
         int sizez = nodeResolution * nodeNumberY;
@@ -156,10 +235,38 @@ public class NodeMesh : MonoBehaviour
         meshRenderer.sharedMaterials[0].mainTexture = texture;
     }
 
+
+    private void GenerateHeightMap()
+    {
+        fbm.Update();
+        tileSize = (float)nodeSize / (float)nodeResolution;
+
+        xzToHeight = new Dictionary<Vector2, float>();
+        for (int z = 0; z < vsizez; z++)
+        {
+            for (int x = 0; x < vsizex; x++)
+            {
+                float high = fbm.GetHeight((float)x / (float)vsizex, (float)z / (float)vsizez) * 10;
+               // high = heightCurve.Evaluate(high);// * heightMultiplication;
+
+                 if (high < 0)
+                 {
+                     high = high / 10;
+                 }
+                 if (high < 0.3 && high > -0.5)
+                 {
+                     high = 0;
+                 }
+                xzToHeight.Add(new Vector2(x*tileSize, z*tileSize), high);
+            }
+        }
+    }
     public void GenerateMesh()
     {
+        GenerateHeightMap();
         mesh.Clear();
         mesh.subMeshCount = nodeNumberX * nodeNumberY;
+        submeshesTriangles = new List<List<int>>();
         //There is nodes and tiles: nodes are ingame representation of a place, while tiles agglomerate to create
         //the node. There is multiple tiles in nodes.
         for (int i =0; i<nodeNumberX; i++)
@@ -184,7 +291,7 @@ public class NodeMesh : MonoBehaviour
         {
             for (x = 0; x < vsizex; x++)
             {
-                float high = 0;// new FractalBrownianMotion().GetHeight(x, z)*10;
+                float high = xzToHeight[new Vector2(x*tileSize, z*tileSize)];
                 vertices[z * vsizex + x] = new Vector3(x * tileSize , high, z*tileSize );
                 normals[z * vsizex + x] = Vector3.up;
                 uv[z * vsizex + x] = new Vector2((float)x / sizex, (float)z / sizez);
@@ -196,13 +303,6 @@ public class NodeMesh : MonoBehaviour
             {
                 int squareIdx = z * sizex + x;
                 int triangeOffset = squareIdx * 6;
-                triangles[triangeOffset + 0] = z * vsizex + x + 0; //0 ; 0,0
-                triangles[triangeOffset + 1] = z * vsizex + x + vsizex + 0; //2 ; 1,0
-                triangles[triangeOffset + 2] = z * vsizex + x + vsizex + 1; //3 ; 1,1
-
-                triangles[triangeOffset + 3] = z * vsizex + x + 0; //0 ; 0,0
-                triangles[triangeOffset + 4] = z * vsizex + x + vsizex + 1; //3 ; 1,1
-                triangles[triangeOffset + 5] = z * vsizex + x +  1; //1 ; 0,1
 
                 GetTrianglesSubmesh(x, z).Add(z * vsizex + x + 0); //0 ; 0,0
                 GetTrianglesSubmesh(x, z).Add(z * vsizex + x + vsizex + 0); //2 ; 1,0
@@ -214,7 +314,7 @@ public class NodeMesh : MonoBehaviour
 
             }
 
-        }
+            }
         UpdateMesh();
     }
 

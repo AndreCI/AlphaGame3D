@@ -391,9 +391,9 @@
     <Compile Include="Assets\Scripts\World\HideMesh.cs" />
     <Compile Include="Assets\Scripts\World\Node.cs" />
     <Compile Include="Assets\Scripts\World\NodeUtils.cs" />
-    <Compile Include="Assets\Scripts\World\WorldGeneration\Biome.cs" />
+    <Compile Include="Assets\Scripts\World\WorldGeneration\Forest.cs" />
     <Compile Include="Assets\Scripts\World\WorldGeneration\FractalBrownianMotion.cs" />
-    <Compile Include="Assets\Scripts\World\WorldGeneration\MountainBiome.cs" />
+    <Compile Include="Assets\Scripts\World\WorldGeneration\ForestBiome.cs" />
     <Compile Include="Assets\Scripts\World\WorldGeneration\NodeMesh.cs" />
     <Compile Include="Assets\Scripts\World\WorldGeneration\WorldGeneration.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
@@ -432,6 +432,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\3DForge\FantasyExteriors\Village &amp; Towns\Documents\Village Exteriors Kit v1.0 - user guide.txt" />
+    <None Include="Assets\Imported\BirchPackVol1\Works For Fun.txt" />
     <None Include="Assets\Imported\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Imported\low poly medieval buildings\readme.txt" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />

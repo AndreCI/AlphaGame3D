@@ -63,6 +63,8 @@ public class Node : MonoBehaviour
 
     public List<Node> adjacentNodes;
     private bool hideMeshCleared;
+    [HideInInspector]
+    public Forest forest;
     // Use this for initialization
     void Awake()
     {
@@ -148,6 +150,10 @@ public class Node : MonoBehaviour
     }
     public void SetVisible(bool v)
     {
+        if (forest != null)
+        {
+            forest.SetVisible(v);
+        }
         if (v)
         {
             FogOfWar.GetComponent<ParticleSystem>().Stop();
@@ -159,7 +165,7 @@ public class Node : MonoBehaviour
         }
         else
         {
-            if (hideMeshCleared)
+            if (biome != WorldGeneration.BIOME_TYPES.MOUNTAIN) 
             {
                 FogOfWar.GetComponent<ParticleSystem>().Play();
             }

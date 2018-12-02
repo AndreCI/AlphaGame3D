@@ -18,6 +18,7 @@ add AI difficulty
 	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 Implement units keywords
+Go In Hexgrid?
 	Rework BFS
 
 UI:
@@ -32,6 +33,9 @@ UI:
 Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
 Rework the UI
+Add notifications (unit died, need more food, building constructed)?
+Think about artstyle
+
 
 Graphic:
 	Implement visual effect on spell effect
@@ -42,6 +46,7 @@ Graphic:
 Do card unit with ability
 Do card unit with requirement schoolom
 Implement TechTreeUI
+Improve terrain
 	Change models in order to add more units
 	Balistic projectiles
 	On Target Attack Range
@@ -81,6 +86,7 @@ Add Menu & button sounds
 AI
 Rework range attack
 	Rework attack priority
+Rework path finding
 
 Debug:
 Fix building out of places

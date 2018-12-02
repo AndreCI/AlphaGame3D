@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -121,6 +122,7 @@ public class NodeUtils
         { -Vector3.forward },
         {-Vector3.right }
         };
+        dirs = dirs.OrderBy(d => Guid.NewGuid()).ToList(); //add random elements on units movement is less boring
         List<Node> adjNodes = new List<Node>();
         Vector3 halfExtend = new Vector3(1f, 1f, 1f);
         foreach (Vector3 dir in dirs)

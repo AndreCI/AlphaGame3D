@@ -37,7 +37,7 @@ public class ArtificialIntelligence : Player
         UpdateUnitEffect();
         
         
-            yield return coroutineStarter.StartCoroutine(BasicRush());
+       //     yield return coroutineStarter.StartCoroutine(BasicRush());
 
 
         UpdateUnitEffect();

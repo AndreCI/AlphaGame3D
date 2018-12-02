@@ -148,7 +148,7 @@ public class Player
         };
 
 
-        buildingVisiblity = 3;
+        buildingVisiblity = 30;
         buildingRange = 3;
     }
 
