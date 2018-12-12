@@ -8,7 +8,7 @@ public class SchoolOfMagicDisplay : MonoBehaviour
     public SpellUtils.SchoolOfMagic schoolOfMagic;
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         level.text = TurnManager.Instance.currentPlayer.schoolOfMagicLevels[schoolOfMagic].ToString();
     }

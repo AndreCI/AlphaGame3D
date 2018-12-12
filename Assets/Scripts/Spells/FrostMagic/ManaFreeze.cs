@@ -28,7 +28,7 @@ public class ManaFreeze : Spell
             p.Play();
         }
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
         int save = TurnManager.Instance.currentPlayer.mana;
         TurnManager.Instance.currentPlayer.mana = 0;

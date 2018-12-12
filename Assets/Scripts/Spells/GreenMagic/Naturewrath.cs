@@ -28,9 +28,9 @@ public class Naturewrath : Spell
         }
         GetComponentInChildren<Animation>().Play();
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
-        foreach (Node node in affectedNodes_)
+        foreach (HexCell node in affectedNodes_)
         {
             node.Damage(damage);
         }

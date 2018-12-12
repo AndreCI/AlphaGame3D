@@ -6,7 +6,7 @@ using UnityEngine;
 public class ArcaneMissile : Spell
 {
     public static ArcaneMissile Instance;
-    List<Node> targetedNodes;
+    List<HexCell> targetedNodes;
     public int missileNumber;
 
     public void Awake()
@@ -30,17 +30,17 @@ public class ArcaneMissile : Spell
 
     private IEnumerator playAnimationWithWait()
     {
-        foreach (Node node in targetedNodes)
+        foreach (HexCell node in targetedNodes)
         {
             Debug.Log(node.ToString());
             yield return StartCoroutine(playSingleAnimation(node));
         }
     }
 
-    private IEnumerator playSingleAnimation(Node node)
+    private IEnumerator playSingleAnimation(HexCell node)
     {
-
-        transform.position = node.position;
+        
+        transform.position = node.Position;
         ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
         foreach (ParticleSystem p in particles)
         {
@@ -49,11 +49,11 @@ public class ArcaneMissile : Spell
         GetComponentInChildren<Animation>().Play();
         yield return new WaitForSeconds(1.8f);
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
-        targetedNodes = new List<Node>();
-        targetedNodes = Utils.GetRandomElements<Node>(affectedNodes_, missileNumber);
-        foreach(Node node in targetedNodes)
+        targetedNodes = new List<HexCell>();
+        targetedNodes = Utils.GetRandomElements<HexCell>(affectedNodes_, missileNumber);
+        foreach(HexCell node in targetedNodes)
         {
             node.Damage(damage);
         }

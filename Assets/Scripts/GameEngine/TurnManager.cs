@@ -98,7 +98,7 @@ public class TurnManager{
         }
         if (!againstAI)
         {
-            currentPlayer.HideVisibleNodes();
+         //   currentPlayer.HideVisibleNodes();
         }
         currentPlayer = playerActive[playerActiveIndex];
         if (GameManager.Instance != null)
@@ -118,28 +118,31 @@ public class TurnManager{
         
     }
 
-    public void StartGame(Node startNode)
+    public void StartGame(HexCell startNode, HexCell startNode2)
     {
         currentPlayer = playerActive[0];
-        Node baseNode = startNode;// (Node)GameObject.Find("Node (121)").GetComponent<Node>();
+        HexCell baseNode = startNode;// (Node)GameObject.Find("Node (121)").GetComponent<Node>();
         ConstructionManager.Instance.SetBuildingToBuild(ConstructionManager.Instance.HallCenter, true);
         baseNode.Construct(true);
         currentPlayer.UpdateVisibleNodes();
-        currentPlayer.HideVisibleNodes();
-
+        
+        HexMapCamera.instance.SetPosition(baseNode.Position.x, baseNode.Position.z - 15, speed:0.5f);
+      //  currentPlayer.HideVisibleNodes();
+      
         currentPlayer = playerActive[1];
-        baseNode = (Node)GameObject.Find("Node (18)").GetComponent<Node>(); //18
+        baseNode = startNode2;// (Node)GameObject.Find("Node (18)").GetComponent<Node>(); //18
         ConstructionManager.Instance.SetBuildingToBuild(ConstructionManager.Instance.HallCenter, true);
         baseNode.Construct(true);
         currentPlayer.UpdateVisibleNodes();
-        currentPlayer.HideVisibleNodes();
+       //s currentPlayer.HideVisibleNodes();
 
-        NewTurn();
         if (againstAI)
         {
             currentPlayer.UpdateVisibleNodes();
             Player.Player2.currentBuildings[0].SetVisible(false);
         }
+      //  currentPlayer = playerActive[0];
+        NewTurn();
     }
 
     public void EndOfAITurn()

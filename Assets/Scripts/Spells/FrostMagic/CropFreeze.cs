@@ -28,7 +28,7 @@ public class CropFreeze : Spell
             p.Play();
         }
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
         int waste = TurnManager.Instance.currentPlayer.food > damage ? damage : TurnManager.Instance.currentPlayer.food;
         TurnManager.Instance.currentPlayer.food -= waste;

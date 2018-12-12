@@ -42,9 +42,9 @@ public class Player
     public int foodPrediction;
     public List<Unit> currentUnits;
     public List<Building> currentBuildings;
-    public List<Node> visibleNodes;
-    public List<Node> knownBuilding;
-    protected List<Node> visibleNodesPrev;
+    public List<HexCell> visibleNodes;
+    //public List<Node> knownBuilding;
+  //  protected List<Node> visibleNodesPrev;
     public Dictionary<SpellUtils.SchoolOfMagic, int> schoolOfMagicLevels;
     public RequirementSystem requirementSystem;
     protected int buildingVisiblity;
@@ -65,17 +65,10 @@ public class Player
             throw new System.Exception("id must be 1 or 2");
         }
     }
-    public void HideVisibleNodes()
-    {
-        foreach (Node node in visibleNodes)
-        {
-            node.SetVisible(false);
-        }
-    }
 
     public virtual void UpdateVisibleNodes()
     {
-        foreach (Building b in currentBuildings)
+      /*  foreach (Building b in currentBuildings)
         {
             if (!knownBuilding.Contains(b.currentPosition))
             {
@@ -121,7 +114,7 @@ public class Player
                 knownBuilding.Add(node);
             }
         }
-        visibleNodesPrev = visibleNodes;
+        visibleNodesPrev = visibleNodes;*/
     }
     protected Player(int id_)
     {
@@ -136,9 +129,9 @@ public class Player
         requirementSystem = new RequirementSystem();
         currentBuildings = new List<Building>();
         currentUnits = new List<Unit>();
-        visibleNodesPrev = new List<Node>();
-        visibleNodes = new List<Node>();
-        knownBuilding = new List<Node>();
+      //  visibleNodesPrev = new List<Node>();
+        visibleNodes = new List<HexCell>();
+     //   knownBuilding = new List<Node>();
         schoolOfMagicLevels = new Dictionary<SpellUtils.SchoolOfMagic, int>
         {
             { SpellUtils.SchoolOfMagic.BASIC, 100 },

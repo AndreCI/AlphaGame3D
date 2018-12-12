@@ -19,7 +19,7 @@ public class Bandit : Unit
     }
 
 
-    protected override IEnumerator Attack(Node target, bool riposte)
+    protected override IEnumerator Attack(HexCell target, bool riposte)
     {
         Unit attacked = target.unit;
         yield return StartCoroutine(base.Attack(target, riposte));

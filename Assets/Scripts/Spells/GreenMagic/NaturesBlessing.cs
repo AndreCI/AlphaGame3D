@@ -37,35 +37,34 @@ public class NaturesBlessing : Spell
     protected override void GetCastableNodes()
     {
         base.GetCastableNodes();
-        foreach(Node n in castableNodes)
+        foreach(HexCell n in castableNodes)
         {
-            if (!n.walkable)
+            if (!n.IsFree)
             {
-                n.MakeIdle();
+                n.State = HexCell.STATE.IDLE;
             }
         }
-        castableNodes.RemoveAll(n => n.state == Node.STATE.IDLE);
+        castableNodes.RemoveAll(n => n.State == HexCell.STATE.IDLE);
     }
 
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
         StartCoroutine(WaitForEffect(affectedNodes_));
     }
-    private IEnumerator WaitForEffect(List<Node> affectedNodes_)
+    private IEnumerator WaitForEffect(List<HexCell> affectedNodes_)
     {
         yield return new WaitForSeconds(1.0f);
-        Node node = affectedNodes_[0];
-        GameObject buildingObject = (GameObject)Instantiate(prefabBuilding.prefab, node.transform.position + node.positionOffset, node.transform.rotation);
+        HexCell node = affectedNodes_[0];
+        GameObject buildingObject = (GameObject)Instantiate(prefabBuilding.prefab, node.Position, node.transform.rotation);
 
         Building building = (Building)buildingObject.GetComponent(prefabBuilding.GetType());
         building.SetVisible(true);
-        building.SetCurrentPosition(node);
+        building.currentPosition = node;
         building.owner = TurnManager.Instance.currentPlayer;
         ((NaturesBlessingBuilding)building).effect = new EffectFactory(effect, buffDuration, amplitude);
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         node.building = building;
-        node.walkable = false;
         base.Activate(affectedNodes_);
         yield return new WaitForEndOfFrame();
     }

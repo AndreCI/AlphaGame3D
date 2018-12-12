@@ -24,7 +24,7 @@ public abstract class DefensiveBuilding : Building
     {
         owner.currentBuildings.Remove(this);
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-        currentPosition.ResetNode();
+        currentPosition.building = null;
         Destroy(prefab);
     }
     public override void UpdateCardDisplayInfo()

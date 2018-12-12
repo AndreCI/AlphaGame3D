@@ -6,29 +6,27 @@ using UnityEngine;
 
 public abstract class Selectable : MonoBehaviour, IObserver
 {
-    public Node currentPosition;
+    public HexCell currentPosition;
     public Player owner;
     public string cardName;
     public int goldCost;
     public int manaCost;
     public int actionPointCost;
+    public int visionRange;
+
     protected CardDisplay cardDisplay;
     public GameObject notificationPanel;
     public TextMeshProUGUI notificationText;
     public bool visible;
 
     public bool isTier2;
-    private void Start()
-    {
-    }
-
 
     public abstract void UpdateCardDisplayInfo();
     public abstract void Select();
     public abstract void Unselect();
-    public virtual void SetCurrentPosition(Node node)
+    public virtual void SetCurrentPosition(HexCell cell)
     {
-        currentPosition = node;
+        currentPosition = cell;
     }
 
     public IEnumerator FadeNotification(string notif, Utils.NotificationTypes type)

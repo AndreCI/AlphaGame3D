@@ -19,13 +19,14 @@ public abstract class Unit : Selectable
     public GameObject meleeAttackAnimation;
     public RangedAttackAnimation rangedAttackAnimation;
     public Vector3 attackOffset;
+    const float rotationSpeed = 180f;
+
 
     [Header("Unit Information")]
     public int maxHealth;
     public int attack;
     public int maxMovementPoints;
     public int attackRange;
-    public int visionRange;
     public string effectDescription;
 
     [Header("Internal variables (no preset is needed)")]
@@ -38,15 +39,33 @@ public abstract class Unit : Selectable
     public int foodConso;
     public int currentVisionRangeModifier;
     public Vector3 direction;
-
+    private float orientation;
+    public float Orientation
+    {
+        get
+        {
+            return orientation;
+        }
+        set
+        {
+            orientation = value;
+            transform.localRotation = Quaternion.Euler(0f, value, 0f);
+        }
+    }
+    private HexCellPriorityQueue searchFrontier;
     protected Animator anim;
-    protected List<Node> potentialPath; //Current path for the target node
-    protected List<Node> path; //selected path to node
+    protected List<HexCell> potentialPath; //Current path for the target node
+  //  protected List<HexCell> path; //selected path to node
+    protected HexCell cellToGo;
     protected bool moving;
-    protected NodeUtils.NodeWrapper currentPositionWrapped; //NodeWrapper containing the root of the movement tree
-    protected List<Node> possibleMoves; //List of all the nodes where the unit can go
-    protected List<Node> rangedAttackableMoves; //List of all the nodes where the unit can go
+    protected List<HexCell> possibleMoves; //List of all the nodes where the unit can go
+    //protected List<HexCell> rangedAttackableMoves; //List of all the nodes where the unit can go
 
+    //Mouvement data
+    private Vector3 a, b, c;
+    private float mouvementTime;
+    private int currentColumn;
+    private HexCell mouvementStartCell;
 
     public virtual void Setup()
     {
@@ -68,10 +87,7 @@ public abstract class Unit : Selectable
 
     void Update()
     {
-        if (moving)
-        {
-            MoveStep();
-        }
+        
     }
 
     public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
@@ -87,18 +103,18 @@ public abstract class Unit : Selectable
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
             }
         }
-        
+
 
     }
 
     public IEnumerator DisplayAndApplyCurrentEffects(Player currentPlayer, List<UnitEffect> currentEffects)
     {
 
-        currentEffects.RemoveAll(ue => ue.duration<=0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
+        currentEffects.RemoveAll(ue => ue.duration <= 0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
 
-        for (int i =0; i<currentEffects.Count; i++) {
+        for (int i = 0; i < currentEffects.Count; i++) {
             UnitEffect ue = currentEffects[i]; //No foreach as effects can be added during opening phase.
             //However, maybe this should be fixed... See NaturesBlessingBuilding
             System.Object[] data = ue.ApplyEffect();
@@ -125,7 +141,7 @@ public abstract class Unit : Selectable
         notificationPanel.transform.rotation = Camera.main.transform.rotation;
         foreach (Utils.NotificationTypes type in notifications.Keys)
         {
-            yield return StartCoroutine(FadeNotification(notifications[type].ToString(),type));
+            yield return StartCoroutine(FadeNotification(notifications[type].ToString(), type));
         }
         notificationPanel.SetActive(false);
         yield return null;
@@ -137,7 +153,7 @@ public abstract class Unit : Selectable
     }
     public void SetVisible(bool v)
     {
-        foreach(Renderer r in movementSphere.GetComponentsInChildren<Renderer>())
+        foreach (Renderer r in movementSphere.GetComponentsInChildren<Renderer>())
         {
             if (r.name != "Selector")
             {
@@ -165,18 +181,18 @@ public abstract class Unit : Selectable
 
     public void IsAttacked(int amount, Unit source, bool riposte)
     {
-        FaceNextNode(source.currentPosition);
+   //     FaceNextNode(source.currentPosition);
         TakesDamage(amount);
-        if(currentPosition.adjacentNodes.Contains(source.currentPosition) && 
-            attackRange==0 && 
+        if (currentPosition.GetNeighbors().Contains(source.currentPosition) &&
+            attackRange == 0 &&
             !riposte &&
-            currentHealth>0)
+            currentHealth > 0)
         {
             StartCoroutine(Attack(source.currentPosition, true));
         }
     }
 
-    public void TakesDamage(int amount, bool unsafeDeath=false)
+    public void TakesDamage(int amount, bool unsafeDeath = false)
     {
         int amountReduced = amount - armor;
         if (amountReduced <= 0)
@@ -184,16 +200,16 @@ public abstract class Unit : Selectable
             amountReduced = 0;
         }
         currentHealth = currentHealth - amountReduced;
-        StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { {Utils.NotificationTypes.DAMAGE, amountReduced } }));
+        StartCoroutine(DisplayNotifications(new Dictionary<Utils.NotificationTypes, int> { { Utils.NotificationTypes.DAMAGE, amountReduced } }));
         if (currentHealth <= 0 && !unsafeDeath)
         {
             StartCoroutine(Death());
         }
-        
-        healthDisplay.fillAmount = (float)currentHealth/(float)(maxHealth);
+
+        healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
     }
 
-    public IEnumerator Death(bool AIcall=false)
+    public IEnumerator Death(bool AIcall = false)
     {
         anim.SetTrigger("Death");
         Debug.Log("A unit died with AIcall:" + AIcall);
@@ -208,9 +224,9 @@ public abstract class Unit : Selectable
 
             currentEffect = new List<UnitEffect>();
             TurnManager.Instance.StartTurnSubject.RemoveObserver(this);
-            if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))){
+            if (!(owner.isAi && TurnManager.Instance.currentPlayer.Equals(owner))) {
 
-                currentPosition.ResetNode(); //No double reset as a new unit could stand here now
+               // currentPosition.ResetNode(); //No double reset as a new unit could stand here now
                 owner.currentUnits.Remove(this);
                 yield return new WaitForSeconds(1.5f);
                 Destroy(prefab);
@@ -221,7 +237,7 @@ public abstract class Unit : Selectable
         else
         {
             yield return new WaitForSeconds(1.5f);
-            currentPosition.ResetNode();
+            currentPosition.unit = null;
             SetVisible(false);
         }
         Debug.Log("Unit died correctly");
@@ -231,6 +247,7 @@ public abstract class Unit : Selectable
     {
         UpdateCardDisplayInfo();
         Renderer[] rends = GetComponentsInChildren<Renderer>();
+        //TODO: non efficient
         foreach (Renderer rend in rends)
         {
             if (rend.name == "Selector")
@@ -238,50 +255,222 @@ public abstract class Unit : Selectable
                 rend.enabled = true;
             }
         }
-        ShowPossibleMoves();
+        mouvementStartCell = currentPosition;
+        SearchAndShowPossibleMoves();
     }
 
-    public List<Node> ShowPossibleMoves()
+    private void ClearPossibleMoves(HexCell previousCell =null)
     {
-        currentPositionWrapped = NodeUtils.BFSNodesAdj(currentPosition, currentMovementPoints, true);
-        possibleMoves = currentPositionWrapped.GetChildrens();
-
-
-        foreach (Node node in possibleMoves)
+        List<HexCell> cellsToClear = new List<HexCell>();
+        Queue<HexCell> possibleMoves = new Queue<HexCell>();
+        possibleMoves.Enqueue(previousCell==null?mouvementStartCell:previousCell);
+        while (possibleMoves.Count > 0)
         {
-            if (TurnManager.Instance.currentPlayer.visibleNodes.Contains(node)) { 
-
-                if (node == currentPosition)
-                {
-                    node.MakeIdle();
-                }else if (node.Attackable(currentPosition))
-                {
-                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
-                }
-                else 
-                {
-                    node.state = Node.STATE.SELECTABLE;
-                }
-            }
-        }
-        rangedAttackableMoves = new List<Node>();
-        foreach (Node node in NodeUtils.BFSNodesAdj(currentPosition, attackRange).GetChildrens())
-        {
-            if (TurnManager.Instance.currentPlayer.visibleNodes.Contains(node))
+            HexCell current = possibleMoves.Dequeue();
+            foreach (HexCell cell in current.PathTo)
             {
-                if (node.Attackable(currentPosition))
-                {
-                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
-                    rangedAttackableMoves.Add(node);
-                }
+                possibleMoves.Enqueue(cell);
             }
+            cellsToClear.Add(current);
         }
-
-
-        return possibleMoves;
+        //cellsToClear.AddRange(rangedAttackableMoves);
+        foreach(HexCell cell in cellsToClear)
+        {
+            cell.State = HexCell.STATE.IDLE;
+        }
+      //  rangedAttackableMoves = new List<HexCell>();
     }
 
-    public override void Unselect()
+    public void SetPathVisible(HexCell target, bool v=true)
+    {
+        if (!moving)
+        {
+            List<HexCell> currentPath = new List<HexCell>();
+            HexCell current = target;
+            currentPath.Add(current);
+            if (target.State == HexCell.STATE.UNIT_POSSIBLE_PATH ||
+                target.State == HexCell.STATE.UNIT_CURRENT_PATH ||
+                target.State == HexCell.STATE.UNIT_POSSIBLE_ATTACK ||
+                target.State == HexCell.STATE.UNIT_CURRENT_ATTACK)
+            {
+                
+                while (current != currentPosition)
+                {
+                    //int turn = (current.Distance - 1) / speed;
+                    //current.SetLabel(turn.ToString());
+                    if (current.State == HexCell.STATE.UNIT_POSSIBLE_ATTACK ||
+                    current.State == HexCell.STATE.UNIT_CURRENT_ATTACK)
+                    {
+                        current.State = v ? HexCell.STATE.UNIT_CURRENT_ATTACK : HexCell.STATE.UNIT_POSSIBLE_ATTACK;
+                    }
+                    else if(current.State == HexCell.STATE.UNIT_POSSIBLE_PATH ||
+                    current.State == HexCell.STATE.UNIT_CURRENT_PATH)
+                    {
+                        current.State = v ? HexCell.STATE.UNIT_CURRENT_PATH : HexCell.STATE.UNIT_POSSIBLE_PATH;
+                    }
+                    current = current.PathFrom;
+                    currentPath.Add(current);
+                }
+            }
+            if (v && attackRange>0)
+            {
+                ShowPotentialRangeAttack(currentPath);
+            }
+            else if (rangedAttackAnimation != null)
+            {
+                rangedAttackAnimation.HideAttackPreview();
+            }
+        }
+    }
+    
+
+    private void SearchAndShowPossibleMoves()
+        //Should search using efficient algo (A* and stuff) and display all possible moves for the current unit.
+        //Update the state of the node and unpdate searchFrontier in order to have all possible moves.
+        //TODO: if heuristic range<attackrange, switch in mode rangeattack and allow 'movement' to go throguh cliffs and such
+        //also add possibleattackrange as in prev vers
+    {
+        HexGrid.Instance.searchFrontierPhase += 2; //Making it +2 allows us to not have to reset this property.
+        if (searchFrontier == null)
+        {
+            searchFrontier = new HexCellPriorityQueue();
+        }
+        else
+        {
+            searchFrontier.Clear();
+        }
+        //rangedAttackableMoves = new List<HexCell>();
+        currentPosition.SearchPhase = HexGrid.Instance.searchFrontierPhase;
+        currentPosition.Distance = 0;
+        searchFrontier.Enqueue(currentPosition);
+        while (searchFrontier.Count > 0)
+        {
+            HexCell current = searchFrontier.Dequeue();
+            current.SearchPhase += 1;
+           if (current.Distance < currentMovementPoints + Mathf.Max(attackRange-1,0))
+            {
+                
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell neighbor = current.GetNeighbor(d);
+                    if (
+                        neighbor == null ||
+                        neighbor.SearchPhase > HexGrid.Instance.searchFrontierPhase
+                    )
+                    {
+                        continue;
+                    }
+                    if (!IsValidDestination(neighbor))
+                    {
+                        continue;
+                    }
+                    int moveCost = GetMoveCost(current, neighbor, d);
+                    int rangeCost = GetRangeCost(current, neighbor, d);
+                    if (moveCost < 0 && rangeCost<0)
+                    {
+                        continue;
+                    }
+                    bool nSearchRange = moveCost < 0 && rangeCost >= 0 || current.SearchRange;
+                    int distance = current.Distance + (nSearchRange? rangeCost : moveCost);
+                    if (neighbor.SearchPhase < HexGrid.Instance.searchFrontierPhase)
+                    {
+                        neighbor.SearchPhase = HexGrid.Instance.searchFrontierPhase;
+                        neighbor.Distance = distance;
+                        neighbor.PathFrom = current;
+                        current.PathTo.Add(neighbor);
+                        neighbor.SearchHeuristic = 0;
+                        neighbor.SearchRange = nSearchRange;
+                        if (IsAttackable(neighbor))
+                        {
+                            neighbor.State = HexCell.STATE.UNIT_POSSIBLE_ATTACK;
+                        }
+                        else if(neighbor.Distance <= currentMovementPoints)
+                        {
+                            neighbor.State = HexCell.STATE.UNIT_POSSIBLE_PATH;
+                            searchFrontier.Enqueue(neighbor);
+                        }
+                        else
+                        {
+                          //  rangedAttackableMoves.Add(neighbor);
+                            searchFrontier.Enqueue(neighbor);
+                        }
+                        // neighbor.coordinates.DistanceTo(toCell.coordinates);
+                    }
+                    else if (distance < neighbor.Distance)
+                    {
+                        int oldPriority = neighbor.SearchPriority;
+                        neighbor.Distance = distance;
+                        neighbor.PathFrom.PathTo.Remove(neighbor);
+                        neighbor.PathFrom = current;
+                        current.PathTo.Add(neighbor);
+                        searchFrontier.Change(neighbor, oldPriority);
+                    }
+
+                }
+            }
+        }
+    }
+    public bool IsValidDestination(HexCell cell)
+    {
+        return cell.IsExplored && !cell.IsUnderwater && (!cell.unit || cell.unit.owner!=owner) && !cell.building;
+    }
+    public bool IsAttackable(HexCell cell)
+    {
+        return cell.unit != null && cell.unit.owner != owner;
+    }
+    public int GetMoveCost(
+        HexCell fromCell, HexCell toCell, HexDirection direction)
+    {
+        if (!IsValidDestination(toCell))
+        {
+            return -1;
+        }
+        HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+        if (edgeType == HexEdgeType.Cliff)
+        {
+            return -1;
+        }
+        int moveCost;
+        if (fromCell.Walled != toCell.Walled)
+        {
+            return -1;
+        }
+        else
+        {
+            //	moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+            //	moveCost +=
+            //		toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+            moveCost = 1;
+        }
+        return moveCost;
+    }
+
+    public int GetRangeCost(
+        HexCell fromCell, HexCell toCell, HexDirection direction)
+    {
+        if (!IsValidDestination(toCell))
+        {
+            return -1;
+        }
+        HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+        if (edgeType == HexEdgeType.Cliff && fromCell.Elevation < toCell.Elevation)
+        {
+            return -1;
+        }
+        int rangeCost;
+        if (fromCell.Walled != toCell.Walled)
+        {
+            return -1;
+        }
+        else
+        {
+            //	moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+            //	moveCost +=
+            //		toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+            rangeCost = 1;
+        }
+        return rangeCost;
+    } public override void Unselect()
     {
         Renderer[] rends = GetComponentsInChildren<Renderer>();
         foreach (Renderer rend in rends)
@@ -291,58 +480,33 @@ public abstract class Unit : Selectable
                 rend.enabled = false;
             }
         }
-        HidePossibleMoves();
-    }
-
-    public void HidePossibleMoves()
-    {
-        if (possibleMoves != null)
+        if (currentPosition != null)
         {
-            foreach (Node node in possibleMoves)
-            {
-                node.MakeIdle();
-            }
-            possibleMoves = null;
-        }
-        if(rangedAttackableMoves != null)
-        {
-            foreach (Node node in rangedAttackableMoves)
-            {
-                node.MakeIdle();
-            }
-            rangedAttackableMoves = null;
+            ClearPossibleMoves();
         }
     }
-
-    public void ShowPotentialMove(Node target)
+    public void ValidateLocation()
     {
-        potentialPath = currentPositionWrapped.GetPath(target); //empty if ranged is out
-        
-        foreach (Node node in potentialPath)
-        {
-            if (node == currentPosition)
-            {
-                node.MakeIdle();
-            }else if (node.Attackable(currentPosition))
-            {
-                node.state = Node.STATE.ATTACKABLE;
-            }
-            else 
-            {
-                node.state = Node.STATE.ON_UNIT_PATH;
-            }
-        }
-        if (rangedAttackableMoves.Contains(target) || //Meaning attackable at range
-            (currentMovementPoints + attackRange > potentialPath.Count &&
-            target.Attackable(currentPosition)
+        movementSphere.position = currentPosition.Position;
+    }
+    
+    public void ShowPotentialRangeAttack(List<HexCell> potentialPath)
+    {
+        HexCell target = potentialPath[0];
+        if (//rangedAttackableMoves.Contains(target) || //Meaning attackable at range
+            (currentMovementPoints + attackRange >= potentialPath.Count &&
+            IsAttackable(target)
             ))
         {
-            target.state = Node.STATE.ATTACKABLE;
-            Node attackSource = currentPosition;
+            target.State = HexCell.STATE.UNIT_CURRENT_ATTACK;
+            HexCell attackSource = currentPosition;
             int removeRange = Mathf.Min(potentialPath.Count, attackRange);
             for (int i = 1; i < removeRange; i++)
             {
-                potentialPath[i].state = Node.STATE.SELECTABLE;
+                if (potentialPath[i].State == HexCell.STATE.UNIT_CURRENT_PATH)
+                {
+                    potentialPath[i].State = HexCell.STATE.UNIT_POSSIBLE_PATH;
+                }
             }
             if (potentialPath.Count >= 1 && attackRange<potentialPath.Count)
             {
@@ -355,55 +519,54 @@ public abstract class Unit : Selectable
 
         }
     }
-
-    public void HidePotentialMove(Node target)
+   IEnumerator LookAt(Vector3 point)
     {
-        if (rangedAttackAnimation != null)
+        if (HexMetrics.Wrapping)
         {
-            rangedAttackAnimation.HideAttackPreview();
-        }
-        if (rangedAttackableMoves.Contains(target)) //Meaning attackable at range
-        {
-            target.state = Node.STATE.ATTACKABLE_HIDDEN;
-        }
-        if (potentialPath != null)
-        {
-            foreach (Node node in potentialPath)
+            float xDistance = point.x - movementSphere.position.x;
+            if (xDistance < -HexMetrics.innerRadius * HexMetrics.wrapSize)
             {
-                if (node.Equals(currentPosition))
-                {
-                    node.MakeIdle();
-                }
-                else if (node.Attackable(currentPosition))
-                {
-                    node.state = Node.STATE.ATTACKABLE_HIDDEN;
-                }
-                else
-                {
-                    node.state = Node.STATE.SELECTABLE;
-                }
-                
+                point.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
             }
-            potentialPath = null;
+            else if (xDistance > HexMetrics.innerRadius * HexMetrics.wrapSize)
+            {
+                point.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+            }
         }
-    }
-    protected void FaceNextNode(Node nextNode)
-    {
-        direction = nextNode.position - movementSphere.position;
-        direction.y = 0;
-        movementSphere.localRotation = Quaternion.LookRotation(direction);
+
+        point.y = movementSphere.position.y;
+        Quaternion fromRotation = movementSphere.localRotation;
+        Quaternion toRotation =
+            Quaternion.LookRotation(point - movementSphere.position);
+        float angle = Quaternion.Angle(fromRotation, toRotation);
+
+        if (angle > 0f)
+        {
+            float speed = rotationSpeed / angle;
+            for (
+                float t = Time.deltaTime * speed;
+                t < 1f;
+                t += Time.deltaTime * speed
+            )
+            {
+                movementSphere.localRotation =
+                    Quaternion.Slerp(fromRotation, toRotation, t);
+                yield return null;
+            }
+        }
+
+        movementSphere.LookAt(point);
+        orientation = movementSphere.localRotation.eulerAngles.y;
     }
 
-    protected virtual IEnumerator Attack(Node target, bool riposte)
+    protected virtual IEnumerator Attack(HexCell target, bool riposte)
     {
+       
         anim.SetTrigger("Attack1Trigger");
-        FinishMove();
-        path = new List<Node>();
         currentMovementPoints = 0;
-        FaceNextNode(target);
-        if (currentPosition.adjacentNodes.Contains(target))
+        if (currentPosition.GetNeighbors().Contains(target))
         {
-            GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.position + attackOffset, new Quaternion(0, 0, 0, 0));
+            GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.Position + attackOffset, new Quaternion(0, 0, 0, 0));
             Destroy(attackAnim, 5);
             yield return new WaitForSeconds(0.5f);
         }else if(rangedAttackAnimation != null)
@@ -425,115 +588,156 @@ public abstract class Unit : Selectable
         yield return new WaitForEndOfFrame();
     }
 
-    protected virtual void FinishMove()
+    protected virtual bool SetupAttack(List<HexCell> nextCells)
     {
-        anim.ResetTrigger("Moving");
-        moving = false;
-        path = new List<Node>();
-        Selector.Instance.Unselect(); //Unselect this, and thus MakeIdle all nodes
-        HidePossibleMoves();
+        return IsAttackable(nextCells[0]) ||
+            (attackRange > 0 &&
+            nextCells.Count <= attackRange &&
+            nextCells.Count > 1 &&
+            IsAttackable(nextCells[nextCells.Count - 1]));
     }
-    protected virtual void MoveStep()
+ 
+
+    public IEnumerator MoveTo(HexCell target)
     {
-        float delta = visible? 0.5f : 1.5f;
-        if (path.Count == 0)
+        if (!moving)
         {
-            FinishMove();
-        }
-        else if ((movementSphere.position.x <= path[0].position.x + delta && movementSphere.position.x >= path[0].position.x - delta) && (movementSphere.position.z <= path[0].position.z + delta && movementSphere.position.z >= path[0].position.z - delta))
-        {
-            movementSphere.position = new Vector3(path[0].position.x, movementSphere.position.y, path[0].position.z);
-            EndMoveStep();
-            path.Remove(path[0]);
-            SetupNextMoveStep();
-        }
-        else
-        {
-            movementSphere.localPosition += direction * Time.deltaTime * (visible? speed:3.9f);
-        }
-    }
-    protected virtual void SetupNextMoveStep()
-    {
-        if (path.Count == 0)
-        {
-            FinishMove();
-        }
-        else
-        {
-            FaceNextNode(path[0]);
-            if(!TurnManager.Instance.currentPlayer.isAi || TurnManager.Instance.inactivePlayer.visibleNodes.Contains(path[0]))
+            HexCell previousCell = currentPosition;
+            //Setup Path
+            List<HexCell> pathToTravel = new List<HexCell>();
+            HexCell current = target;
+            while (current != currentPosition)
             {
-                SetVisible(true);
+                pathToTravel.Add(current);
+                current = current.PathFrom;
+            }
+            pathToTravel.Add(current);
+            pathToTravel.Reverse();
+            yield return LookAt(pathToTravel[1].Position);
+            bool attackNext = SetupAttack(pathToTravel.GetRange(1, pathToTravel.Count - 1));
+            if (attackNext)
+            {
+                if (IsAttackable(pathToTravel[1]))
+                {
+                    ClearPossibleMoves();
+                    yield return StartCoroutine(Attack(pathToTravel[1], false));
+                }
+                else if (IsAttackable(pathToTravel[pathToTravel.Count - 1]))
+                {
+                    ClearPossibleMoves();
+                    yield return StartCoroutine(Attack(pathToTravel[pathToTravel.Count - 1], false));
+                }
             }
             else
             {
-                SetVisible(false);
-            }
-            if (path[0].Attackable(this.currentPosition))
-            {
-                StartCoroutine(Attack(path[0], false));
-            }
-            else if (attackRange>0 && path.Count <= attackRange && path[path.Count - 1].Attackable(this.currentPosition))
-            {
-                StartCoroutine(Attack(path[path.Count - 1], false));
-            }
-        }
-    }
-
-    protected virtual void EndMoveStep()
-    {
-        //Update currentPosition
-        currentPosition.ResetNode();
-        currentPosition = path[0];
-        currentPosition.UpdateUnit(this);
-        currentMovementPoints -= 1;
-        if (!(TurnManager.Instance.currentPlayer.isAi))
-        {
-            UpdateCardDisplayInfo();
-        }
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-    }
-
-    public virtual IEnumerator StartMoving(Node target)
-    {
-        if (rangedAttackableMoves.Contains(target))
-        {
-            yield return StartCoroutine(Attack(target, false));
-        }
-        else
-        {
-            moving = true;
-            path = potentialPath;
-            if (TurnManager.Instance.currentPlayer.isAi)
-            {
-                HidePotentialMove(path[path.Count - 1]);
-                HidePossibleMoves();
-            }
-            if (path.Count >= 0)
-            {
+                //Start moving
+                a = b = c = pathToTravel[0].Position;
+                moving = true;
                 anim.SetTrigger("Moving");
-                path.Reverse();
-                path.Remove(path[0]);
-                SetupNextMoveStep();
-                bool hiddenPath = false;
-                if (TurnManager.Instance.currentPlayer.isAi)
+
+               // HexGrid.Instance.DecreaseVisibility(pathToTravel[0], visionRange);
+                currentColumn = pathToTravel[0].ColumnIndex;
+
+                mouvementTime = Time.deltaTime * speed;
+                int i;
+                for (i = 1; i < pathToTravel.Count; i++)
                 {
-                    hiddenPath = true;
-                    foreach (Node n in path)
+                    attackNext = SetupAttack(pathToTravel.GetRange(i, pathToTravel.Count - i));
+                    if (!attackNext)
                     {
-                        if (TurnManager.Instance.inactivePlayer.visibleNodes.Contains(n))
-                        {
-                            hiddenPath = false;
-                        }
+                        yield return StartCoroutine(MoveStep(pathToTravel[i - 1], pathToTravel[i]));
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+                yield return StartCoroutine(FinishMove(previousCell));
+                if (attackNext)
+                {
+                    if (IsAttackable(pathToTravel[i]))
+                    {
+                        yield return StartCoroutine(Attack(pathToTravel[i], false));
+                    }
+                    else if (IsAttackable(pathToTravel[pathToTravel.Count - 1]))
+                    {
+                        yield return StartCoroutine(Attack(pathToTravel[pathToTravel.Count - 1], false));
                     }
                 }
-                yield return new WaitForSeconds(currentMovementPoints < 1 || hiddenPath ? 0.5f : currentMovementPoints - 1.0f);
             }
-            else
-            {
-                yield return new WaitForEndOfFrame();
-            }
+            yield return new WaitForEndOfFrame();
         }
+    }
+
+    private IEnumerator FinishMove(HexCell previousCell)
+    {
+        a = c;
+        b = currentPosition.Position;
+        c = b;
+        for (; mouvementTime < 1f; mouvementTime += Time.deltaTime * speed)
+        {
+            movementSphere.position = Bezier.GetPoint(a, b, c, mouvementTime);
+            Vector3 d = Bezier.GetDerivative(a, b, c, mouvementTime);
+            d.y = 0f;
+            movementSphere.localRotation = Quaternion.LookRotation(d);
+            yield return null;
+        }
+
+        movementSphere.position = currentPosition.Position;
+        orientation = movementSphere.localRotation.eulerAngles.y;
+        HexGrid.Instance.DecreaseVisibility(previousCell, visionRange);
+        HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange);
+        anim.ResetTrigger("Moving");
+        moving = false;
+        ClearPossibleMoves(previousCell: previousCell);
+        if(Selector.Instance.currentObject == this)
+        {
+            Selector.Instance.Unselect();
+        }
+        yield return new WaitForEndOfFrame();
+    }
+
+
+    private IEnumerator MoveStep(HexCell previousCell, HexCell nextCell)
+    {
+        HexCell currentTravelLocation = nextCell;
+        a = c;
+        b = previousCell.Position;
+
+        int nextColumn = currentTravelLocation.ColumnIndex;
+        if (currentColumn != nextColumn)
+        {
+            if (nextColumn < currentColumn - 1)
+            {
+                a.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+                b.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+            }
+            else if (nextColumn > currentColumn + 1)
+            {
+                a.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
+                b.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
+            }
+            //HexGrid.Instance.MakeChildOfColumn(movementSphere, nextColumn);
+            currentColumn = nextColumn;
+        }
+
+        c = (b + currentTravelLocation.Position) * 0.5f;
+        currentPosition.unit = null;
+        currentPosition = nextCell;
+        currentPosition.unit = this;
+        for (; mouvementTime < 1f; mouvementTime+= Time.deltaTime * speed)
+        {
+            movementSphere.position = Bezier.GetPoint(a, b, c, mouvementTime);
+            Vector3 d = Bezier.GetDerivative(a, b, c, mouvementTime);
+            d.y = 0f;
+            movementSphere.localRotation = Quaternion.LookRotation(d);
+            yield return null;
+        }
+        mouvementTime -= 1f;
+        currentMovementPoints -= 1;
+        UpdateCardDisplayInfo();
+        yield return new WaitForEndOfFrame();
     }
 
     public override void UpdateCardDisplayInfo()

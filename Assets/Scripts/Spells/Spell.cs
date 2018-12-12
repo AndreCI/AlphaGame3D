@@ -15,11 +15,12 @@ public abstract class Spell : Selectable
     public int areaOfEffect;
     public int castableRange;
     public int damage;
-    protected List<Node> castableNodes;
-    public List<Node> affectedNodes;
+    protected List<HexCell> castableNodes;
+    public List<HexCell> affectedNodes;
     public abstract void PlayAnimation();
     private SpellButtonScript spellButton;
-
+    protected int searchPhaseFrontier;
+    private HexCellPriorityQueue searchFrontier;
     public Dictionary<Player, PlayerInfo> playerInfos;
     public List<EffectFactory> effects;
 
@@ -52,7 +53,7 @@ public abstract class Spell : Selectable
         }
     }
 
-    public virtual void Activate(List<Node> affectedNodes_)
+    public virtual void Activate(List<HexCell> affectedNodes_)
     {
         Selector.Instance.Unselect();
         playerInfos[TurnManager.Instance.currentPlayer].currentCooldown = cooldown;
@@ -85,19 +86,20 @@ public abstract class Spell : Selectable
     {
         if (affectedNodes != null)
         {
-            foreach (Node node in affectedNodes)
+            foreach (HexCell node in affectedNodes)
             {
                 if (node != null)
                 {
-                    node.MakeIdle();
+                    node.State = HexCell.STATE.IDLE;
                 }
             }
         }
         if (castableNodes != null)
         {
-            foreach (Node node in castableNodes)
+            foreach (HexCell node in castableNodes)
             {
-                node.MakeIdle();
+
+                node.State = HexCell.STATE.IDLE;
             }
         }
         CardDisplay.Instance.DisableCardDisplay();
@@ -161,61 +163,153 @@ public abstract class Spell : Selectable
         }
     }
 
-    public void GetSpellEffectNodes(Node source)
+    public void GetSpellEffectNodes(HexCell source)
     {
         
-        affectedNodes = new List<Node>();
-        foreach (Node node in castableNodes)
+        affectedNodes = new List<HexCell>();
+        foreach (HexCell node in castableNodes)
         {
-            node.MakeIdle();
+            node.State = HexCell.STATE.IDLE;
         }
-        source.state = Node.STATE.SPELL_SELECTED;
-        foreach (Node node in NodeUtils.BFSNodesAdj(source, areaOfEffect).GetChildrens())
+        source.State = HexCell.STATE.SPELL_CURRENT_CAST;
+        affectedNodes.Add(source);
+        foreach (HexCell node in Search(source, areaOfEffect))
         {
-            node.state = Node.STATE.SPELL_EFFECT;
+            node.State = HexCell.STATE.SPELL_AFFECTED;
             affectedNodes.Add(node);
         }
-        source.state = Node.STATE.SPELL_SELECTED;
-        castableNodes = new List<Node>();
+        source.State = HexCell.STATE.SPELL_CURRENT_CAST;
+        castableNodes = new List<HexCell>();
     }
 
     protected virtual void GetCastableNodes()
     {
-        castableNodes = new List<Node>();
+        castableNodes = new List<HexCell>();
         List<Unit> currentUnits = TurnManager.Instance.currentPlayer.currentUnits;
         List<Building> currentBuildings = TurnManager.Instance.currentPlayer.currentBuildings;
         
         foreach (Unit unit in currentUnits)
         {
-            foreach(Node node in NodeUtils.BFSNodesAdj(unit.currentPosition, castableRange).GetChildrens()){
-                if (!castableNodes.Contains(node))
-                {
-                    castableNodes.Add(node);
-                }
-            }
-            
+            castableNodes.AddRange(Search(unit.currentPosition, castableRange));
         }
         foreach (Building buiding in currentBuildings)
         {
-            foreach (Node node in NodeUtils.BFSNodesAdj(buiding.currentPosition, castableRange).GetChildrens())
+            castableNodes.AddRange(Search(buiding.currentPosition, castableRange));
+        }
+        foreach (HexCell n in castableNodes)
+        {
+            n.State = HexCell.STATE.SPELL_POSSIBLE_CAST;
+        }
+    }
+
+    private List<HexCell> Search(HexCell start, int range)
+    //Should search using efficient algo (A* and stuff) and display all possible moves for the current unit.
+    //Update the state of the node and unpdate searchFrontier in order to have all possible moves.
+    {
+        List<HexCell> castable = new List<HexCell>();
+        HexGrid.Instance.searchFrontierPhase += 2; //Making it +2 allows us to not have to reset this property.
+        if (searchFrontier == null)
+        {
+            searchFrontier = new HexCellPriorityQueue();
+        }
+        else
+        {
+            searchFrontier.Clear();
+        }
+
+        start.SearchPhase = HexGrid.Instance.searchFrontierPhase;
+        start.Distance = 0;
+        searchFrontier.Enqueue(start);
+        while (searchFrontier.Count > 0)
+        {
+            HexCell current = searchFrontier.Dequeue();
+            current.SearchPhase += 1;
+            if (current.Distance < range)
             {
-                if (!castableNodes.Contains(node))
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
-                    castableNodes.Add(node);
+                    HexCell neighbor = current.GetNeighbor(d);
+                    if (
+                        neighbor == null ||
+                        neighbor.SearchPhase > HexGrid.Instance.searchFrontierPhase
+                    )
+                    {
+                        continue;
+                    }
+                    if (!IsValidCell(neighbor))
+                    {
+                        continue;
+                    }
+                    int moveCost = GetRangeCost(current, neighbor, d);
+                    if (moveCost < 0)
+                    {
+                        continue;
+                    }
+
+                    int distance = current.Distance + moveCost;
+                    if (neighbor.SearchPhase < HexGrid.Instance.searchFrontierPhase)
+                    {
+                        neighbor.SearchPhase = HexGrid.Instance.searchFrontierPhase;
+                        neighbor.Distance = distance;
+                        neighbor.PathFrom = current;
+                        current.PathTo.Add(neighbor);
+                        neighbor.SearchHeuristic = 0;
+                        castable.Add(neighbor);
+                        // neighbor.coordinates.DistanceTo(toCell.coordinates);
+                        searchFrontier.Enqueue(neighbor);
+                    }
+                    else if (distance < neighbor.Distance)
+                    {
+                        int oldPriority = neighbor.SearchPriority;
+                        neighbor.Distance = distance;
+                        neighbor.PathFrom.PathTo.Remove(neighbor);
+                        neighbor.PathFrom = current;
+                        current.PathTo.Add(neighbor);
+                        searchFrontier.Change(neighbor, oldPriority);
+                    }
+
                 }
             }
         }
-        foreach (Node n in castableNodes)
+        return castable;
+    }
+
+    public bool IsValidCell(HexCell cell)
+    {
+        return cell.IsExplored && !cell.IsUnderwater;
+    }
+    public int GetRangeCost(
+        HexCell fromCell, HexCell toCell, HexDirection direction)
+    {
+        if (!IsValidCell(toCell))
         {
-            n.state = Node.STATE.SPELL_SELECTABLE;
+            return -1;
         }
+        HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+        if (edgeType == HexEdgeType.Cliff && fromCell.Elevation < toCell.Elevation)
+        {
+            return -1;
+        }
+        int moveCost;
+        if (fromCell.Walled != toCell.Walled)
+        {
+            return -1;
+        }
+        else
+        {
+            //	moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+            //	moveCost +=
+            //		toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+            moveCost = 1;
+        }
+        return moveCost;
     }
 
     public class PlayerInfo
     {
         public int currentCooldown;
         public Player owner;
-        public Node position;
+        public HexCell position;
 
         public PlayerInfo()
         {

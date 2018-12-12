@@ -12,6 +12,7 @@ public class BalisticProjectile : RangedAttackAnimation
     public GameObject projectile;
     public ParticleSystem hitAnimation;
     public float projectileFadePerSecond;
+    public float elevationOffset;
 
     [Header("Projectile initialization")]
     private List<Vector3> trajectory;
@@ -45,14 +46,14 @@ public class BalisticProjectile : RangedAttackAnimation
             else if(timeIdx>0)
             {
                 int idx =Mathf.FloorToInt(resolution * timeIdx / animationDuration);
-                projectile.transform.position = trajectory[idx];
+                projectile.transform.position = trajectory[idx] + source.Position;
                 if (idx + resolution / 10 < resolution)
                 {
-                    projectile.transform.LookAt(trajectory[idx+Mathf.FloorToInt(resolution/10)]);
+                    projectile.transform.LookAt(trajectory[idx+Mathf.FloorToInt(resolution/10)] + source.Position);
                 }
                 else
                 {
-                    projectile.transform.LookAt(trajectory[resolution]);
+                    projectile.transform.LookAt(trajectory[resolution] + source.Position);
                 }
             }
 
@@ -68,7 +69,7 @@ public class BalisticProjectile : RangedAttackAnimation
         }
     }
 
-    public override void ShowAttackPreview(Node source_, Node target_)
+    public override void ShowAttackPreview(HexCell source_, HexCell target_)
     {
         source = source_;
         target = target_;
@@ -85,17 +86,16 @@ public class BalisticProjectile : RangedAttackAnimation
     {
         transform.position = new Vector3(0, 0, 0) ;
         ray.positionCount=resolution +1;
+        transform.position = source.Position;// new Vector3(0, 0, 0);
         ray.SetPositions(trajectory.ToArray());
         ray.materials[0].mainTextureScale = new Vector3(maxDistance, 1, 1);
-         
-
     }
 
     public void SetTrajectory()
     {
         trajectory = new List<Vector3>();
         GetAngle();
-        maxDistance = Vector3.Distance(source.position, target.position);
+        maxDistance = Vector3.Distance(source.Position, target.Position);
         for(int i =0; i<=resolution; i++)
         {
             float t = (float)i / (float)(resolution);
@@ -105,15 +105,15 @@ public class BalisticProjectile : RangedAttackAnimation
 
     private void GetAngle()
     {
-        float bornes = 1.2f;
+        float bornes = 3f;
         System.Random randsys = new System.Random();
         Vector3 randomOffset = new Vector3((float)(randsys.NextDouble()*2-1)*bornes, 0, (float)(randsys.NextDouble() * 2 - 1)*bornes);
-        direction = -0.5f*gravity - source.position + (target.position + randomOffset);
+        direction = -0.5f * gravity + ((target.Position + randomOffset) - source.Position);
     }
 
     private Vector3 CalculateArcPoint(float t)
     {
-        return 0.5f * gravity * Mathf.Pow(t, 2) + direction * t + source.position + new Vector3(0, 1.5f, 0);
+        return (0.5f * gravity * Mathf.Pow(t, 2) + direction * t + new Vector3(0, elevationOffset, 0));
         
     }
 

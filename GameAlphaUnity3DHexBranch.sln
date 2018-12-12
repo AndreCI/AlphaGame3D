@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameAlphaUnity3DHexBranch", "GameAlphaUnity3DHexBranch.csproj", "{5B9D89DA-4946-4909-55D9-873C813B2264}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameAlphaUnity3DHexBranch.Editor", "GameAlphaUnity3DHexBranch.Editor.csproj", "{697A95AC-422D-1CBB-054B-749472D9C7CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B9D89DA-4946-4909-55D9-873C813B2264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B9D89DA-4946-4909-55D9-873C813B2264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B9D89DA-4946-4909-55D9-873C813B2264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B9D89DA-4946-4909-55D9-873C813B2264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{697A95AC-422D-1CBB-054B-749472D9C7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{697A95AC-422D-1CBB-054B-749472D9C7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{697A95AC-422D-1CBB-054B-749472D9C7CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{697A95AC-422D-1CBB-054B-749472D9C7CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

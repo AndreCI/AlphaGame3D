@@ -18,7 +18,7 @@ add AI difficulty
 	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 Implement units keywords
-Go In Hexgrid?
+	Go In Hexgrid see https://catlikecoding.com/unity/tutorials/hex-map/part-27/
 	Rework BFS
 
 UI:
@@ -30,11 +30,12 @@ UI:
 	Implement effect help (show which effects are active + little panel to display consequences of the effects when hover over card)
 	Implement T2 help
 	Change fontsize of carddisplay (spell overflow)
-Implement camera automove (double click centers it, etc)
+	Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
 Rework the UI
-Add notifications (unit died, need more food, building constructed)?
+Add notifications (unit died, need more food, building constructed)? see tuto quill18
 Think about artstyle
+Modify building display if in construction
 
 
 Graphic:
@@ -46,11 +47,21 @@ Graphic:
 Do card unit with ability
 Do card unit with requirement schoolom
 Implement TechTreeUI
-Improve terrain
+	Improve terrain
 	Change models in order to add more units
 	Balistic projectiles
 	On Target Attack Range
-	
+hexgrid:
+	add attack
+	add range attack
+	and spells
+	debug visibility
+add a way to check if game is unplayable
+think about a way to place building
+remove ability to place building/unit at wrong places
+Rework building/unit placement
+	center camera on hall center at start of game	
+
 Balance:
 Rebalance game
 ?Construction Time?
@@ -62,7 +73,7 @@ Content:
 	Implement barrack T2 unit
 Continue the global reflexion: Units & buildings.
 Implement more building & units
-Implement terrain effect
+	Implement terrain effect
 	Implement more frost spells
 	Implement more fire spells
 	Implement more basic spells
@@ -77,6 +88,7 @@ Implement better AI (more units, spells?)
 Start a reflexion on play during enemy turn/interaction
 
 Audio:
+	Find audio track
 Add audio track
 Add spell sounds
 Add untis sounds

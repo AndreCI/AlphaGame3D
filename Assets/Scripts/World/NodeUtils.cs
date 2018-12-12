@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 
-
+/*
 public class NodeUtils
 {
     public class NodeWrapper
@@ -14,12 +14,12 @@ public class NodeUtils
             EMPTY,
             NONEMPTY
         }
-        public Node root;
+        public HexCell root;
         public List<NodeWrapper> children;
         public NodeWrapper parent;
         public STATE state;
         public int distance;
-        public NodeWrapper(Node root_)
+        public NodeWrapper(HexCell root_)
         {
             root = root_;
             children = new List<NodeWrapper>();
@@ -29,9 +29,9 @@ public class NodeUtils
         {
             return root.ToString() + " d=" + distance.ToString() + " p=" + (parent==null? "null" :parent.ToString());
         }
-        public List<Node> GetChildrens()
+        public List<HexCell> GetChildrens()
         {
-            List<Node> possibleMoves = new List<Node>
+            List<HexCell> possibleMoves = new List<HexCell>
             {
                 root
             };
@@ -46,9 +46,9 @@ public class NodeUtils
             return possibleMoves;
         }
 
-        public List<Node> GetPath(Node target)
+        public List<HexCell> GetPath(HexCell target)
         {
-            List<Node> path = new List<Node>();
+            List<HexCell> path = new List<HexCell>();
             if (root == target)
             {
                 path.Add(root);
@@ -70,7 +70,7 @@ public class NodeUtils
 
         
     }
-
+    /*
     public static NodeWrapper BFSNodesAdj(Node sourceNode, int depth, bool selectOnlyWalkable=false)
     {
         NodeWrapper source = new NodeWrapper(sourceNode)
@@ -139,5 +139,5 @@ public class NodeUtils
         }
         return adjNodes;
     }
-
-   }
+    
+   }*/

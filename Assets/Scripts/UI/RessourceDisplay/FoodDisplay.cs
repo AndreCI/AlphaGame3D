@@ -7,7 +7,7 @@ public class FoodDisplay : MonoBehaviour
     public TextMeshProUGUI food;
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         food.text = Player.Player1.food.ToString() + " ("+ Player.Player1.foodPrediction.ToString() + ")";
     }

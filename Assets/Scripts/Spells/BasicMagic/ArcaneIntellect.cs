@@ -28,7 +28,7 @@ public class ArcaneIntellect : Spell
             p.Play();
         }
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
         TurnManager.Instance.currentPlayer.actionPoints += 2;
         base.Activate(affectedNodes_);

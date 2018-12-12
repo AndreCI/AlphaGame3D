@@ -21,7 +21,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
         TurnManager.Instance.EndTurnSubject.AddObserver(this);
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
         canConstruct = false;
-        availablePositions = new List<Node>();
+        availablePositions = new List<HexCell>();
     }
     [Header("Building prefabs")]
     public Building Barracks;
@@ -40,7 +40,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
     private Spell spellToConstruct;
     public string mode;
     public bool canConstruct;
-    private List<Node> availablePositions;
+    private List<HexCell> availablePositions;
 
     public void SetBuildingToBuild(Building building, bool hallCenter=false)
     {
@@ -53,40 +53,40 @@ public class ConstructionManager : MonoBehaviour, IObserver
         {
             Selector.Instance.currentObject = (building);
             building.UpdateCardDisplayInfo();
-            foreach (Node n in NodeUtils.BFSNodesAdj(TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition, 
-                                                    TurnManager.Instance.currentPlayer.buildingRange).
-                                                    GetChildrens())
+            foreach (HexCell n in TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition.GetNeighbors())
             
             {
-                if (n.walkable)
+                if (n.IsFree)
                 {
-                    n.state = Node.STATE.SELECTABLE_CONSTRUCT;
+                    n.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
                     availablePositions.Add(n);
                 }
             }
         }
     }
 
-    public Building ConstructBuilding(Node node)
+    public Building ConstructBuilding(HexCell target)
     {
         GameObject prefab = buildingToConstruct.prefab;
-        GameObject buildingObject = (GameObject)Instantiate(prefab, node.transform.position + node.positionOffset, node.transform.rotation);
+        GameObject buildingObject = (GameObject)Instantiate(prefab, target.Position, target.transform.rotation);
 
         Building building = (Building)GetScript(buildingObject);
-        building.SetCurrentPosition(node);
+        building.SetCurrentPosition(target);
         building.owner = TurnManager.Instance.currentPlayer;
+        building.SetVisible(true);
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
         TurnManager.Instance.currentPlayer.requirementSystem.AddCopy(building.GetType());
         TurnManager.Instance.currentPlayer.gold -= building.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= building.actionPointCost;
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-        foreach (Node n in availablePositions)
+        foreach(HexCell cell in availablePositions)
         {
-            n.MakeIdle();
+            cell.State = HexCell.STATE.IDLE;
         }
         Selector.Instance.currentObject = null;
         if (CardDisplay.Instance != null) { CardDisplay.Instance.DisableCardDisplay(); } //sanity check because hallcenter spawn is manually made.
         TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+        availablePositions = new List<HexCell>();
         return building;
     }
 
@@ -101,12 +101,12 @@ public class ConstructionManager : MonoBehaviour, IObserver
         canConstruct = true;
     }
 
-    public void SpellNodeSelected(Node node)
+    public void SpellNodeSelected(HexCell node)
     {
         spellToConstruct.GetSpellEffectNodes(node);
     }
 
-    public Spell ConstructSpell(Node node)
+    public Spell ConstructSpell(HexCell node)
     {
         spellToConstruct.playerInfos[TurnManager.Instance.currentPlayer].position = node;
         spellToConstruct.playerInfos[TurnManager.Instance.currentPlayer].owner = TurnManager.Instance.currentPlayer;
@@ -122,7 +122,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
     public void SetUnitToBuild(Unit unit)
     {
         ResetConstruction();
-        availablePositions = new List<Node>();
+        availablePositions = new List<HexCell>();
         Selector.Instance.Unselect();
         mode = "unit";
         unitToConstruct = unit;
@@ -130,39 +130,40 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Selector.Instance.currentObject = (unit);
         unit.UpdateCardDisplayInfo();
         Selectable spawnPoint = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetSpawnPoint());
-        foreach(Node n in NodeUtils.BFSNodesAdj(spawnPoint.currentPosition, 1).GetChildrens())
+        foreach(HexCell possibleSpawn in spawnPoint.currentPosition.GetNeighbors())
         {
-            if (n.walkable)
+            if (!possibleSpawn.IsSpecial)
             {
-                n.state = Node.STATE.SELECTABLE_CONSTRUCT;
-                availablePositions.Add(n);
+                possibleSpawn.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
+                availablePositions.Add(possibleSpawn);
             }
         }
 
     }
 
-    public Unit ConstructUnit(Node node)
+    public Unit ConstructUnit(HexCell target)
     {
         GameObject prefab = unitToConstruct.prefab;
-        GameObject unitObject = (GameObject)Instantiate(prefab, node.transform.position + node.positionOffset, node.transform.rotation);
+        GameObject unitObject = (GameObject)Instantiate(prefab, target.Position, target.transform.rotation);
 
         Unit unit = (Unit)ConstructionManager.Instance.GetScript(unitObject);
         unit.Setup();
 
-        unit.SetCurrentPosition(node);
-        unit.owner = TurnManager.Instance.currentPlayer;
+        unit.SetCurrentPosition(target);
+        unit.owner = Random.Range(0f,1f) > 0.5? TurnManager.Instance.currentPlayer : TurnManager.Instance.inactivePlayer;
         TurnManager.Instance.currentPlayer.currentUnits.Add(unit);
         TurnManager.Instance.currentPlayer.gold -= unit.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= unit.actionPointCost;
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
-        foreach(Node n in availablePositions)
+        HexGrid.Instance.IncreaseVisibility(unit.currentPosition, unit.visionRange);
+        foreach(HexCell n in availablePositions)
         {
-            n.MakeIdle();
+            n.State = HexCell.STATE.IDLE;
         }
         Selector.Instance.currentObject = null;
         CardDisplay.Instance.DisableCardDisplay();
         TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
-        unit.currentPosition.MakeIdle(); //not needed?
+        availablePositions = new List<HexCell>();
         return unit;
     }
 
@@ -172,9 +173,9 @@ public class ConstructionManager : MonoBehaviour, IObserver
         unitToConstruct = null;
         spellToConstruct = null;
         canConstruct = false;
-        foreach (Node n in availablePositions)
+        foreach (HexCell n in availablePositions)
         {
-            n.MakeIdle();
+            n.State = HexCell.STATE.IDLE;
         }
     }
 

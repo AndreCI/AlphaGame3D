@@ -20,6 +20,18 @@ public class ArcaneMirage : Spell
             throw new System.NotImplementedException();
         }
     }
+    protected override void GetCastableNodes()
+    {
+        base.GetCastableNodes();
+        foreach (HexCell n in castableNodes)
+        {
+            if (!n.IsFree)
+            {
+                n.State = HexCell.STATE.IDLE;
+            }
+        }
+        castableNodes.RemoveAll(n => n.State == HexCell.STATE.IDLE);
+    }
     public override void PlayAnimation()
     {
         transform.position = playerInfos[TurnManager.Instance.currentPlayer].position.transform.position;
@@ -30,24 +42,23 @@ public class ArcaneMirage : Spell
         }
         GetComponentInChildren<Animation>().Play();
     }
-    public override void Activate(List<Node> affectedNodes_)
+    public override void Activate(List<HexCell> affectedNodes_)
     {
         StartCoroutine(WaitForEffect(affectedNodes_));
     }
-    private IEnumerator WaitForEffect(List<Node> affectedNodes_)
+    private IEnumerator WaitForEffect(List<HexCell> affectedNodes_)
     {
-        yield return new WaitForSeconds(1.0f);
-        Node node = affectedNodes_[0];
-        GameObject buildingObject = (GameObject)Instantiate(prefabBuilding.prefab, node.transform.position + node.positionOffset, node.transform.rotation);
+       yield return new WaitForSeconds(1.0f);
+        HexCell node = affectedNodes_[0];
+        GameObject buildingObject = (GameObject)Instantiate(prefabBuilding.prefab, node.Position, node.transform.rotation);
 
         Building building = (Building)buildingObject.GetComponent(prefabBuilding.GetType());
         building.SetVisible(true);
-        building.SetCurrentPosition(node);
+        building.currentPosition = node;
         building.owner = TurnManager.Instance.currentPlayer;
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
         TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         node.building = building;
-        node.walkable = false;
         base.Activate(affectedNodes_);
         yield return new WaitForEndOfFrame();
     }

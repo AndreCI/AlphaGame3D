@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class NaturesBlessingBuilding : DefensiveBuilding
 {
-    private List<Node> affectedNodes;
+    private List<HexCell> affectedNodes;
     public EffectFactory effect;
 
     private void Start()
@@ -12,7 +12,7 @@ public class NaturesBlessingBuilding : DefensiveBuilding
         startOfTurnNotificationData = new Dictionary<Utils.NotificationTypes, int> {
             {Utils.NotificationTypes.FOOD, 1 }
         };
-        affectedNodes = currentPosition.adjacentNodes;
+       // affectedNodes = currentPosition2.adjacentNodes;
     }
 
     public override void Death()
@@ -23,7 +23,7 @@ public class NaturesBlessingBuilding : DefensiveBuilding
 
     public override void Notify(Player player, TurnSubject.NOTIFICATION_TYPE type)
     {
-        if (player.Equals(owner) &&type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
+      /*  if (player.Equals(owner) &&type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
         {
             foreach (Node n in affectedNodes)
             {
@@ -42,6 +42,6 @@ public class NaturesBlessingBuilding : DefensiveBuilding
                 }
             }TakeDamage(1);
         }
-        base.Notify(player, type);
+        base.Notify(player, type);*/
     }
 }

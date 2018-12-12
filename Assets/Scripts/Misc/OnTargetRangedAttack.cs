@@ -24,9 +24,9 @@ public class OnTargetRangedAttack : RangedAttackAnimation
         hitAnimation.Play();
     }
 
-    public override void ShowAttackPreview(Node source, Node target)
+    public override void ShowAttackPreview(HexCell source, HexCell target)
     {
-        projectile.transform.position = target.position;
+        projectile.transform.position = target.Position;
         previewAnimation.Play();
         
     }
