@@ -49,6 +49,11 @@ public abstract class Spell : Selectable
             if (type == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
             {
                 playerInfos[player].currentCooldown -= 1;
+                if(playerInfos[player].currentCooldown == 0 && player.Equals(Player.Player1))
+                {
+                    NotificationsList.Instance.AddNotification("The spell " + cardName + " is castable.",
+                        Notification.NOTIFICATION_TYPE.SPELL_CASTABLE);
+                }
             }
         }
     }

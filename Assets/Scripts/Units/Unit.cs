@@ -19,7 +19,7 @@ public abstract class Unit : Selectable
     public GameObject meleeAttackAnimation;
     public RangedAttackAnimation rangedAttackAnimation;
     public Vector3 attackOffset;
-    const float rotationSpeed = 180f;
+    float rotationSpeed = 180f;
 
 
     [Header("Unit Information")]
@@ -65,7 +65,7 @@ public abstract class Unit : Selectable
     private Vector3 a, b, c;
     private float mouvementTime;
     private int currentColumn;
-    private HexCell mouvementStartCell;
+    public HexCell mouvementStartCell;
 
     public virtual void Setup()
     {
@@ -76,6 +76,7 @@ public abstract class Unit : Selectable
         currentHealth = maxHealth;
         currentMovementPoints = maxMovementPoints;
         healthDisplay.fillAmount = (float)currentHealth / (float)(maxHealth);
+        healthDisplay.color = TurnManager.Instance.currentPlayer.Equals(Player.Player1) ? Color.green : Color.red;
         TurnManager.Instance.StartTurnSubject.AddObserver(this);
         moving = false;
         visible = true;
@@ -163,6 +164,9 @@ public abstract class Unit : Selectable
         //prefab.SetActive(v);
         healthCanvas.enabled = v;
         visible = v;
+        
+     //   rotationSpeed += v && rotationSpeed > 180f ? -100f : (v ? 0: 100f);
+    //    speed += v && speed > 10 ? -10 : (v ? 0: 10);
     }
 
     public void Heal(int amount)
@@ -181,6 +185,7 @@ public abstract class Unit : Selectable
 
     public void IsAttacked(int amount, Unit source, bool riposte)
     {
+        LookAt(source.currentPosition.Position + new Vector3(0, 1, 0));
    //     FaceNextNode(source.currentPosition);
         TakesDamage(amount);
         if (currentPosition.GetNeighbors().Contains(source.currentPosition) &&
@@ -211,6 +216,12 @@ public abstract class Unit : Selectable
 
     public IEnumerator Death(bool AIcall = false)
     {
+        if (owner.Equals(Player.Player1))
+        {
+            NotificationsList.Instance.AddNotification("Your unit ("+ cardName+ ") died!",
+                Notification.NOTIFICATION_TYPE.UNIT_DEATH,
+                currentPosition);
+        }
         anim.SetTrigger("Death");
         Debug.Log("A unit died with AIcall:" + AIcall);
         if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
@@ -231,7 +242,6 @@ public abstract class Unit : Selectable
                 yield return new WaitForSeconds(1.5f);
                 Destroy(prefab);
             } //For riposte,safe remove after
-            TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
             Debug.Log("     reset correctly");
         }
         else
@@ -240,7 +250,9 @@ public abstract class Unit : Selectable
             currentPosition.unit = null;
             SetVisible(false);
         }
+        HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange, forceSource:owner);
         Debug.Log("Unit died correctly");
+        
 
     }
     public override void Select()
@@ -259,8 +271,10 @@ public abstract class Unit : Selectable
         SearchAndShowPossibleMoves();
     }
 
-    private void ClearPossibleMoves(HexCell previousCell =null)
+    public void ClearPossibleMoves(HexCell previousCell =null)
     {
+        HexCell temp = (previousCell == null ? mouvementStartCell : previousCell);
+        Debug.Log("Clear possible Move from " + temp.ToString());
         List<HexCell> cellsToClear = new List<HexCell>();
         Queue<HexCell> possibleMoves = new Queue<HexCell>();
         possibleMoves.Enqueue(previousCell==null?mouvementStartCell:previousCell);
@@ -324,7 +338,7 @@ public abstract class Unit : Selectable
     }
     
 
-    private void SearchAndShowPossibleMoves()
+    public void SearchAndShowPossibleMoves()
         //Should search using efficient algo (A* and stuff) and display all possible moves for the current unit.
         //Update the state of the node and unpdate searchFrontier in order to have all possible moves.
         //TODO: if heuristic range<attackrange, switch in mode rangeattack and allow 'movement' to go throguh cliffs and such
@@ -339,9 +353,10 @@ public abstract class Unit : Selectable
         {
             searchFrontier.Clear();
         }
-        //rangedAttackableMoves = new List<HexCell>();
         currentPosition.SearchPhase = HexGrid.Instance.searchFrontierPhase;
         currentPosition.Distance = 0;
+        currentPosition.RangeDistance = 0;
+        currentPosition.SearchRange = false;
         searchFrontier.Enqueue(currentPosition);
         while (searchFrontier.Count > 0)
         {
@@ -360,10 +375,6 @@ public abstract class Unit : Selectable
                     {
                         continue;
                     }
-                    if (!IsValidDestination(neighbor))
-                    {
-                        continue;
-                    }
                     int moveCost = GetMoveCost(current, neighbor, d);
                     int rangeCost = GetRangeCost(current, neighbor, d);
                     if (moveCost < 0 && rangeCost<0)
@@ -376,6 +387,7 @@ public abstract class Unit : Selectable
                     {
                         neighbor.SearchPhase = HexGrid.Instance.searchFrontierPhase;
                         neighbor.Distance = distance;
+                        neighbor.RangeDistance = 0;
                         neighbor.PathFrom = current;
                         current.PathTo.Add(neighbor);
                         neighbor.SearchHeuristic = 0;
@@ -383,20 +395,32 @@ public abstract class Unit : Selectable
                         if (IsAttackable(neighbor))
                         {
                             neighbor.State = HexCell.STATE.UNIT_POSSIBLE_ATTACK;
+                            HexCell goback = neighbor;
+                            while (goback != currentPosition)
+                            {
+                                goback.OnAttackPath = true;
+                                goback = goback.PathFrom;
+                            }
                         }
-                        else if(neighbor.Distance <= currentMovementPoints)
+                        else if(neighbor.Distance <= currentMovementPoints && !nSearchRange)
                         {
                             neighbor.State = HexCell.STATE.UNIT_POSSIBLE_PATH;
                             searchFrontier.Enqueue(neighbor);
                         }
-                        else
+                        else if(current.RangeDistance+1 < attackRange)
                         {
-                          //  rangedAttackableMoves.Add(neighbor);
+                            //  rangedAttackableMoves.Add(neighbor);
+                            neighbor.RangeDistance = current.RangeDistance + 1;
+                            neighbor.EnableHighlight(Color.cyan, true);
                             searchFrontier.Enqueue(neighbor);
                         }
                         // neighbor.coordinates.DistanceTo(toCell.coordinates);
                     }
-                    else if (distance < neighbor.Distance)
+                    else if (searchFrontier.Contains(neighbor) && 
+                        (distance < neighbor.Distance || 
+                        (neighbor.SearchRange &&
+                        neighbor.State!=HexCell.STATE.UNIT_POSSIBLE_ATTACK) &&
+                        !neighbor.OnAttackPath))
                     {
                         int oldPriority = neighbor.SearchPriority;
                         neighbor.Distance = distance;
@@ -404,7 +428,13 @@ public abstract class Unit : Selectable
                         neighbor.PathFrom = current;
                         current.PathTo.Add(neighbor);
                         searchFrontier.Change(neighbor, oldPriority);
-                    }
+                        neighbor.SearchRange = nSearchRange;
+                        if (neighbor.Distance <= currentMovementPoints && !nSearchRange)
+                        {
+                            neighbor.State = HexCell.STATE.UNIT_POSSIBLE_PATH;
+                        }
+
+                        }
 
                 }
             }
@@ -416,7 +446,7 @@ public abstract class Unit : Selectable
     }
     public bool IsAttackable(HexCell cell)
     {
-        return cell.unit != null && cell.unit.owner != owner;
+        return cell.unit != null && cell.unit.currentHealth>0 && cell.unit.owner != owner;
     }
     public int GetMoveCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)
@@ -448,7 +478,7 @@ public abstract class Unit : Selectable
     public int GetRangeCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)
     {
-        if (!IsValidDestination(toCell))
+        if (!toCell.IsExplored || toCell.IsUnderwater)
         {
             return -1;
         }
@@ -564,7 +594,7 @@ public abstract class Unit : Selectable
        
         anim.SetTrigger("Attack1Trigger");
         currentMovementPoints = 0;
-        if (currentPosition.GetNeighbors().Contains(target))
+        if (currentPosition.GetNeighbors().Contains(target) && meleeAttackAnimation != null)
         {
             GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.Position + attackOffset, new Quaternion(0, 0, 0, 0));
             Destroy(attackAnim, 5);
@@ -613,6 +643,7 @@ public abstract class Unit : Selectable
             }
             pathToTravel.Add(current);
             pathToTravel.Reverse();
+            Debug.Log("623 Debug Catch: " + target.ToString());
             yield return LookAt(pathToTravel[1].Position);
             bool attackNext = SetupAttack(pathToTravel.GetRange(1, pathToTravel.Count - 1));
             if (attackNext)
@@ -723,10 +754,17 @@ public abstract class Unit : Selectable
         }
 
         c = (b + currentTravelLocation.Position) * 0.5f;
+        float hideSpeed = speed;
+        if(TurnManager.Instance.againstAI &&
+            currentPosition.visibility_p1 <=0 &&
+            nextCell.visibility_p1 <= 0)
+        {
+            hideSpeed += 10;
+        }
         currentPosition.unit = null;
         currentPosition = nextCell;
         currentPosition.unit = this;
-        for (; mouvementTime < 1f; mouvementTime+= Time.deltaTime * speed)
+        for (; mouvementTime < 1f; mouvementTime+= Time.deltaTime * hideSpeed)
         {
             movementSphere.position = Bezier.GetPoint(a, b, c, mouvementTime);
             Vector3 d = Bezier.GetDerivative(a, b, c, mouvementTime);
@@ -736,7 +774,10 @@ public abstract class Unit : Selectable
         }
         mouvementTime -= 1f;
         currentMovementPoints -= 1;
-        UpdateCardDisplayInfo();
+        if (!TurnManager.Instance.againstAI || TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+        {
+            UpdateCardDisplayInfo();
+        }
         yield return new WaitForEndOfFrame();
     }
 

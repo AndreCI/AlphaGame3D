@@ -23,7 +23,6 @@ public abstract class DefensiveBuilding : Building
     public virtual void Death()
     {
         owner.currentBuildings.Remove(this);
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         currentPosition.building = null;
         Destroy(prefab);
     }

@@ -111,6 +111,12 @@ public abstract class Building : Selectable
                     StartCoroutine(DisplayAndApplyNotification(owner, new Dictionary<Utils.NotificationTypes, int> {
                     {Utils.NotificationTypes.BUILDING, constructionTime }
                 }));
+                    if(constructionTime == 0 && player.Equals(Player.Player1))
+                    {
+                        NotificationsList.Instance.AddNotification("Your building " + cardName + " is now constructed.",
+                            Notification.NOTIFICATION_TYPE.BUILDING_FINISH,
+                            currentPosition);
+                    }
                     return;
                 }
                 else

@@ -73,19 +73,21 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Building building = (Building)GetScript(buildingObject);
         building.SetCurrentPosition(target);
         building.owner = TurnManager.Instance.currentPlayer;
-        building.SetVisible(true);
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
         TurnManager.Instance.currentPlayer.requirementSystem.AddCopy(building.GetType());
         TurnManager.Instance.currentPlayer.gold -= building.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= building.actionPointCost;
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         foreach(HexCell cell in availablePositions)
         {
             cell.State = HexCell.STATE.IDLE;
         }
         Selector.Instance.currentObject = null;
-        if (CardDisplay.Instance != null) { CardDisplay.Instance.DisableCardDisplay(); } //sanity check because hallcenter spawn is manually made.
-        TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+        if (!TurnManager.Instance.againstAI || !TurnManager.Instance.currentPlayer.Equals(Player.Player2))
+        {
+            if (CardDisplay.Instance != null) { CardDisplay.Instance.DisableCardDisplay(); } //sanity check because hallcenter spawn is manually made.
+            TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+            building.SetVisible(true);
+        }
         availablePositions = new List<HexCell>();
         return building;
     }
@@ -132,7 +134,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Selectable spawnPoint = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetSpawnPoint());
         foreach(HexCell possibleSpawn in spawnPoint.currentPosition.GetNeighbors())
         {
-            if (!possibleSpawn.IsSpecial)
+            if (possibleSpawn.IsFree)
             {
                 possibleSpawn.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
                 availablePositions.Add(possibleSpawn);
@@ -150,19 +152,21 @@ public class ConstructionManager : MonoBehaviour, IObserver
         unit.Setup();
 
         unit.SetCurrentPosition(target);
-        unit.owner = Random.Range(0f,1f) > 0.5? TurnManager.Instance.currentPlayer : TurnManager.Instance.inactivePlayer;
+        unit.owner = TurnManager.Instance.currentPlayer;
         TurnManager.Instance.currentPlayer.currentUnits.Add(unit);
         TurnManager.Instance.currentPlayer.gold -= unit.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= unit.actionPointCost;
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         HexGrid.Instance.IncreaseVisibility(unit.currentPosition, unit.visionRange);
         foreach(HexCell n in availablePositions)
         {
             n.State = HexCell.STATE.IDLE;
         }
         Selector.Instance.currentObject = null;
-        CardDisplay.Instance.DisableCardDisplay();
-        TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+        if (!TurnManager.Instance.againstAI || !TurnManager.Instance.currentPlayer.Equals(Player.Player2))
+        {
+            CardDisplay.Instance.DisableCardDisplay();
+            TurnManager.Instance.ButtonUpdateSubject.NotifyObservers(TurnManager.Instance.currentPlayer);
+        }
         availablePositions = new List<HexCell>();
         return unit;
     }

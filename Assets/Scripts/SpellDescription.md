@@ -8,6 +8,7 @@ brainstorm ideas:
 	frost=control, mana gain, disruption (food removal?)		[COLOR:BLUE/CYAN/VIOLET]
 	green=value, economic power (food & gold?), heal			[COLOR:GREEN/YELLOW/CYAN]
 	void=powerful, costly, high cooldown, combos?				[COLOR:VIOLET/BLACK]
+need invocation spells to support monoS? can invoc normal units?
 Each schoolom should have spells available to all that represents its spirit:
 	arcane=[{Deal a little damage(2?) for 1 mana with no cooldown: cheap, non optimal, quick, low impact, mana sink}
 		{Create a wall (with HP, attackable) which disappears after X turns?: quick, low impact}

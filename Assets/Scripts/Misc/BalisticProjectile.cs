@@ -89,6 +89,7 @@ public class BalisticProjectile : RangedAttackAnimation
         transform.position = source.Position;// new Vector3(0, 0, 0);
         ray.SetPositions(trajectory.ToArray());
         ray.materials[0].mainTextureScale = new Vector3(maxDistance, 1, 1);
+        
     }
 
     public void SetTrajectory()

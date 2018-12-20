@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     [Header("General starting objects")]
     private TurnManager turnManager;
+    public GameObject tutorialStart;
     public GameObject menu;
     public GameObject selectionPanel;
     public GameObject ressourcePanel;
@@ -21,32 +22,44 @@ public class GameManager : MonoBehaviour
        // selectionPanel.SetActive(true);
         turnManager = TurnManager.Instance;
         turnManager.currentPlayer = Player.Player1;
-        turnManager.StartGame(SelectRandomCell(), SelectRandomCell());
+        turnManager.StartGame(SelectRandomCell(Player.Player1), SelectRandomCell(Player.Player2));
         Instance = this;
 
         //CardDisplay.Instance.DisableCardDisplay();
         
     }
 
-    private HexCell SelectRandomCell()
+    private HexCell SelectRandomCell(Player player)
     {
         HexCell start = null;
-        hexGrid.GetPlayer1StartZone();
-        while (start == null)
+        List<HexCell> spawnZone = hexGrid.GetPlayerStartZone(player);
+        bool found = true;
+        do
         {
-            start = hexGrid.GetCell(Random.Range(0, hexGrid.cellCountX), Random.Range(0, hexGrid.cellCountZ));
+            found = true;
+            start = spawnZone[Random.Range(0, spawnZone.Count)];
             if (start.IsUnderwater)
             {
-                start = null;
+                found = false;
             }
-            foreach(HexCell cell in start.GetNeighbors())
-            {
-                if(cell==null || cell.IsUnderwater)
+           
+            foreach (HexCell cell in start.GetNeighbors())
                 {
-                    start = null;
+                if (cell == null || cell.IsUnderwater)
+                {
+                    found = false;
+                }
+                else
+                {
+                    HexEdgeType edgeType = start.GetEdgeType(cell);
+                    if (edgeType == HexEdgeType.Cliff)
+                    {
+                        found = false;
+                    }
                 }
             }
-        }
+            
+        } while (!found);
         return start;
     }
     public void ManualEndTurn()
@@ -68,7 +81,7 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown("space"))
         {
             turnManager.TryEndTurn();
-        }/*else if (turnManager.currentPlayer.isAi && turnManager.debugCounter > 1 && ((ArtificialIntelligence)Player.Player2).turnShouldBeFinished)
+        }else if (turnManager.currentPlayer.isAi && turnManager.debugCounter > 3 && ((ArtificialIntelligence)Player.Player2).turnShouldBeFinished)
         {
           //  ((ArtificialIntelligence)Player.Player2).UpdateUnitEffect();
             ((ArtificialIntelligence)Player.Player2).turnFinished = true;
@@ -76,7 +89,7 @@ public class GameManager : MonoBehaviour
 
             turnManager.EndTurn();
             turnManager.debugCounter = -1;
-        }*/
+        }
         if (turnManager.debugCounter >= 0)
         {
             turnManager.debugCounter += Time.deltaTime;

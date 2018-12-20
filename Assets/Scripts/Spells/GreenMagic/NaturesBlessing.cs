@@ -63,7 +63,6 @@ public class NaturesBlessing : Spell
         building.owner = TurnManager.Instance.currentPlayer;
         ((NaturesBlessingBuilding)building).effect = new EffectFactory(effect, buffDuration, amplitude);
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         node.building = building;
         base.Activate(affectedNodes_);
         yield return new WaitForEndOfFrame();

@@ -57,7 +57,6 @@ public class ArcaneMirage : Spell
         building.currentPosition = node;
         building.owner = TurnManager.Instance.currentPlayer;
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
-        TurnManager.Instance.currentPlayer.UpdateVisibleNodes();
         node.building = building;
         base.Activate(affectedNodes_);
         yield return new WaitForEndOfFrame();

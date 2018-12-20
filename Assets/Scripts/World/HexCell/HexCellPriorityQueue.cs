@@ -13,6 +13,11 @@ public class HexCellPriorityQueue {
 		}
 	}
 
+    public bool Contains(HexCell hexCell)
+    {
+        return list.Contains(hexCell);
+    }
+
 	public void Enqueue (HexCell cell) {
 		count += 1;
 		int priority = cell.SearchPriority;

@@ -49,12 +49,25 @@ public class HexGrid : MonoBehaviour {
         gameUi.SetEditMode(false);
     }
 
-    public List<HexCell> GetPlayer1StartZone()
+    public List<HexCell> GetPlayerStartZone(Player player, int width=7)
     {
         List<HexCell> startZone = new List<HexCell>();
-        for (int i = 0; i < 15; i++) {
-            GetCell(i).EnableHighlight(Color.red);
-         }
+        for (int z = 0; z < cellCountZ; z++)
+        {
+            if (player.Equals(Player.Player1)){
+                for (int x = 0; x < width; x++)
+                {
+                    startZone.Add(GetCell(x, z));
+                }
+            }
+            else
+            {
+                for (int x = cellCountX -1 ; x > cellCountX - width - 1; x--)
+                {
+                    startZone.Add(GetCell(x, z));
+                }
+            }
+        }
         return startZone;
     }
 
@@ -279,20 +292,19 @@ public class HexGrid : MonoBehaviour {
 	}
 
 
-
  
-	public void IncreaseVisibility (HexCell fromCell, int range) {
+	public void IncreaseVisibility (HexCell fromCell, int range, Player forceSource=null) {
 		List<HexCell> cells = GetVisibleCells(fromCell, range);
 		for (int i = 0; i < cells.Count; i++) {
-			cells[i].IncreaseVisibility();
+			cells[i].IncreaseVisibility(forceSource);
 		}
 		ListPool<HexCell>.Add(cells);
 	}
 
-	public void DecreaseVisibility (HexCell fromCell, int range) {
+	public void DecreaseVisibility (HexCell fromCell, int range, Player forceSource=null) {
 		List<HexCell> cells = GetVisibleCells(fromCell, range);
 		for (int i = 0; i < cells.Count; i++) {
-			cells[i].DecreaseVisibility();
+			cells[i].DecreaseVisibility(forceSource);
 		}
 		ListPool<HexCell>.Add(cells);
 	}

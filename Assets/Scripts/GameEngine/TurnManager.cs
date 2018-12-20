@@ -73,21 +73,15 @@ public class TurnManager{
 
     void StartTurn()
     {
-        if (!againstAI)
-        {
-            currentPlayer.UpdateVisibleNodes();
-        }
         currentPlayer.mana += currentPlayer.manaBank;
         currentPlayer.manaBank = 0;
         Utils.EatFood(currentPlayer);
         StartTurnSubject.NotifyObservers(currentPlayer);
-        currentPlayer.UpdateVisibleNodes();
         GameObject.FindObjectOfType<MonoBehaviour>().StartCoroutine(currentPlayer.StartOfTurn());
     }
 
     void NewTurn()
     {
-        //debugCounter = 0;
         TurnNumber += 1;
         if (playerActiveIndex == 1)
         {
@@ -121,28 +115,25 @@ public class TurnManager{
     public void StartGame(HexCell startNode, HexCell startNode2)
     {
         currentPlayer = playerActive[0];
-        HexCell baseNode = startNode;// (Node)GameObject.Find("Node (121)").GetComponent<Node>();
+        HexCell baseNode = startNode;
         ConstructionManager.Instance.SetBuildingToBuild(ConstructionManager.Instance.HallCenter, true);
         baseNode.Construct(true);
-        currentPlayer.UpdateVisibleNodes();
         
         HexMapCamera.instance.SetPosition(baseNode.Position.x, baseNode.Position.z - 15, speed:0.5f);
-      //  currentPlayer.HideVisibleNodes();
       
         currentPlayer = playerActive[1];
-        baseNode = startNode2;// (Node)GameObject.Find("Node (18)").GetComponent<Node>(); //18
+        baseNode = startNode2;
         ConstructionManager.Instance.SetBuildingToBuild(ConstructionManager.Instance.HallCenter, true);
         baseNode.Construct(true);
-        currentPlayer.UpdateVisibleNodes();
-       //s currentPlayer.HideVisibleNodes();
 
         if (againstAI)
         {
-            currentPlayer.UpdateVisibleNodes();
             Player.Player2.currentBuildings[0].SetVisible(false);
         }
-      //  currentPlayer = playerActive[0];
         NewTurn();
+
+        NotificationsList.Instance.AddNotification("Left click here to start tutorial, right click to dismiss",
+            Notification.NOTIFICATION_TYPE.START_GAME);
     }
 
     public void EndOfAITurn()

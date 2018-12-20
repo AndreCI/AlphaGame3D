@@ -26,7 +26,7 @@ public class HexCell : MonoBehaviour, IObserver {
         CONSTRUCT_SELECTABLE,
         SPELL_POSSIBLE_CAST,//: a spell can be casted on this hex
         SPELL_AFFECTED,//: a spell will affect this hex if cast
-        SPELL_CURRENT_CAST//: a spell will be cast on this hex if revalidate
+        SPELL_CURRENT_CAST,//: a spell will be cast on this hex if revalidate
     }
 
 
@@ -50,21 +50,9 @@ public class HexCell : MonoBehaviour, IObserver {
                     PathTo = null;
                     PathFrom = null;
                     SearchRange = false;
-                    if (unit != null && unit.visible)
-                    {
-                        if (unit.owner == Player.Player1)
-                        {
-                            EnableHighlight(Color.green);
-                        }
-                        else if (unit.owner == Player.Player2)
-                        {
-                            EnableHighlight(Color.red);
-                        }
-                    }
-                    else
-                    {
-                        DisableHighlight();
-                    }
+                    OnAttackPath = false;
+                    RangeDistance = 0;
+                    DisableHighlight();
                     break;
                 case STATE.UNIT_CURRENT_PATH:
                     EnableHighlight(Color.green);
@@ -381,20 +369,12 @@ public class HexCell : MonoBehaviour, IObserver {
     public Unit unit { get {
             return unit_;
         } set {
-            if (value != null && value.visible && State==STATE.IDLE)
+            if (value != null)
             {
-                if (value.owner == Player.Player1)
+                if (TurnManager.Instance.againstAI)
                 {
-                    EnableHighlight(Color.green);
+                    value.SetVisible(visibility_p1 > 0);
                 }
-                else if (value.owner == Player.Player2)
-                {
-                    EnableHighlight(Color.red);
-                }
-            }
-            else if (State == STATE.IDLE)
-            {
-                DisableHighlight();
             }
             unit_ = value;
         } }
@@ -408,7 +388,7 @@ public class HexCell : MonoBehaviour, IObserver {
                 HexGrid.Instance.IncreaseVisibility(this, value.visionRange);
             }
             else {
-                HexGrid.Instance.DecreaseVisibility(this, value.visionRange);
+                HexGrid.Instance.DecreaseVisibility(this, building_.visionRange);
             }
             building_ = value;
             
@@ -440,6 +420,8 @@ public class HexCell : MonoBehaviour, IObserver {
 
 	public int SearchPhase { get; set; }
     public bool SearchRange { get; set; }
+    public bool OnAttackPath { get; set; }
+    public int RangeDistance { get; set; }
 
 	public HexCell NextWithSamePriority { get; set; }
 
@@ -471,10 +453,21 @@ public class HexCell : MonoBehaviour, IObserver {
 	[SerializeField]
 	HexCell[] neighbors;
     
-
-	public void IncreaseVisibility ()
+    public void SetVisible(bool v)
     {
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+        if (building)
+        {
+            building.SetVisible(v);
+        }
+        if (unit)
+        {
+            unit.SetVisible(v);
+        }
+    }
+
+	public void IncreaseVisibility (Player forceSource=null)
+    {
+        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1) &&(forceSource==null || forceSource.Equals(Player.Player1)))
         {
             visibility_p1 += 1;
             if (visibility_p1 == 1)
@@ -482,6 +475,17 @@ public class HexCell : MonoBehaviour, IObserver {
                 Player.Player1.visibleNodes.Add(this);
                 IsExplored = true;
                 ShaderData.RefreshVisibility(this);
+                if (TurnManager.Instance.againstAI)
+                {
+                    if (unit)
+                    {
+                        unit.SetVisible(true);
+                    }
+                    if (building)
+                    {
+                        building.SetVisible(true);
+                    }
+                }
             }
         }
         else
@@ -500,14 +504,18 @@ public class HexCell : MonoBehaviour, IObserver {
         }
 	}
 
-	public void DecreaseVisibility () {
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+	public void DecreaseVisibility (Player forceSource=null) {
+        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1) && (forceSource == null || forceSource.Equals(Player.Player1)))
         {
             visibility_p1 -= 1;
             if (visibility_p1 == 0)
             {
                 Player.Player1.visibleNodes.Remove(this);
                 ShaderData.RefreshVisibility(this);
+                if (unit)
+                {
+                    unit.SetVisible(false);
+                }
             }
         }
         else
@@ -790,11 +798,13 @@ public class HexCell : MonoBehaviour, IObserver {
 		highlight.enabled = false;
 	}
 
-	public void EnableHighlight (Color color) {
-        
-		Image highlight = uiRect.GetChild(0).GetComponent<Image>();
-		highlight.color = color;
-		highlight.enabled = true;
+	public void EnableHighlight (Color color, bool forceColor=false) {
+        if (!TurnManager.Instance.againstAI || TurnManager.Instance.currentPlayer.Equals(Player.Player1) || forceColor)
+        {
+            Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+            highlight.color = color;
+            highlight.enabled = true;
+        }
 	}
 
 	public void SetMapData (float data) {

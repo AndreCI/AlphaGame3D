@@ -20,23 +20,10 @@ Warehouse: allow for keeping food?/mana? between turns? Other stuff?
 Quarry: lose food agains gold?
 market?
 
-World:
-Multiples biome with minor impact: impassible obstacle for now
-Lets start with 2 biome: default and montains
-biome are an aggregation of nodes which shares a property. 
-Biome are created at the start of the game proceduraly
-
-Biome idea:
-mountain, #non walkable #high height
-water, #non walkable #low height
-forest, #contains tree, which are non walkable #medium height, high precipitation
-plain, #construcable zone, non procedural
-desert #default, non procedural
-
-Add rivers?
-
-Add constraint: at least X path between players should be accessible
-	Bioime must not be big
-
-Noise:
-Create height and precipitation noise, then rework values: between X and Y height, normalize to 0 to have nice walkable tiles
+Building placement:
+Forbid building placed to an other one? Prevent building blocking
+How to encourage players to get building together? if they can't be destroyed && provide vision/spwan points, it is necessary
+1) add building time depending on distance to hall center + forbid building creation using building that are being build
+2) allow building to be de destroyed
+3) set a zone where building can be put, such as start zone (see code)
+4) allow unit to be recruit to more than just building spawn points

@@ -65,58 +65,7 @@ public class Player
             throw new System.Exception("id must be 1 or 2");
         }
     }
-
-    public virtual void UpdateVisibleNodes()
-    {
-      /*  foreach (Building b in currentBuildings)
-        {
-            if (!knownBuilding.Contains(b.currentPosition))
-            {
-                knownBuilding.Add(b.currentPosition);
-            }
-        }
-        visibleNodes = new List<Node>();
-        foreach (Building buiding in currentBuildings)
-        {
-            List<Node> currentBuildingVisibleNodes = NodeUtils.BFSNodesAdj(buiding.currentPosition, buildingVisiblity).GetChildrens();
-            foreach (Node node in currentBuildingVisibleNodes)
-            {
-                if (!visibleNodes.Contains(node))
-                {
-                    visibleNodes.Add(node);
-                }
-            }
-        }
-        foreach (Unit unit in currentUnits)
-        {
-            List<Node> currentUnitVisibleNodes = NodeUtils.BFSNodesAdj(unit.currentPosition, unit.GetVisionRange()).GetChildrens();
-            foreach (Node node in currentUnitVisibleNodes)
-            {
-                if (!visibleNodes.Contains(node))
-                {
-                    visibleNodes.Add(node);
-                }
-            }
-        }
-        foreach (Node node in visibleNodesPrev)
-        {
-            if (!visibleNodes.Contains(node))
-            {
-                node.SetVisible(false);
-            }
-
-        }
-        foreach (Node node in visibleNodes)
-        {
-            node.SetVisible(true);
-            if (node.building != null && !knownBuilding.Contains(node))
-            {
-                knownBuilding.Add(node);
-            }
-        }
-        visibleNodesPrev = visibleNodes;*/
-    }
-    protected Player(int id_)
+     protected Player(int id_)
     {
         gold = 28;
         mana = 0;

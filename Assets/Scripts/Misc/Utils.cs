@@ -13,6 +13,11 @@ public static class Utils
         int i = currentPlayer.food;
         if (i < eatingUnits.Count)
         {
+            if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+            {
+                NotificationsList.Instance.AddNotification("You need more food!",
+                    Notification.NOTIFICATION_TYPE.NEED_FOOD);
+            }
             List<Unit> unitFed = GetRandomElements<Unit>(eatingUnits, i);
             foreach(Unit u in eatingUnits)
             {

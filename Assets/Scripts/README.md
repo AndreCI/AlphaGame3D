@@ -33,7 +33,7 @@ UI:
 	Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
 Rework the UI
-Add notifications (unit died, need more food, building constructed)? see tuto quill18
+	Add notifications (unit died, need more food, building constructed)? see tuto quill18
 Think about artstyle
 Modify building display if in construction
 
@@ -56,10 +56,13 @@ hexgrid:
 	add range attack
 	and spells
 	debug visibility
+	Debug AI
+Debug range attack
 add a way to check if game is unplayable
 think about a way to place building
 remove ability to place building/unit at wrong places
 Rework building/unit placement
+Implement damage source type (food, attack, riposte, spell, effect...)
 	center camera on hall center at start of game	
 
 Balance:
@@ -71,7 +74,8 @@ Rebalance game
 Content:
 	Start a global reflexion before implementing anything
 	Implement barrack T2 unit
-Continue the global reflexion: Units & buildings.
+	Continue the global reflexion: Units & buildings.
+Finish the global reflexion: Units & buildings.
 Implement more building & units
 	Implement terrain effect
 	Implement more frost spells

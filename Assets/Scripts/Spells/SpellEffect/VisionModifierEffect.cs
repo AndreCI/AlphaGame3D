@@ -17,6 +17,7 @@
     public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
+        HexGrid.Instance.DecreaseVisibility(u.currentPosition, u.visionRange);
         u.currentVisionRangeModifier += modifier;
         string notif = "";
         System.Object[] e = {null, null};
@@ -32,7 +33,8 @@
         }
         notif += modifier.ToString();
         e[1] = notif;
-        u.owner.UpdateVisibleNodes();
+        //TODO: debug vision buffing
+        HexGrid.Instance.IncreaseVisibility(u.currentPosition, u.visionRange + u.currentVisionRangeModifier);
         return e;
     }
 

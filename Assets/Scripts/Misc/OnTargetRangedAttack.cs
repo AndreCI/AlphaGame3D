@@ -27,7 +27,10 @@ public class OnTargetRangedAttack : RangedAttackAnimation
     public override void ShowAttackPreview(HexCell source, HexCell target)
     {
         projectile.transform.position = target.Position;
-        previewAnimation.Play();
+        if (!TurnManager.Instance.currentPlayer.isAi)
+        {
+            previewAnimation.Play();
+        }
         
     }
 }

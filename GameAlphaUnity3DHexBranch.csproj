@@ -363,6 +363,8 @@
     <Compile Include="Assets\Scripts\UI\HexGameUI.cs" />
     <Compile Include="Assets\Scripts\UI\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\Notification.cs" />
+    <Compile Include="Assets\Scripts\UI\NotificationsList.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\ActionPointDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\FoodDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\RessourceDisplay\ManaDisplay.cs" />
