@@ -393,6 +393,8 @@
     <Compile Include="Assets\Scripts\Units\UnitsAbility\TriggeredUnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbilityUtils.cs" />
+    <Compile Include="Assets\Scripts\Units\FlyingUnit.cs" />
+    <Compile Include="Assets\Scripts\Units\Dragon.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\Wizard.cs" />
     <Compile Include="Assets\Scripts\World\Bezier.cs" />

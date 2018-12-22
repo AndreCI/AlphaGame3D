@@ -22,7 +22,7 @@ public class HexMapCamera : MonoBehaviour {
 
 	float zoom = 1f;
 
-	float rotationAngle;
+	float rotationAngle = 90;
     private bool moving;
     private float xTarget;
     private float zTarget;

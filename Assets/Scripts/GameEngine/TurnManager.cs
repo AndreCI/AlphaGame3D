@@ -68,6 +68,10 @@ public class TurnManager{
     {
         EndTurnSubject.NotifyObservers(currentPlayer);
         currentPlayer.mana = 0;
+        if (currentPlayer.Equals(Player.Player1))
+        {
+            NotificationsList.Instance.ClearNotifications();
+        }
         NewTurn();
     }
 

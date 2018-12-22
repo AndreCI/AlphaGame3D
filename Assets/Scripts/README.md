@@ -32,7 +32,7 @@ UI:
 	Change fontsize of carddisplay (spell overflow)
 	Implement camera automove (double click centers it, etc)
 Implement UI controler: click on barracks unlock barracks unit tab, etc.
-Rework the UI
+	Rework the UI
 	Add notifications (unit died, need more food, building constructed)? see tuto quill18
 Think about artstyle
 Modify building display if in construction

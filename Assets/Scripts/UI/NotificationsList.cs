@@ -50,6 +50,21 @@ public class NotificationsList : MonoBehaviour
         }
     }
 
+    public void ClearNotifications()
+    {
+        while (notifications.Count > 0)
+        {
+            Notification notif = notifications[0];
+            notif.Remove();
+            notifications.Remove(notif);
+            inactiveNotifications.Push(notif);
+        }
+        while (waitingNotifications.Count > 0)
+        {
+            inactiveNotifications.Push(waitingNotifications.Pop());
+        }
+    }
+
     public void AddNotification(string text, Notification.NOTIFICATION_TYPE type, HexCell emitter = null)
     {
         if(inactiveNotifications.Count == 0)

@@ -54,6 +54,7 @@ public abstract class Unit : Selectable
     }
     private HexCellPriorityQueue searchFrontier;
     protected Animator anim;
+    public Animation animLegacy;
     protected List<HexCell> potentialPath; //Current path for the target node
   //  protected List<HexCell> path; //selected path to node
     protected HexCell cellToGo;
@@ -69,8 +70,11 @@ public abstract class Unit : Selectable
 
     public virtual void Setup()
     {
-        anim = GetComponentInChildren<Animator>();
-        anim.logWarnings = false;
+        if (!animLegacy)
+        {
+            anim = GetComponentInChildren<Animator>();
+            anim.logWarnings = false;
+        }
         currentAttackModifier = 0;
         currentVisionRangeModifier = 0;
         currentHealth = maxHealth;
@@ -223,6 +227,8 @@ public abstract class Unit : Selectable
                 currentPosition);
         }
         anim.SetTrigger("Death");
+        //animLegacy;
+        //animLegacy.c // ["death"];
         Debug.Log("A unit died with AIcall:" + AIcall);
         if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
         {

@@ -395,7 +395,24 @@ public class HexCell : MonoBehaviour, IObserver {
         } }
 
 	public HexCell PathFrom { get; set; }
+    public HexCell PathFromRanged { get; set; }
 
+    private List<HexCell> pathToRange;
+    public List<HexCell> PathToRange
+    {
+        get
+        {
+            if (pathToRange == null)
+            {
+                pathToRange = new List<HexCell>();
+            }
+            return pathToRange;
+        }
+        set
+        {
+            pathToRange = value;
+        }
+    }
     private List<HexCell> pathTo;
     public List<HexCell> PathTo { get
         {
