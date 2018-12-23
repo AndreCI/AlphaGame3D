@@ -302,14 +302,13 @@ public class HexCell : MonoBehaviour, IObserver {
 		}
 	}
 
-	public bool IsVisible {
-		get {
-            if (TurnManager.Instance.currentPlayer.Equals(Player.Player1)) {
+	public bool IsVisible(Player player) {
+            if (player.Equals(Player.Player1)) {
                 return visibility_p1 > 0 && Explorable;
             } else {
                 return visibility_p2 > 0 && Explorable;
             }
-		}
+		
 	}
 
 	public bool IsExplored {
@@ -336,6 +335,8 @@ public class HexCell : MonoBehaviour, IObserver {
 	}
 
 	public bool Explorable { get; set; }
+
+    public int visionDistance;
 
 	public int Distance {
 		get {
@@ -379,21 +380,22 @@ public class HexCell : MonoBehaviour, IObserver {
             unit_ = value;
         } }
     private Building building_;
-    public Building building { get {
-            return building_;
+    public Building building { get; set; }
+     /*       return building_;
         }
         set {
             if (value != null)
             {
-                HexGrid.Instance.IncreaseVisibility(this, value.visionRange);
+                HexGrid.Instance.IncreaseVisibility(this, value.visionRange, building.owner);// + value.currentVisionRangeModifier);
             }
             else {
-                HexGrid.Instance.DecreaseVisibility(this, building_.visionRange);
+                HexGrid.Instance.DecreaseVisibility(this, building_.visionRange, building.owner);
             }
             building_ = value;
             
-        } }
+        } }*/
 
+    public HexCell VisionPathFrom { get; set; }
 	public HexCell PathFrom { get; set; }
     public HexCell PathFromRanged { get; set; }
 
@@ -434,6 +436,8 @@ public class HexCell : MonoBehaviour, IObserver {
 			return distance + SearchHeuristic;
 		}
 	}
+
+    public int VisionSearchPhase;
 
 	public int SearchPhase { get; set; }
     public bool SearchRange { get; set; }
@@ -482,16 +486,16 @@ public class HexCell : MonoBehaviour, IObserver {
         }
     }
 
-	public void IncreaseVisibility (Player forceSource=null)
+	public void IncreaseVisibility (Player player)
     {
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1) &&(forceSource==null || forceSource.Equals(Player.Player1)))
+        if (player.Equals(Player.Player1))
         {
             visibility_p1 += 1;
             if (visibility_p1 == 1)
             {
                 Player.Player1.visibleNodes.Add(this);
                 IsExplored = true;
-                ShaderData.RefreshVisibility(this);
+                ShaderData.RefreshVisibility(this, player);
                 if (TurnManager.Instance.againstAI)
                 {
                     if (unit)
@@ -514,21 +518,21 @@ public class HexCell : MonoBehaviour, IObserver {
                 IsExplored = true;
                 if (!TurnManager.Instance.againstAI)
                 {
-                    ShaderData.RefreshVisibility(this);
+                    ShaderData.RefreshVisibility(this, player);
                 }
             }
 
         }
 	}
-
-	public void DecreaseVisibility (Player forceSource=null) {
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1) && (forceSource == null || forceSource.Equals(Player.Player1)))
+    
+	public void DecreaseVisibility (Player player) {
+        if (player.Equals(Player.Player1))
         {
             visibility_p1 -= 1;
             if (visibility_p1 == 0)
             {
                 Player.Player1.visibleNodes.Remove(this);
-                ShaderData.RefreshVisibility(this);
+                ShaderData.RefreshVisibility(this, player);
                 if (unit)
                 {
                     unit.SetVisible(false);
@@ -543,21 +547,21 @@ public class HexCell : MonoBehaviour, IObserver {
                 Player.Player2.visibleNodes.Remove(this);
                 if (!TurnManager.Instance.againstAI)
                 {
-                    ShaderData.RefreshVisibility(this);
+                    ShaderData.RefreshVisibility(this, player);
                 }
             }
         }
 	}
 
-	public void ResetVisibility () {
+	public void ResetVisibility (Player player) {
 
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+        if (player.Equals(Player.Player1))
         {
             if (visibility_p1 > 0)
             {
                 Player.Player1.visibleNodes.Remove(this);
                 visibility_p1 = 0;
-                ShaderData.RefreshVisibility(this);
+                ShaderData.RefreshVisibility(this, player);
             }
         }
         else
@@ -568,7 +572,7 @@ public class HexCell : MonoBehaviour, IObserver {
                 visibility_p2 = 0;
                 if (!TurnManager.Instance.againstAI)
                 {
-                    ShaderData.RefreshVisibility(this);
+                    ShaderData.RefreshVisibility(this, player);
                 }
             }
         }
@@ -802,7 +806,7 @@ public class HexCell : MonoBehaviour, IObserver {
 
 		
 		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
-		ShaderData.RefreshVisibility(this);
+		ShaderData.RefreshVisibility(this, TurnManager.Instance.currentPlayer);
 	}
 
 	public void SetLabel (string text) {
@@ -928,7 +932,7 @@ public class HexCell : MonoBehaviour, IObserver {
         {
             if (subjectType == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
             {
-                ShaderData.RefreshVisibility(this);
+                ShaderData.RefreshVisibility(this, player);
                 
             }
         }

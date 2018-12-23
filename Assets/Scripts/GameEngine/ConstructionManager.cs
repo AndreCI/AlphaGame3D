@@ -71,13 +71,15 @@ public class ConstructionManager : MonoBehaviour, IObserver
         GameObject buildingObject = (GameObject)Instantiate(prefab, target.Position, target.transform.rotation);
 
         Building building = (Building)GetScript(buildingObject);
-        building.SetCurrentPosition(target);
         building.owner = TurnManager.Instance.currentPlayer;
+        building.SetCurrentPosition(target);
         TurnManager.Instance.currentPlayer.currentBuildings.Add(building);
         TurnManager.Instance.currentPlayer.requirementSystem.AddCopy(building.GetType());
         TurnManager.Instance.currentPlayer.gold -= building.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= building.actionPointCost;
-        foreach(HexCell cell in availablePositions)
+        HexGrid.Instance.IncreaseVisibility(building.currentPosition, building.visionRange, building.owner);
+
+        foreach (HexCell cell in availablePositions)
         {
             cell.State = HexCell.STATE.IDLE;
         }
@@ -151,12 +153,12 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Unit unit = (Unit)ConstructionManager.Instance.GetScript(unitObject);
         unit.Setup();
 
-        unit.SetCurrentPosition(target);
         unit.owner = TurnManager.Instance.currentPlayer;
+        unit.SetCurrentPosition(target);
         TurnManager.Instance.currentPlayer.currentUnits.Add(unit);
         TurnManager.Instance.currentPlayer.gold -= unit.goldCost;
         TurnManager.Instance.currentPlayer.actionPoints -= unit.actionPointCost;
-        HexGrid.Instance.IncreaseVisibility(unit.currentPosition, unit.visionRange);
+        HexGrid.Instance.IncreaseVisibility(unit.currentPosition, unit.visionRange + unit.currentVisionRangeModifier, unit.owner);
         foreach(HexCell n in availablePositions)
         {
             n.State = HexCell.STATE.IDLE;

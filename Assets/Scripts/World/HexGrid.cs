@@ -24,6 +24,7 @@ public class HexGrid : MonoBehaviour {
 
 	public int seed;
     public int searchFrontierPhase;
+    private int visionSearchFrontierPhase;
 
 	Transform[] columns;
 	HexGridChunk[] chunks;
@@ -137,9 +138,10 @@ public class HexGrid : MonoBehaviour {
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
 			HexMetrics.wrapSize = wrapping ? cellCountX : 0;
-			ResetVisibility();
-		}
-	}
+            ResetVisibility(Player.Player2);
+            ResetVisibility(Player.Player1);
+        }
+    }
 
 	public HexCell GetCell (Ray ray) {
 		RaycastHit hit;
@@ -293,59 +295,48 @@ public class HexGrid : MonoBehaviour {
 
 
  
-	public void IncreaseVisibility (HexCell fromCell, int range, Player forceSource=null) {
-		List<HexCell> cells = GetVisibleCells(fromCell, range);
+	public void IncreaseVisibility (HexCell fromCell, int range, Player player, int additionalElevation=0) {
+		List<HexCell> cells = GetVisibleCells(fromCell, range, additionalElevation);
 		for (int i = 0; i < cells.Count; i++) {
-			cells[i].IncreaseVisibility(forceSource);
+			cells[i].IncreaseVisibility(player);
 		}
 		ListPool<HexCell>.Add(cells);
 	}
 
-	public void DecreaseVisibility (HexCell fromCell, int range, Player forceSource=null) {
-		List<HexCell> cells = GetVisibleCells(fromCell, range);
+	public void DecreaseVisibility (HexCell fromCell, int range, Player player, int additionalElevation = 0) {
+		List<HexCell> cells = GetVisibleCells(fromCell, range, additionalElevation);
 		for (int i = 0; i < cells.Count; i++) {
-			cells[i].DecreaseVisibility(forceSource);
+			cells[i].DecreaseVisibility(player);
 		}
 		ListPool<HexCell>.Add(cells);
 	}
 
-	public void ResetVisibility () {
+	public void ResetVisibility (Player player) {
 
 		for (int i = 0; i < cells.Length; i++) {
-			cells[i].ResetVisibility();
+			cells[i].ResetVisibility(player);
 		}
         /*for (int i = 0; i < units.Count; i++) {
 			HexUnit unit = units[i];
 			IncreaseVisibility(unit.Location, unit.VisionRange);
 		}*/
-        if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
-        {
+        
             foreach (Building building in Player.Player1.currentBuildings)
             {
-                IncreaseVisibility(building.currentPosition, building.visionRange);
+                IncreaseVisibility(building.currentPosition, building.visionRange, player);
             }
-            foreach (Unit unit in Player.Player1.currentUnits)
+            foreach (Unit unit in player.currentUnits)
             {
-                IncreaseVisibility(unit.currentPosition, unit.visionRange);
+                IncreaseVisibility(unit.currentPosition, unit.visionRange+unit.currentVisionRangeModifier, player);
             }
-        }
-        else
-        {
-            foreach (Building building in Player.Player2.currentBuildings)
-            {
-                IncreaseVisibility(building.currentPosition, building.visionRange);
-            }
-            foreach (Unit unit in Player.Player2.currentUnits)
-            {
-                IncreaseVisibility(unit.currentPosition, unit.visionRange);
-            }
-        }
+        
+        
     }
 
-	List<HexCell> GetVisibleCells (HexCell fromCell, int range) {
-        List<HexCell> visibleCells = new List<HexCell>();// ListPool<HexCell>.Get();
+	List<HexCell> GetVisibleCells (HexCell fromCell, int range, int additionalElevation=0) {
+        List<HexCell> visibleCells = new List<HexCell>();
 
-		searchFrontierPhase += 2;
+		visionSearchFrontierPhase += 2;
 		if (searchFrontier == null) {
 			searchFrontier = new HexCellPriorityQueue();
 		}
@@ -354,29 +345,29 @@ public class HexGrid : MonoBehaviour {
 		}
 
 		//range += fromCell.ViewElevation;
-		fromCell.SearchPhase = searchFrontierPhase;
-		fromCell.Distance = 0;
+		fromCell.VisionSearchPhase = visionSearchFrontierPhase;
+		fromCell.visionDistance = 0;
 		searchFrontier.Enqueue(fromCell);
 		HexCoordinates fromCoordinates = fromCell.coordinates;
 		while (searchFrontier.Count > 0) {
 			HexCell current = searchFrontier.Dequeue();
-			current.SearchPhase += 1;
+			current.VisionSearchPhase += 1;
 			visibleCells.Add(current);
 
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 				HexCell neighbor = current.GetNeighbor(d);
 				if (
 					neighbor == null ||
-					neighbor.SearchPhase > searchFrontierPhase ||
+					neighbor.VisionSearchPhase > visionSearchFrontierPhase ||
 					!neighbor.Explorable
 				) {
 					continue;
 				}
 
-				int distance = current.Distance + 1;
+				int distance = current.visionDistance + 1;
                 HexEdgeType edgeType = current.GetEdgeType(neighbor);
                 
-                int elevatedDistance = neighbor.ViewElevation > current.ViewElevation ? neighbor.ViewElevation - current.ViewElevation : 0;
+                int elevatedDistance = neighbor.ViewElevation > (current.ViewElevation +additionalElevation) ? neighbor.ViewElevation - current.ViewElevation : 0;
 				if (distance + Mathf.FloorToInt(elevatedDistance/2) > range  ||
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates) ||
                     (edgeType == HexEdgeType.Cliff && elevatedDistance > 0)
@@ -384,15 +375,15 @@ public class HexGrid : MonoBehaviour {
 					continue;
 				}
 
-				if (neighbor.SearchPhase < searchFrontierPhase) {
-					neighbor.SearchPhase = searchFrontierPhase;
-					neighbor.Distance = distance;
+				if (neighbor.VisionSearchPhase < visionSearchFrontierPhase) {
+					neighbor.VisionSearchPhase = visionSearchFrontierPhase;
+					neighbor.visionDistance = distance;
 					neighbor.SearchHeuristic = 0;
 					searchFrontier.Enqueue(neighbor);
 				}
-				else if (distance < neighbor.Distance) {
+				else if (distance < neighbor.visionDistance) {
 					int oldPriority = neighbor.SearchPriority;
-					neighbor.Distance = distance;
+					neighbor.visionDistance = distance;
 					searchFrontier.Change(neighbor, oldPriority);
 				}
 			}

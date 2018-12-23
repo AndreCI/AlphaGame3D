@@ -4,7 +4,6 @@ using UnityEngine;
 public class HexMapCamera : MonoBehaviour {
 
 
-
 	public float stickMinZoom, stickMaxZoom;
 
 	public float swivelMinZoom, swivelMaxZoom;

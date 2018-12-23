@@ -134,7 +134,7 @@ public abstract class Building : Selectable
     public IEnumerator DisplayAndApplyNotification(Player currentPlayer, Dictionary<Utils.NotificationTypes, int> notificationData)
     {
         notificationPanel.SetActive(true);
-        notificationPanel.transform.rotation = Camera.main.transform.rotation;
+        notificationPanel.transform.rotation = HexMapCamera.instance.transform.rotation;//Camera.main.transform.rotation;
         foreach (Utils.NotificationTypes type in notificationData.Keys)
         {
             string data = "";

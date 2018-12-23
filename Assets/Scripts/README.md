@@ -18,6 +18,7 @@ add AI difficulty
 	Fix effect and death mechanics
 	Rework unit movement completly by removing root motion
 Implement units keywords
+	Implement flight
 	Go In Hexgrid see https://catlikecoding.com/unity/tutorials/hex-map/part-27/
 	Rework BFS
 
@@ -56,6 +57,7 @@ hexgrid:
 	add range attack
 	and spells
 	debug visibility
+Debug visibility (death effect, change visibility during oppo turn)
 	Debug AI
 Debug range attack
 add a way to check if game is unplayable

@@ -34,6 +34,8 @@ public class RequirementSystem {
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Dragon));
         AddUnlocksAndLocks(depth1, depth2);
+        depth2 = new NodeR(typeof(Golem));
+        AddUnlocksAndLocks(depth1, depth2);
 
 
         //Barracks

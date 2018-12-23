@@ -147,9 +147,12 @@ public class ArtificialIntelligence : Player
               CardDisplay.Instance.DisableCardDisplay();
           }
         u.ClearPossibleMoves(target);
-          Debug.Log("AI move done.");
-          yield return new WaitForSeconds(0.0f);
-      }
+        if (u.visible)
+        {
+            yield return new WaitForSeconds(0.9f);
+        }
+        Debug.Log("AI move done.");
+    }
       private HexCell DecideUnitMovement(Unit u)
       {
           HexCell target = null;

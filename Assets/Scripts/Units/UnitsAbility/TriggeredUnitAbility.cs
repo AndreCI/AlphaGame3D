@@ -56,8 +56,6 @@ public class TriggeredUnitAbility : UnitAbility, IObserver
                 {
                     abilityOwner.currentEffect.Add(ue);
                 }
-                Debug.Log("vision=" + abilityOwner.GetVisionRange());
-                Debug.Log(ue.duration);
                 break;
         }
     }

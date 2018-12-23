@@ -28,6 +28,9 @@ public abstract class Unit : Selectable
     public int maxMovementPoints;
     public int attackRange;
     public string effectDescription;
+    public bool attackAnimationIsFromSource = false;
+    [Header("Flying attribute")]
+    public bool flying;
 
     [Header("Internal variables (no preset is needed)")]
     public int currentHealth;
@@ -54,13 +57,13 @@ public abstract class Unit : Selectable
     }
     private HexCellPriorityQueue searchFrontier;
     protected Animator anim;
-    public Animation animLegacy;
     protected List<HexCell> potentialPath; //Current path for the target node
   //  protected List<HexCell> path; //selected path to node
     protected HexCell cellToGo;
     protected bool moving;
     protected List<HexCell> possibleMoves; //List of all the nodes where the unit can go
     //protected List<HexCell> rangedAttackableMoves; //List of all the nodes where the unit can go
+    protected float yPositionOffset; //used in flying units
 
     //Mouvement data
     private Vector3 a, b, c;
@@ -70,11 +73,8 @@ public abstract class Unit : Selectable
 
     public virtual void Setup()
     {
-        if (!animLegacy)
-        {
             anim = GetComponentInChildren<Animator>();
             anim.logWarnings = false;
-        }
         currentAttackModifier = 0;
         currentVisionRangeModifier = 0;
         currentHealth = maxHealth;
@@ -103,9 +103,14 @@ public abstract class Unit : Selectable
             {
                 currentMovementPoints = maxMovementPoints;
                 currentAttackModifier = 0;
+                HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+
                 currentVisionRangeModifier = 0;
                 armor = 0;
+                HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
+
             }
         }
 
@@ -117,7 +122,7 @@ public abstract class Unit : Selectable
 
         currentEffects.RemoveAll(ue => ue.duration <= 0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
         notificationPanel.SetActive(true);
-        notificationPanel.transform.rotation = Camera.main.transform.rotation;
+        notificationPanel.transform.rotation = HexMapCamera.instance.transform.rotation;//Camera.main.transform.rotation;
 
         for (int i = 0; i < currentEffects.Count; i++) {
             UnitEffect ue = currentEffects[i]; //No foreach as effects can be added during opening phase.
@@ -189,8 +194,7 @@ public abstract class Unit : Selectable
 
     public void IsAttacked(int amount, Unit source, bool riposte)
     {
-        LookAt(source.currentPosition.Position + new Vector3(0, 1, 0));
-   //     FaceNextNode(source.currentPosition);
+        StartCoroutine(LookAt(source.currentPosition.Position + new Vector3(0, 1, 0)));
         TakesDamage(amount);
         if (currentPosition.GetNeighbors().Contains(source.currentPosition) &&
             attackRange == 0 &&
@@ -201,7 +205,7 @@ public abstract class Unit : Selectable
         }
     }
 
-    public void TakesDamage(int amount, bool unsafeDeath = false)
+    public virtual void TakesDamage(int amount, bool unsafeDeath = false)
     {
         int amountReduced = amount - armor;
         if (amountReduced <= 0)
@@ -220,6 +224,7 @@ public abstract class Unit : Selectable
 
     public IEnumerator Death(bool AIcall = false)
     {
+        HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
         if (owner.Equals(Player.Player1))
         {
             NotificationsList.Instance.AddNotification("Your unit ("+ cardName+ ") died!",
@@ -227,8 +232,6 @@ public abstract class Unit : Selectable
                 currentPosition);
         }
         anim.SetTrigger("Death");
-        //animLegacy;
-        //animLegacy.c // ["death"];
         Debug.Log("A unit died with AIcall:" + AIcall);
         if (owner.GetType() != typeof(ArtificialIntelligence) || AIcall || !TurnManager.Instance.currentPlayer.Equals(owner))
         {
@@ -245,7 +248,7 @@ public abstract class Unit : Selectable
 
                // currentPosition.ResetNode(); //No double reset as a new unit could stand here now
                 owner.currentUnits.Remove(this);
-                yield return new WaitForSeconds(1.5f);
+                yield return new WaitForSeconds(2.5f);
                 Destroy(prefab);
             } //For riposte,safe remove after
             Debug.Log("     reset correctly");
@@ -256,7 +259,6 @@ public abstract class Unit : Selectable
             currentPosition.unit = null;
             SetVisible(false);
         }
-        HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange, forceSource:owner);
         Debug.Log("Unit died correctly");
         
 
@@ -446,15 +448,22 @@ public abstract class Unit : Selectable
             }
         }
     }
-    public bool IsValidDestination(HexCell cell)
+    public virtual bool IsValidDestination(HexCell cell)
     {
-        return cell.IsExplored && !cell.IsUnderwater && (!cell.unit || cell.unit.owner!=owner) && !cell.building;
+        return cell.IsExplored && 
+            (!cell.IsUnderwater || IsAttackable(cell)) && 
+            (!cell.unit || cell.unit.owner!=owner) && 
+            !cell.building;
     }
     public bool IsAttackable(HexCell cell)
     {
-        return cell.unit != null && cell.unit.currentHealth>0 && cell.unit.owner != owner;
+        return cell.unit != null && 
+            cell.unit.currentHealth>0 && 
+            cell.unit.owner != owner &&
+        //    (!cell.unit.flying || attackRange>0) && //(!cell.IsUnderwater || 
+            ((!cell.unit.flying || attackRange>0)); //flying check is redundant but makes it more clear
     }
-    public int GetMoveCost(
+    public virtual int GetMoveCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)
     {
         if (!IsValidDestination(toCell))
@@ -523,7 +532,7 @@ public abstract class Unit : Selectable
     }
     public void ValidateLocation()
     {
-        movementSphere.position = currentPosition.Position;
+        movementSphere.position = currentPosition.Position + new Vector3(0, yPositionOffset, 0);
     }
     
     public void ShowPotentialRangeAttack(List<HexCell> potentialPath)
@@ -597,14 +606,26 @@ public abstract class Unit : Selectable
 
     protected virtual IEnumerator Attack(HexCell target, bool riposte)
     {
-       
+        yield return StartCoroutine(LookAt(target.Position + attackOffset));
         anim.SetTrigger("Attack1Trigger");
         currentMovementPoints = 0;
         if (currentPosition.GetNeighbors().Contains(target) && meleeAttackAnimation != null)
         {
-            GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.Position + attackOffset, new Quaternion(0, 0, 0, 0));
-            Destroy(attackAnim, 5);
-            yield return new WaitForSeconds(0.5f);
+            if (attackAnimationIsFromSource)
+            {
+                foreach(ParticleSystem ps in meleeAttackAnimation.GetComponentsInChildren<ParticleSystem>())
+                {
+                    ps.transform.LookAt(target.Position + attackOffset);
+                    ps.Play();
+                }
+                yield return new WaitForSeconds(1.5f);
+            }
+            else
+            {
+                GameObject attackAnim = (GameObject)Instantiate(meleeAttackAnimation, target.Position + attackOffset, new Quaternion(0, 0, 0, 0));
+                Destroy(attackAnim, 5);
+                yield return new WaitForSeconds(0.5f);
+            }
         }else if(rangedAttackAnimation != null)
         {
             rangedAttackAnimation.HideAttackPreview();
@@ -649,8 +670,7 @@ public abstract class Unit : Selectable
             }
             pathToTravel.Add(current);
             pathToTravel.Reverse();
-            Debug.Log("623 Debug Catch: " + target.ToString());
-            yield return LookAt(pathToTravel[1].Position);
+            yield return StartCoroutine(LookAt(pathToTravel[1].Position));
             bool attackNext = SetupAttack(pathToTravel.GetRange(1, pathToTravel.Count - 1));
             if (attackNext)
             {
@@ -668,7 +688,7 @@ public abstract class Unit : Selectable
             else
             {
                 //Start moving
-                a = b = c = pathToTravel[0].Position;
+                a = b = c = pathToTravel[0].Position + new Vector3(0, yPositionOffset, 0);
                 moving = true;
                 anim.SetTrigger("Moving");
 
@@ -688,7 +708,8 @@ public abstract class Unit : Selectable
                     {
                         break;
                     }
-
+                     HexGrid.Instance.DecreaseVisibility(pathToTravel[i], visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+                    HexGrid.Instance.IncreaseVisibility(pathToTravel[i], visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
                 }
                 yield return StartCoroutine(FinishMove(previousCell));
                 if (attackNext)
@@ -710,7 +731,7 @@ public abstract class Unit : Selectable
     private IEnumerator FinishMove(HexCell previousCell)
     {
         a = c;
-        b = currentPosition.Position;
+        b = currentPosition.Position + new Vector3(0, yPositionOffset, 0);
         c = b;
         for (; mouvementTime < 1f; mouvementTime += Time.deltaTime * speed)
         {
@@ -721,10 +742,10 @@ public abstract class Unit : Selectable
             yield return null;
         }
 
-        movementSphere.position = currentPosition.Position;
+        movementSphere.position = currentPosition.Position + new Vector3(0, yPositionOffset, 0);
         orientation = movementSphere.localRotation.eulerAngles.y;
-        HexGrid.Instance.DecreaseVisibility(previousCell, visionRange);
-        HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange);
+        HexGrid.Instance.DecreaseVisibility(previousCell, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+        HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
         anim.ResetTrigger("Moving");
         moving = false;
         ClearPossibleMoves(previousCell: previousCell);
@@ -740,7 +761,7 @@ public abstract class Unit : Selectable
     {
         HexCell currentTravelLocation = nextCell;
         a = c;
-        b = previousCell.Position;
+        b = previousCell.Position + new Vector3(0, yPositionOffset, 0);
 
         int nextColumn = currentTravelLocation.ColumnIndex;
         if (currentColumn != nextColumn)

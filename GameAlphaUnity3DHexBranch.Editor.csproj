@@ -303,6 +303,7 @@
   <ItemGroup>
     <None Include="Assets\3DForge\FantasyExteriors\Village &amp; Towns\Documents\Village Exteriors Kit v1.0 - user guide.txt" />
     <None Include="Assets\Imported\BirchPackVol1\Works For Fun.txt" />
+    <None Include="Assets\Imported\HEROIC FANTASY CREATURES FULL PACK\DEMONIC CREATURES PACK\GOLEM\SHADER\SelfIllumBumpedSpecular.shader" />
     <None Include="Assets\Imported\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Imported\low poly medieval buildings\readme.txt" />
     <None Include="Assets\Materials\Estuary.shader" />

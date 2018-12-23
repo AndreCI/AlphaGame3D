@@ -293,6 +293,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Imported\HEROIC FANTASY CREATURES FULL PACK\DEMONIC CREATURES PACK\DEMON LORD\SCRIPT\ScrollingUVs.cs" />
     <Compile Include="Assets\Imported\KY_effects\Script\ConGUI.cs" />
     <Compile Include="Assets\Imported\KY_effects\Script\Lighting.cs" />
     <Compile Include="Assets\Imported\Warrior Pack Bundle 3 FREE\Code\IKHands.cs" />
@@ -386,6 +387,8 @@
     <Compile Include="Assets\Scripts\Units\Archer.cs" />
     <Compile Include="Assets\Scripts\Units\Bandit.cs" />
     <Compile Include="Assets\Scripts\Units\Brute.cs" />
+    <Compile Include="Assets\Scripts\Units\Dragon.cs" />
+    <Compile Include="Assets\Scripts\Units\FlyingUnit.cs" />
     <Compile Include="Assets\Scripts\Units\Horseman.cs" />
     <Compile Include="Assets\Scripts\Units\Scout.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
@@ -393,8 +396,7 @@
     <Compile Include="Assets\Scripts\Units\UnitsAbility\TriggeredUnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbility.cs" />
     <Compile Include="Assets\Scripts\Units\UnitsAbility\UnitAbilityUtils.cs" />
-    <Compile Include="Assets\Scripts\Units\FlyingUnit.cs" />
-    <Compile Include="Assets\Scripts\Units\Dragon.cs" />
+    <Compile Include="Assets\Scripts\Units\Golem.cs" />
     <Compile Include="Assets\Scripts\Units\Warrior.cs" />
     <Compile Include="Assets\Scripts\Units\Wizard.cs" />
     <Compile Include="Assets\Scripts\World\Bezier.cs" />
@@ -456,6 +458,7 @@
   <ItemGroup>
     <None Include="Assets\3DForge\FantasyExteriors\Village &amp; Towns\Documents\Village Exteriors Kit v1.0 - user guide.txt" />
     <None Include="Assets\Imported\BirchPackVol1\Works For Fun.txt" />
+    <None Include="Assets\Imported\HEROIC FANTASY CREATURES FULL PACK\DEMONIC CREATURES PACK\GOLEM\SHADER\SelfIllumBumpedSpecular.shader" />
     <None Include="Assets\Imported\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Imported\low poly medieval buildings\readme.txt" />
     <None Include="Assets\Materials\Estuary.shader" />

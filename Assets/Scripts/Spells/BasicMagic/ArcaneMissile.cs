@@ -32,7 +32,6 @@ public class ArcaneMissile : Spell
     {
         foreach (HexCell node in targetedNodes)
         {
-            Debug.Log(node.ToString());
             yield return StartCoroutine(playSingleAnimation(node));
         }
     }
