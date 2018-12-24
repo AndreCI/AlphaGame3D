@@ -100,7 +100,7 @@ public class HexGrid : MonoBehaviour {
 		chunkCountX = cellCountX / HexMetrics.chunkSizeX;
 		chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 		cellShaderData.Initialize(cellCountX, cellCountZ);
-        cellShaderData.ImmediateMode = true; //If false, bugs occur :( 
+        //cellShaderData.ImmediateMode = true; //If false, bugs occur :( 
 		CreateChunks();
 		CreateCells();
 		return true;

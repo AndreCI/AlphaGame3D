@@ -8,7 +8,7 @@ public class HexCellShaderData : MonoBehaviour {
 	Texture2D cellTexture;
 	Color32[] cellTextureData;
 
-	List<HexCell> transitioningCells = new List<HexCell>();
+	Dictionary<HexCell, Player> transitioningCells = new Dictionary<HexCell, Player>();
 
 	bool needsVisibilityReset;
 
@@ -53,14 +53,15 @@ public class HexCellShaderData : MonoBehaviour {
 	}
 
 	public void RefreshVisibility (HexCell cell, Player owner) {
+       // owner = Player.Player1;
 		int index = cell.Index;
 		if (ImmediateMode) {
 			cellTextureData[index].r = cell.IsVisible(owner) ? (byte)255 : (byte)0;
-			cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
+			cellTextureData[index].g = cell.IsExplored(owner) ? (byte)255 : (byte)0;
 		}
 		else if (cellTextureData[index].b != 255) {
 			cellTextureData[index].b = 255;
-			transitioningCells.Add(cell);
+			transitioningCells.Add(cell, owner);
 		}
 		enabled = true;
 	}
@@ -86,13 +87,24 @@ public class HexCellShaderData : MonoBehaviour {
 		if (delta == 0) {
 			delta = 1;
 		}
+        List<HexCell> keys = new List<HexCell>(transitioningCells.Keys);
+        for(int i = 0; i < keys.Count; i++)
+        {
+            if (!UpdateCellData(keys[i], delta, transitioningCells[keys[i]]))
+            {
+                transitioningCells.Remove(keys[i]);
+                keys[i--] =
+                    keys[keys.Count - 1];
+                keys.RemoveAt(keys.Count - 1);
+            }
+        }/*
 		for (int i = 0; i < transitioningCells.Count; i++) {
 			if (!UpdateCellData(transitioningCells[i], delta, TurnManager.Instance.currentPlayer)) {
 				transitioningCells[i--] =
 					transitioningCells[transitioningCells.Count - 1];
 				transitioningCells.RemoveAt(transitioningCells.Count - 1);
 			}
-		}
+		}*/
 
 		cellTexture.SetPixels32(cellTextureData);
 		cellTexture.Apply();
@@ -100,18 +112,19 @@ public class HexCellShaderData : MonoBehaviour {
 	}
 
 	bool UpdateCellData (HexCell cell, int delta, Player player) {
+       // player = Player.Player1;
 		int index = cell.Index;
 		Color32 data = cellTextureData[index];
 		bool stillUpdating = false;
 
-		if (cell.IsExplored && data.g < 255) {
+		if (cell.IsExplored(player) && data.g < 255) { //g is exploration channel
 			stillUpdating = true;
 			int t = data.g + delta;
 			data.g = t >= 255 ? (byte)255 : (byte)t;
 		}
 
 		if (cell.IsVisible(player)) {
-			if (data.r < 255) {
+			if (data.r < 255) { //r is visibility channel
 				stillUpdating = true;
 				int t = data.r + delta;
 				data.r = t >= 255 ? (byte)255 : (byte)t;
@@ -124,7 +137,7 @@ public class HexCellShaderData : MonoBehaviour {
 		}
 
 		if (!stillUpdating) {
-			data.b = 0;
+			data.b = 0; //b is transition channel
 		}
 		cellTextureData[index] = data;
 		return stillUpdating;

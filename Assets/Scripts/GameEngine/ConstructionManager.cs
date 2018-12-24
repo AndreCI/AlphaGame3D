@@ -53,15 +53,22 @@ public class ConstructionManager : MonoBehaviour, IObserver
         {
             Selector.Instance.currentObject = (building);
             building.UpdateCardDisplayInfo();
-            foreach (HexCell n in TurnManager.Instance.currentPlayer.currentBuildings[0].currentPosition.GetNeighbors())
-            
+            foreach(Building b in TurnManager.Instance.currentPlayer.currentBuildings)
             {
-                if (n.IsFree)
+                foreach(HexDirection direction in HexDirectionExtensions.AllDirections())
                 {
-                    n.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
-                    availablePositions.Add(n);
+                    HexCell potential = b.currentPosition.GetNeighbor(direction);
+                    if (potential != null) {
+                        potential =potential.GetNeighbor(direction);
+                        if (potential != null && potential.IsFree(TurnManager.Instance.currentPlayer))
+                        {
+                            potential.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
+                            availablePositions.Add(potential);
+                        }
+                    }
                 }
             }
+            
         }
     }
 
@@ -136,7 +143,7 @@ public class ConstructionManager : MonoBehaviour, IObserver
         Selectable spawnPoint = TurnManager.Instance.currentPlayer.GetSelectableFromType(unit.GetSpawnPoint());
         foreach(HexCell possibleSpawn in spawnPoint.currentPosition.GetNeighbors())
         {
-            if (possibleSpawn.IsFree)
+            if (possibleSpawn.IsFree(TurnManager.Instance.currentPlayer))
             {
                 possibleSpawn.State = HexCell.STATE.CONSTRUCT_SELECTABLE;
                 availablePositions.Add(possibleSpawn);

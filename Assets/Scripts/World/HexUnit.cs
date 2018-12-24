@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-
+/*
 public class HexUnit : MonoBehaviour {
 
 	const float rotationSpeed = 180f;
@@ -246,4 +246,4 @@ public class HexUnit : MonoBehaviour {
 //			Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
 //		}
 //	}
-}
+}*/

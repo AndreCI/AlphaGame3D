@@ -281,7 +281,7 @@ public abstract class Spell : Selectable
 
     public bool IsValidCell(HexCell cell)
     {
-        return cell.IsExplored && !cell.IsUnderwater;
+        return cell.IsExplored(TurnManager.Instance.currentPlayer) && !cell.IsUnderwater;
     }
     public int GetRangeCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)

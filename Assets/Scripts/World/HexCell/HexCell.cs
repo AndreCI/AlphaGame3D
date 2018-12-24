@@ -270,12 +270,10 @@ public class HexCell : MonoBehaviour, IObserver {
 		}
 	}
 
-    public bool IsFree
+    public bool IsFree(Player player)
     {
-        get
-        {
-            return !unit && !building && !IsUnderwater && IsExplored;
-        }
+            return !unit && !building && !IsUnderwater && IsExplored(player);
+        
     }
 
 	public bool Walled {
@@ -311,19 +309,19 @@ public class HexCell : MonoBehaviour, IObserver {
 		
 	}
 
-	public bool IsExplored {
-		get {
-            if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
-            {
-                return explored_p1 && Explorable;
-            }
-            else
-            {
-                return explored_p2 && Explorable;
-            }
-		}
-		private set {
-            if (TurnManager.Instance.currentPlayer.Equals(Player.Player1))
+    public bool IsExplored(Player player) {
+
+        if (player.Equals(Player.Player1))
+        {
+            return explored_p1 && Explorable;
+        }
+        else
+        {
+            return explored_p2 && Explorable;
+        }
+    }
+    private void SetExplored(Player player, bool value) {
+            if (player.Equals(Player.Player1))
             {
                 explored_p1 = value;
             }
@@ -331,7 +329,7 @@ public class HexCell : MonoBehaviour, IObserver {
             {
                 explored_p2 = value;
             }
-        }
+        
 	}
 
 	public bool Explorable { get; set; }
@@ -494,7 +492,7 @@ public class HexCell : MonoBehaviour, IObserver {
             if (visibility_p1 == 1)
             {
                 Player.Player1.visibleNodes.Add(this);
-                IsExplored = true;
+                SetExplored(player, true);
                 ShaderData.RefreshVisibility(this, player);
                 if (TurnManager.Instance.againstAI)
                 {
@@ -515,7 +513,7 @@ public class HexCell : MonoBehaviour, IObserver {
             if (visibility_p2 == 1)
             {
                 Player.Player2.visibleNodes.Add(this);
-                IsExplored = true;
+                SetExplored(player, true);
                 if (!TurnManager.Instance.againstAI)
                 {
                     ShaderData.RefreshVisibility(this, player);
@@ -598,7 +596,14 @@ public class HexCell : MonoBehaviour, IObserver {
     }
 
 	public HexCell GetNeighbor (HexDirection direction) {
-		return neighbors[(int)direction];
+        if (neighbors.Length >= (int)direction)
+        {
+            return neighbors[(int)direction];
+        }
+        else
+        {
+            return null;
+        }
 	}
 
 	public void SetNeighbor (HexDirection direction, HexCell cell) {
@@ -768,7 +773,7 @@ public class HexCell : MonoBehaviour, IObserver {
 		}
 
 		
-		writer.Write(IsExplored);
+		writer.Write(IsExplored(TurnManager.Instance.currentPlayer));
 	}
 
 	public void Load (BinaryReader reader, int header) {
@@ -805,7 +810,7 @@ public class HexCell : MonoBehaviour, IObserver {
 		}
 
 		
-		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
+	//	IsExplored = header >= 3 ? reader.ReadBoolean() : false;
 		ShaderData.RefreshVisibility(this, TurnManager.Instance.currentPlayer);
 	}
 
@@ -932,7 +937,7 @@ public class HexCell : MonoBehaviour, IObserver {
         {
             if (subjectType == TurnSubject.NOTIFICATION_TYPE.START_OF_TURN)
             {
-                ShaderData.RefreshVisibility(this, player);
+          //      ShaderData.RefreshVisibility(this, player);
                 
             }
         }

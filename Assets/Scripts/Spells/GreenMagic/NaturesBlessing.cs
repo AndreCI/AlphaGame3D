@@ -39,7 +39,7 @@ public class NaturesBlessing : Spell
         base.GetCastableNodes();
         foreach(HexCell n in castableNodes)
         {
-            if (!n.IsFree)
+            if (!n.IsFree(TurnManager.Instance.currentPlayer))
             {
                 n.State = HexCell.STATE.IDLE;
             }

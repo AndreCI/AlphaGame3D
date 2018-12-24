@@ -1,4 +1,6 @@
-﻿public enum HexDirection {
+﻿using System.Collections.Generic;
+
+public enum HexDirection {
 	NE, E, SE, SW, W, NW
 }
 
@@ -25,4 +27,15 @@ public static class HexDirectionExtensions {
 		direction += 2;
 		return direction <= HexDirection.NW ? direction : (direction - 6);
 	}
+
+    public static List<HexDirection> AllDirections()
+    {
+        return new List<HexDirection> { HexDirection.E,
+            HexDirection.NE,
+            HexDirection.NW,
+            HexDirection.SE,
+            HexDirection.SW,
+            HexDirection.W
+        };
+    }
 }

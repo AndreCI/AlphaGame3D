@@ -15,7 +15,7 @@ public abstract class FlyingUnit : Unit
     {
         if (flying)
         {
-            return cell.IsExplored && (!cell.unit || cell.unit.owner != owner) && !cell.building;
+            return cell.IsExplored(owner) && (!cell.unit || cell.unit.owner != owner) && !cell.building;
         }
         else
         {

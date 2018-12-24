@@ -141,7 +141,7 @@ public abstract class Unit : Selectable
         currentEffects.RemoveAll(ue => ue.effectEnded); //safe removing of elements
         if (currentHealth <= 0)
         {
-            yield return StartCoroutine(Death());
+            StartCoroutine(Death());
         }
         yield return null;
     }
@@ -450,7 +450,7 @@ public abstract class Unit : Selectable
     }
     public virtual bool IsValidDestination(HexCell cell)
     {
-        return cell.IsExplored && 
+        return cell.IsExplored(owner) && 
             (!cell.IsUnderwater || IsAttackable(cell)) && 
             (!cell.unit || cell.unit.owner!=owner) && 
             !cell.building;
@@ -493,7 +493,7 @@ public abstract class Unit : Selectable
     public int GetRangeCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)
     {
-        if (!toCell.IsExplored || toCell.IsUnderwater)
+        if (!toCell.IsExplored(owner) || toCell.IsUnderwater)
         {
             return -1;
         }
@@ -708,7 +708,7 @@ public abstract class Unit : Selectable
                     {
                         break;
                     }
-                     HexGrid.Instance.DecreaseVisibility(pathToTravel[i], visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+                    HexGrid.Instance.DecreaseVisibility(pathToTravel[i-1], visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
                     HexGrid.Instance.IncreaseVisibility(pathToTravel[i], visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
                 }
                 yield return StartCoroutine(FinishMove(previousCell));
@@ -744,7 +744,7 @@ public abstract class Unit : Selectable
 
         movementSphere.position = currentPosition.Position + new Vector3(0, yPositionOffset, 0);
         orientation = movementSphere.localRotation.eulerAngles.y;
-        HexGrid.Instance.DecreaseVisibility(previousCell, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+        //HexGrid.Instance.DecreaseVisibility(previousCell, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
         HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
         anim.ResetTrigger("Moving");
         moving = false;

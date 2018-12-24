@@ -61,9 +61,9 @@ Debug visibility (death effect, change visibility during oppo turn)
 	Debug AI
 Debug range attack
 add a way to check if game is unplayable
-think about a way to place building
+	think about a way to place building
 remove ability to place building/unit at wrong places
-Rework building/unit placement
+	Rework building/unit placement
 Implement damage source type (food, attack, riposte, spell, effect...)
 	center camera on hall center at start of game	
 
