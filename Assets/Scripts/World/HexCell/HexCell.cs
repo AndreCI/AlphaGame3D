@@ -344,25 +344,21 @@ public class HexCell : MonoBehaviour, IObserver {
 			distance = value;
 		}
 	}
-    public void Construct(bool makeUnwalkable = true)
+    public void Construct(bool makeUnwalkable = true, Player owner=null)
     {
         if (ConstructionManager.Instance.mode == "building")
         {
-            building = ConstructionManager.Instance.ConstructBuilding(this);
+            building = ConstructionManager.Instance.ConstructBuilding(this, owner);
         }
         else if (ConstructionManager.Instance.mode == "unit")
         {
-            unit = ConstructionManager.Instance.ConstructUnit(this);
+            unit = ConstructionManager.Instance.ConstructUnit(this, owner);
         }
         else if (ConstructionManager.Instance.mode == "spell")
         {
-            ConstructionManager.Instance.ConstructSpell(this);
+            ConstructionManager.Instance.ConstructSpell(this, owner);
         }
         ConstructionManager.Instance.ResetConstruction();
-        if (makeUnwalkable)
-        {
-            
-        }
     }
     private Unit unit_;
     public Unit unit { get {
@@ -457,7 +453,7 @@ public class HexCell : MonoBehaviour, IObserver {
 
 	int distance;
 
-	public int visibility_p1;
+    public int visibility_p1;
     int visibility_p2;
 
     bool explored_p1;
@@ -527,6 +523,7 @@ public class HexCell : MonoBehaviour, IObserver {
         if (player.Equals(Player.Player1))
         {
             visibility_p1 -= 1;
+          //  SetLabel(visibility_p1.ToString());
             if (visibility_p1 == 0)
             {
                 Player.Player1.visibleNodes.Remove(this);
@@ -574,7 +571,8 @@ public class HexCell : MonoBehaviour, IObserver {
                 }
             }
         }
-	}
+       // SetLabel(visibility_p1.ToString());
+    }
 
     public void Damage(int amount)
     {

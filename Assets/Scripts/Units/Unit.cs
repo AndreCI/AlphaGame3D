@@ -41,6 +41,7 @@ public abstract class Unit : Selectable
     public int armor;
     public int foodConso;
     public int currentVisionRangeModifier;
+    private int oldVisionRangeModifier;
     public Vector3 direction;
     private float orientation;
     public float Orientation
@@ -103,13 +104,13 @@ public abstract class Unit : Selectable
             {
                 currentMovementPoints = maxMovementPoints;
                 currentAttackModifier = 0;
-                HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
-
+                // HexGrid.Instance.DecreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+                oldVisionRangeModifier = currentVisionRangeModifier;
                 currentVisionRangeModifier = 0;
                 armor = 0;
-                HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
-
+                
                 StartCoroutine(DisplayAndApplyCurrentEffects(owner, currentEffect));
+             
 
             }
         }
@@ -119,8 +120,15 @@ public abstract class Unit : Selectable
 
     public IEnumerator DisplayAndApplyCurrentEffects(Player currentPlayer, List<UnitEffect> currentEffects)
     {
-
+        foreach(UnitEffect ue in currentEffects)
+        {
+            if(ue.duration <= 0)
+            {
+                ue.End(); //end animations
+            }
+        }
         currentEffects.RemoveAll(ue => ue.duration <= 0); //safe removing of elements (direct apply buffs, which sticks even to 0 duration for a turn)
+
         notificationPanel.SetActive(true);
         notificationPanel.transform.rotation = HexMapCamera.instance.transform.rotation;//Camera.main.transform.rotation;
 
@@ -143,7 +151,12 @@ public abstract class Unit : Selectable
         {
             StartCoroutine(Death());
         }
-        yield return null;
+        else
+        {
+            
+            HexGrid.Instance.DecreaseVisibilityFromRadius(currentPosition, visionRange, visionRange + oldVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+            
+        }
     }
     public IEnumerator DisplayNotifications(Dictionary<Utils.NotificationTypes, int> notifications)
     {
@@ -282,7 +295,7 @@ public abstract class Unit : Selectable
     public void ClearPossibleMoves(HexCell previousCell =null)
     {
         HexCell temp = (previousCell == null ? mouvementStartCell : previousCell);
-        Debug.Log("Clear possible Move from " + temp.ToString());
+       // Debug.Log("Clear possible Move from " + temp.ToString());
         List<HexCell> cellsToClear = new List<HexCell>();
         Queue<HexCell> possibleMoves = new Queue<HexCell>();
         possibleMoves.Enqueue(previousCell==null?mouvementStartCell:previousCell);
@@ -745,7 +758,7 @@ public abstract class Unit : Selectable
         movementSphere.position = currentPosition.Position + new Vector3(0, yPositionOffset, 0);
         orientation = movementSphere.localRotation.eulerAngles.y;
         //HexGrid.Instance.DecreaseVisibility(previousCell, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
-        HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
+      //  HexGrid.Instance.IncreaseVisibility(currentPosition, visionRange + currentVisionRangeModifier, owner, additionalElevation: Mathf.FloorToInt(yPositionOffset));
         anim.ResetTrigger("Moving");
         moving = false;
         ClearPossibleMoves(previousCell: previousCell);
@@ -757,7 +770,7 @@ public abstract class Unit : Selectable
     }
 
 
-    private IEnumerator MoveStep(HexCell previousCell, HexCell nextCell)
+    protected virtual IEnumerator MoveStep(HexCell previousCell, HexCell nextCell)
     {
         HexCell currentTravelLocation = nextCell;
         a = c;

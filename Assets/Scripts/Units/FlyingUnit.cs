@@ -72,7 +72,10 @@ public abstract class FlyingUnit : Unit
     {
         flying = true;
         anim.SetTrigger("Flying");
-        
+
+        HexGrid.Instance.IncreaseVisibilityFromRadius(currentPosition, visionRange + currentVisionRangeModifier,
+            visionRange + currentVisionRangeModifier + 3, owner, Mathf.FloorToInt(yPositionOffset + 10));
+        visionRange += 3;
         StartCoroutine(ChangeHeight(10, duration:0.5f, waitValue:1.5f));
 
     }
@@ -80,6 +83,10 @@ public abstract class FlyingUnit : Unit
     {
         flying = false;
         anim.ResetTrigger("Flying");
+        HexGrid.Instance.DecreaseVisibilityFromRadius(currentPosition, 
+            visionRange + currentVisionRangeModifier - 3, 
+            visionRange + currentVisionRangeModifier, owner, Mathf.FloorToInt(yPositionOffset - 10));
+        visionRange -= 3;
         StartCoroutine(ChangeHeight(-10, duration:0.6f));
     }
     public override void TakesDamage(int amount, bool unsafeDeath = false)

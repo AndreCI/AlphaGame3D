@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class UnitEffect
 {
@@ -33,11 +34,11 @@ public abstract class UnitEffect
     }
 
     public virtual void End()
-    { 
+    {
         int counter = 0;
         foreach (UnitEffect ue in u.currentEffect)
         {
-            if (ue.type == type)
+            if (ue.type == type && ue.duration >0)
             {
                 counter++;
             }

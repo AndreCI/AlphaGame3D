@@ -5,6 +5,7 @@ using UnityEngine;
 
 public static class Utils
 {
+    
     public static void EatFood(Player currentPlayer)
     {
         currentPlayer.food = currentPlayer.foodPrediction;
@@ -34,6 +35,21 @@ public static class Utils
     {//TODO: change this
         return list.OrderBy(arg => Guid.NewGuid()).Take(elementsCount).ToList();
     }
+    private static System.Random rng = new System.Random();
+
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+    }
+
     public static Dictionary<string, Spell> stringToSpell = new Dictionary<string, Spell>{
         {"naturewrath", Naturewrath.Instance },
         {"fireblast", Fireblast.Instance},

@@ -8,6 +8,7 @@ public class UnitAbilityUtils
         APPLY_EFFECT,
         GOLD_MODIFIER,
         ARMOR,
-        
+        CREATE_UNIT,
+
     }
 }

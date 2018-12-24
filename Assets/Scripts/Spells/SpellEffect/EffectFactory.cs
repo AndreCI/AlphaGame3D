@@ -4,7 +4,7 @@ using System;
 public class EffectFactory {
     private SpellUtils.EffectTypes type;
     private int duration;
-    private int amplitude;
+    public int amplitude;
     public EffectFactory(SpellUtils.EffectTypes type_, int duration_, int amplitude_ = 0)
     {
         type = type_;

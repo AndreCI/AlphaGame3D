@@ -293,9 +293,34 @@ public class HexGrid : MonoBehaviour {
 		cellShaderData.ImmediateMode = originalImmediateMode;
 	}
 
+    public void IncreaseVisibilityFromRadius(HexCell fromCell, int radius, int range, Player player, int additionalElevation = 0)
+    { //radius must be < range
+        List<HexCell> cells = GetVisibleCells(fromCell, range, additionalElevation);
+        List<HexCell> cellRadius = GetVisibleCells(fromCell, radius, additionalElevation);
+        cells.RemoveAll(c => cellRadius.Contains(c));
+        Debug.Log(cells.Count);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].IncreaseVisibility(player);
+        }
+        ListPool<HexCell>.Add(cells);
+    }
 
- 
-	public void IncreaseVisibility (HexCell fromCell, int range, Player player, int additionalElevation=0) {
+    public void DecreaseVisibilityFromRadius(HexCell fromCell, int radius, int range, Player player, int additionalElevation = 0)
+    {
+        //Radius must be < than range
+        List<HexCell> cells = GetVisibleCells(fromCell, range, additionalElevation);
+        List<HexCell> cellRadius = GetVisibleCells(fromCell, radius, additionalElevation);
+        cells.RemoveAll(c => cellRadius.Contains(c));
+        Debug.Log(cells.Count);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].DecreaseVisibility(player);
+        }
+        ListPool<HexCell>.Add(cells);
+    }
+
+    public void IncreaseVisibility (HexCell fromCell, int range, Player player, int additionalElevation=0) {
 		List<HexCell> cells = GetVisibleCells(fromCell, range, additionalElevation);
 		for (int i = 0; i < cells.Count; i++) {
 			cells[i].IncreaseVisibility(player);
@@ -367,7 +392,7 @@ public class HexGrid : MonoBehaviour {
 				int distance = current.visionDistance + 1;
                 HexEdgeType edgeType = current.GetEdgeType(neighbor);
                 
-                int elevatedDistance = neighbor.ViewElevation > (current.ViewElevation +additionalElevation) ? neighbor.ViewElevation - current.ViewElevation : 0;
+                int elevatedDistance = neighbor.ViewElevation > (current.ViewElevation +additionalElevation) ? neighbor.ViewElevation - (current.ViewElevation+additionalElevation) : 0;
 				if (distance + Mathf.FloorToInt(elevatedDistance/2) > range  ||
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates) ||
                     (edgeType == HexEdgeType.Cliff && elevatedDistance > 0)

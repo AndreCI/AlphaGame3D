@@ -40,14 +40,14 @@ public class ArtificialIntelligence : Player
         gold += 20;
         actionPoints += 5;
         foodPrediction -= 2;
-        // UpdateUnitEffect();
+         UpdateUnitEffect();
 
 
         yield return coroutineStarter.StartCoroutine(BasicRush());
         coroutineStarter.StopCoroutine(BasicRush());
 
 
-        //    UpdateUnitEffect();
+        UpdateUnitEffect();
         yield return new WaitForSeconds(1f);
         Debug.Log("AI ends the turn.");
             turnFinished = true;
@@ -61,14 +61,12 @@ public class ArtificialIntelligence : Player
           {
               PlaceBuilding(ConstructionManager.Instance.Barracks);
             
-            //yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
-            //yield return coroutineStarter.StartCoroutine(PlaceBuilding(ConstructionManager.Instance.Barracks));
         }
           else if (turnNumber == 2)// || food < 1)
           {
             PlaceBuilding(ConstructionManager.Instance.WindMill);
           }
-        PlaceUnit(ConstructionManager.Instance.SkeletonWarrior);
+     //   PlaceUnit(ConstructionManager.Instance.SkeletonWarrior);
         PlaceUnit(ConstructionManager.Instance.Wizard);
         //yield return coroutineStarter.StartCoroutine(PlaceUnit(ConstructionManager.Instance.Warrior));
 
@@ -120,13 +118,16 @@ public class ArtificialIntelligence : Player
       private IEnumerator MoveAllUnits()
       {
           Debug.Log("AI starts moving all units");
-          foreach(Unit u in currentUnits)
-          {
-              if (u.currentHealth > 0) //sanity check
-              {
-                  yield return u.StartCoroutine(MoveUnit(u));
-              }
-          }
+        currentUnits.Shuffle();
+         for(int i = 0; i < currentUnits.Count; i++)
+        {
+            Unit u = currentUnits[i];
+            if (u.currentHealth > 0) //sanity check
+            {
+                yield return u.StartCoroutine(MoveUnit(u));
+            }
+        }
+       
           turnShouldBeFinished = true;
           Debug.Log("AI finished moving units");
           yield return new WaitForSeconds(0.0f) ;
@@ -136,14 +137,14 @@ public class ArtificialIntelligence : Player
       {
           Debug.Log("AI starts moving a unit");
           HexCell target = DecideUnitMovement(u);
-          Debug.Log("   Unit target decided");
+        //  Debug.Log("   Unit target decided");
           if (target != null)
           {
               u.SetPathVisible(target);
-              Debug.Log("   Unit path found");
+          //    Debug.Log("   Unit path found");
               CardDisplay.Instance.DisableCardDisplay();
               yield return u.StartCoroutine(u.MoveTo(target));
-              Debug.Log("   Movement finished");
+            //  Debug.Log("   Movement finished");
               CardDisplay.Instance.DisableCardDisplay();
           }
         u.ClearPossibleMoves(target);
@@ -281,7 +282,7 @@ public class ArtificialIntelligence : Player
                   u.transform.position = node.transform.position;
                   u.transform.rotation = node.transform.rotation;
                   u.Setup();
-                //  u.SetCurrentPosition(node);
+                  u.SetCurrentPosition(node); //was commented
                   u.owner = this;
                   currentUnits.Add(u);
                   deactivatedUnits.Remove(u);

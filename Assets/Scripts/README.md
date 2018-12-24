@@ -57,7 +57,7 @@ hexgrid:
 	add range attack
 	and spells
 	debug visibility
-Debug visibility (death effect, change visibility during oppo turn)
+	Debug visibility (death effect, change visibility during oppo turn)
 	Debug AI
 Debug range attack
 add a way to check if game is unplayable

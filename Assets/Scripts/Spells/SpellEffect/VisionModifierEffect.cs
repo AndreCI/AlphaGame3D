@@ -17,24 +17,28 @@
     public override System.Object[] ApplyEffect()
     {
         base.ApplyEffect();
-        HexGrid.Instance.DecreaseVisibility(u.currentPosition, u.visionRange + u.currentVisionRangeModifier, u.owner);
-        u.currentVisionRangeModifier += modifier;
         string notif = "";
         System.Object[] e = {null, null};
         if (modifier > 0)
         {
             notif += "+";
             e[0] = Utils.NotificationTypes.BUFF_ATCK;
+            HexGrid.Instance.IncreaseVisibilityFromRadius(u.currentPosition, u.visionRange + u.currentVisionRangeModifier, 
+                u.visionRange + u.currentVisionRangeModifier + modifier, u.owner);
+
         }
         else
         {
             notif += "-";
             e[0] = Utils.NotificationTypes.DEBUFF_ATCK;
+            HexGrid.Instance.DecreaseVisibilityFromRadius(u.currentPosition, u.visionRange + u.currentVisionRangeModifier + modifier,
+                u.visionRange + u.currentVisionRangeModifier, u.owner);
+
         }
+        u.currentVisionRangeModifier += modifier;
         notif += modifier.ToString();
         e[1] = notif;
         //TODO: debug vision buffing
-        HexGrid.Instance.IncreaseVisibility(u.currentPosition, u.visionRange + u.currentVisionRangeModifier, u.owner);
         return e;
     }
 

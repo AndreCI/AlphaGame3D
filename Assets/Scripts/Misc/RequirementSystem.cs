@@ -10,6 +10,7 @@ public class RequirementSystem {
         NodeR depth0;
         NodeR depth1;
         NodeR depth2;
+        NodeR depth3;
         
         depth0 = new NodeR(typeof(HallCenter)){ owned = true};
         depth1 = new NodeR(typeof(Scout));
@@ -27,15 +28,6 @@ public class RequirementSystem {
         depth2 = new NodeR(typeof(Windmill)) { maxAllowed = 2};
         AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);
-        //Stables
-        depth1 = new NodeR(typeof(Stables));
-        AddUnlocksAndLocks(depth0, depth1);
-        depth2 = new NodeR(typeof(Horseman));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Dragon));
-        AddUnlocksAndLocks(depth1, depth2);
-        depth2 = new NodeR(typeof(Golem));
-        AddUnlocksAndLocks(depth1, depth2);
 
 
         //Barracks
@@ -51,8 +43,18 @@ public class RequirementSystem {
         depth2 = new NodeR(typeof(Brute));
         AddUnlocksAndLocks(depth1, depth2);
         depth2 = new NodeR(typeof(Bandit));
+        depth2 = new NodeR(typeof(Golem));
+        AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, depth2);
         AddUnlocksAndLocks(depth1, shrine);
+
+        //Stables
+        depth2 = new NodeR(typeof(Stables));
+        AddUnlocksAndLocks(depth1, depth2);
+        depth3 = new NodeR(typeof(Horseman));
+        AddUnlocksAndLocks(depth2, depth3);
+        depth3 = new NodeR(typeof(Dragon));
+        AddUnlocksAndLocks(depth2, depth3);
 
 
         //Magic Center
@@ -71,7 +73,7 @@ public class RequirementSystem {
 
         //Shrine
         depth2 = shrine;
-        NodeR depth3 = new NodeR(typeof(Fireblast));
+        depth3 = new NodeR(typeof(Fireblast));
         AddUnlocksAndLocks(depth2, depth3);
         depth3 = new NodeR(typeof(BerserkerSpirit));
         AddUnlocksAndLocks(depth2, depth3);
